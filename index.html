@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Tilde</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300" rel="stylesheet" type="text/css">
+
+    <style>
+      body {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #29323c;
+        color: #fff;
+        font-family: 'Lato';
+        font-weight: 300;
+        text-align: center;
+      }
+
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .wrapper {
+        position: relative;
+        top: 46%;
+        padding: 1rem;
+        transform: translateY(-50%);
+      }
+
+      .time {
+        font-size: 5rem;
+        letter-spacing: 6px;
+      }
+
+      .search {
+        margin-top: 2rem;
+      }
+
+      .search__text {
+        -webkit-appearance: none;
+        width: 100%;
+        max-width: 300px;
+        padding: 0.75rem;
+        background: #3F4A56;
+        border: 0;
+        border-radius: 2px;
+        color: #fff;
+        font-size: 1.1rem;
+      }
+
+      .search__text:focus{
+        outline: 0;
+      }
+
+      .links {
+        margin-top: 2rem;
+      }
+
+      .links li,
+      .links a {
+        display: inline-block;
+      }
+
+      .links a {
+        padding: 0.5rem;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <time class="time" id="js-time"></time>
+
+      <form class="search" action="https://www.google.com/search" method="get" autocomplete="off">
+        <input class="search__text" type="text" name="q" autofocus>
+      </form>
+
+      <ul class="links">
+        <li><a href="https://inbox.google.com/">Inbox</a></li>
+        <li><a href="https://github.com/">GitHub</a></li>
+        <li><a href="https://www.reddit.com/">Reddit</a></li>
+      </ul>
+    </div>
+
+    <script type="text/javascript">
+      function setTime() {
+        var zeros = function(num) {
+          return ('0' + num.toString()).slice(-2);
+        }
+
+        var date = new Date();
+        var time = date.getHours() + ' ' + zeros(date.getMinutes());
+
+        document.getElementById('js-time').innerHTML = time;
+      }
+
+      setTime();
+      setInterval(setTime, 1000);
+    </script>
+  </body>
+</html>
