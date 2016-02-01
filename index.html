@@ -129,6 +129,7 @@
           });
 
           Commander.searchHelp.innerHTML = helpMessage;
+          Commander.searchText.value = '';
         } else {
           Commander.location = 'https://www.google.com/search?q=' + q;
 
@@ -139,7 +140,6 @@
           window.location.href = Commander.location;
         }
 
-        Commander.searchText.value = '';
         e.preventDefault();
       }
     };
