@@ -23,13 +23,6 @@
         text-align: center;
       }
 
-      ul,
-      li {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-
       .wrapper {
         position: relative;
         top: 46%;
@@ -61,51 +54,68 @@
       .search__text:focus{
         outline: 0;
       }
-
-      .links {
-        margin-top: 2rem;
-      }
-
-      .links li,
-      .links a {
-        display: inline-block;
-      }
-
-      .links a {
-        padding: 0.5rem;
-        color: #fff;
-      }
     </style>
   </head>
   <body>
     <div class="wrapper">
       <time class="time" id="js-time"></time>
 
-      <form class="search" action="https://www.google.com/search" method="get" autocomplete="off">
-        <input class="search__text" type="text" name="q" autofocus>
+      <form class="search" id="js-search" autocomplete="off">
+        <input class="search__text" id="js-search-text" type="text" autofocus>
       </form>
-
-      <ul class="links">
-        <li><a href="https://inbox.google.com/">Inbox</a></li>
-        <li><a href="https://github.com/">GitHub</a></li>
-        <li><a href="https://www.reddit.com/">Reddit</a></li>
-      </ul>
     </div>
 
     <script type="text/javascript">
-      function setTime() {
-        var zeros = function(num) {
-          return ('0' + num.toString()).slice(-2);
-        }
+      ;(function() {
+        var Clock = {
+          el: document.getElementById('js-time'),
 
-        var date = new Date();
-        var time = date.getHours() + ' ' + zeros(date.getMinutes());
+          init: function() {
+            Clock.setTime();
+            setInterval(Clock.setTime, 1000);
+          },
 
-        document.getElementById('js-time').innerHTML = time;
-      }
+          zeros: function(num) {
+            return ('0' + num.toString()).slice(-2);
+          },
 
-      setTime();
-      setInterval(setTime, 1000);
+          setTime: function() {
+            var date = new Date();
+            var time = date.getHours() + ' ' + Clock.zeros(date.getMinutes());
+
+            Clock.el.innerHTML = time;
+          }
+        };
+
+        var Commander = {
+          searchForm: document.getElementById('js-search'),
+          searchText: document.getElementById('js-search-text'),
+
+          init: function(commands) {
+            Commander.commands = commands;
+            Commander.searchForm.addEventListener('submit', Commander.search, false);
+          },
+
+          search: function(e) {
+            var q = Commander.searchText.value;
+            Commander.location = 'https://www.google.com/search?q=' + q;
+
+            Commander.commands.forEach(function(command) {
+              if (q === command.key) Commander.location = command.url;
+            });
+
+            window.location.href = Commander.location;
+            e.preventDefault();
+          }
+        };
+
+        Clock.init();
+        Commander.init([
+          { key: 'i', url: 'https://inbox.google.com' },
+          { key: 'g', url: 'https://github.com' },
+          { key: 'r', url: 'https://www.reddit.com' }
+        ]);
+      }());
     </script>
   </body>
 </html>
