@@ -1,128 +1,136 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>Tilde</title>
+<!-- home is where the ~ is -->
+<title>~</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:300" rel="stylesheet" type="text/css">
+<!-- meta -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <style>
-      body {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background: #29323c;
-        color: #fff;
-        font-family: 'Lato';
-        font-weight: 300;
-        text-align: center;
+<!-- fonts -->
+<script type="text/javascript">WebFontConfig={google:{families:['Lato:300:latin']}};</script>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" type="text/javascript" async></script>
+
+<!-- styles -->
+<style type="text/css">
+  input,
+  input:focus {
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+  }
+
+  body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #29323c;
+    color: #fff;
+    font-family: 'Lato';
+    font-weight: 300;
+    text-align: center;
+  }
+
+  .wrapper {
+    position: relative;
+    top: 40%;
+    padding: 1rem;
+    transform: translateY(-50%);
+  }
+
+  .time {
+    font-size: 5rem;
+    letter-spacing: 6px;
+  }
+
+  .search {
+    margin-top: 2rem;
+  }
+
+  .search__text {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 300px;
+    padding: 0.75rem;
+    background: #3F4A56;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 1.1rem;
+  }
+</style>
+
+<!-- markup -->
+<div class="wrapper">
+  <time class="time" id="js-time"></time>
+
+  <form class="search" id="js-search" autocomplete="off">
+    <input class="search__text" id="js-search-text" type="search" autofocus>
+  </form>
+</div>
+
+<!-- script -->
+<script type="text/javascript">
+  ;(function() {
+    var Clock = {
+      el: document.getElementById('js-time'),
+
+      init: function() {
+        Clock.setTime();
+        setInterval(Clock.setTime, 1000);
+      },
+
+      zeros: function(num) {
+        return ('0' + num.toString()).slice(-2);
+      },
+
+      setTime: function() {
+        var date = new Date();
+        var time = Clock.zeros(date.getHours()) + ' ' + Clock.zeros(date.getMinutes());
+
+        Clock.el.innerHTML = time;
       }
+    };
 
-      input {
-        border: 0;
-        -webkit-appearance: none;
+    var Commander = {
+      searchForm: document.getElementById('js-search'),
+      searchText: document.getElementById('js-search-text'),
+
+      init: function(commands) {
+        Commander.commands = commands;
+        Commander.searchForm.addEventListener('submit', Commander.search, false);
+      },
+
+      search: function(e) {
+        var q = Commander.searchText.value;
+        Commander.location = 'https://www.google.com/search?q=' + q;
+
+        Commander.commands.forEach(function(command) {
+          if (q === command.key) Commander.location = command.url;
+        });
+
+        window.location.href = Commander.location;
+        e.preventDefault();
       }
+    };
 
-      .wrapper {
-        position: relative;
-        top: 40%;
-        padding: 1rem;
-        transform: translateY(-50%);
-      }
-
-      .time {
-        font-size: 5rem;
-        letter-spacing: 6px;
-      }
-
-      .search {
-        margin-top: 2rem;
-      }
-
-      .search__text {
-        box-sizing: border-box;
-        width: 100%;
-        max-width: 300px;
-        padding: 0.75rem;
-        background: #3F4A56;
-        border-radius: 2px;
-        color: #fff;
-        font-size: 1.1rem;
-      }
-
-      .search__text:focus{
-        outline: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrapper">
-      <time class="time" id="js-time"></time>
-
-      <form class="search" id="js-search" autocomplete="off">
-        <input class="search__text" id="js-search-text" type="text" autofocus>
-      </form>
-    </div>
-
-    <script type="text/javascript">
-      ;(function() {
-        var Clock = {
-          el: document.getElementById('js-time'),
-
-          init: function() {
-            Clock.setTime();
-            setInterval(Clock.setTime, 1000);
-          },
-
-          zeros: function(num) {
-            return ('0' + num.toString()).slice(-2);
-          },
-
-          setTime: function() {
-            var date = new Date();
-            var time = date.getHours() + ' ' + Clock.zeros(date.getMinutes());
-
-            Clock.el.innerHTML = time;
-          }
-        };
-
-        var Commander = {
-          searchForm: document.getElementById('js-search'),
-          searchText: document.getElementById('js-search-text'),
-
-          init: function(commands) {
-            Commander.commands = commands;
-            Commander.searchForm.addEventListener('submit', Commander.search, false);
-          },
-
-          search: function(e) {
-            var q = Commander.searchText.value;
-            Commander.location = 'https://www.google.com/search?q=' + q;
-
-            Commander.commands.forEach(function(command) {
-              if (q === command.key) Commander.location = command.url;
-            });
-
-            window.location.href = Commander.location;
-            e.preventDefault();
-          }
-        };
-
-        Clock.init();
-        Commander.init([
-          { key: 'i', url: 'https://inbox.google.com' },
-          { key: 'k', url: 'https://keep.google.com' },
-          { key: 'g', url: 'https://github.com' },
-          { key: 'r', url: 'https://www.reddit.com' },
-          { key: 't', url: 'https://twitter.com' },
-          { key: 'f', url: 'https://www.facebook.com' }
-        ]);
-      }());
-    </script>
-  </body>
-</html>
+    Clock.init();
+    Commander.init([
+      { key: 'i', url: 'https://inbox.google.com' },
+      { key: 'k', url: 'https://keep.google.com' },
+      { key: 'g', url: 'https://github.com' },
+      { key: 'r', url: 'https://www.reddit.com' },
+      { key: 't', url: 'https://twitter.com' },
+      { key: 'f', url: 'https://www.facebook.com' }
+    ]);
+  }());
+</script>
