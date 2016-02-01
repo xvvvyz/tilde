@@ -43,9 +43,8 @@
 
   .wrapper {
     position: relative;
-    top: 40%;
+    top: 25%;
     padding: 1rem;
-    transform: translateY(-50%);
   }
 
   .time {
@@ -67,6 +66,12 @@
     color: #fff;
     font-size: 1.1rem;
   }
+
+  .help {
+    width: 300px;
+    margin: 1rem auto 0;
+    text-align: left;
+  }
 </style>
 
 <!-- markup -->
@@ -76,6 +81,8 @@
   <form class="search" id="js-search" autocomplete="off">
     <input class="search__text" id="js-search-text" type="search" autofocus>
   </form>
+
+  <pre class="help" id="js-help"></pre>
 </div>
 
 <!-- script -->
@@ -104,6 +111,7 @@
     var Commander = {
       searchForm: document.getElementById('js-search'),
       searchText: document.getElementById('js-search-text'),
+      searchHelp: document.getElementById('js-help'),
 
       init: function(commands) {
         Commander.commands = commands;
@@ -112,18 +120,33 @@
 
       search: function(e) {
         var q = Commander.searchText.value;
-        Commander.location = 'https://www.google.com/search?q=' + q;
 
-        Commander.commands.forEach(function(command) {
-          if (q === command.key) Commander.location = command.url;
-        });
+        if (q === '?') {
+          var helpMessage = '';
 
-        window.location.href = Commander.location;
+          Commander.commands.forEach(function(command) {
+            helpMessage += command.key + ': ' + command.url + '\n';
+          });
+
+          Commander.searchHelp.innerHTML = helpMessage;
+        } else {
+          Commander.location = 'https://www.google.com/search?q=' + q;
+
+          Commander.commands.forEach(function(command) {
+            if (q === command.key) Commander.location = command.url;
+          });
+
+          window.location.href = Commander.location;
+        }
+
+        Commander.searchText.value = '';
         e.preventDefault();
       }
     };
 
     Clock.init();
+
+    // add commands here
     Commander.init([
       { key: 'i', url: 'https://inbox.google.com' },
       { key: 'k', url: 'https://keep.google.com' },
