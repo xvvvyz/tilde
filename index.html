@@ -1,33 +1,16 @@
 <!doctype html>
 
-<!-- home is where the ~ is -->
 <title>~</title>
 
-<!-- meta -->
 <meta charset="utf-8">
+<meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-<!-- fonts -->
 <script type="text/javascript">WebFontConfig={google:{families:['Lato:300:latin']}};</script>
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" type="text/javascript" async></script>
 
-<!-- styles -->
 <style type="text/css">
-  input,
-  input:focus {
-    border: 0;
-    outline: 0;
-    -webkit-appearance: none;
-  }
-
-  input[type="search"]::-webkit-search-decoration,
-  input[type="search"]::-webkit-search-cancel-button,
-  input[type="search"]::-webkit-search-results-button,
-  input[type="search"]::-webkit-search-results-decoration {
-    display: none;
-  }
-
   body {
     position: absolute;
     width: 100%;
@@ -36,14 +19,21 @@
     padding: 0;
     background: #29323c;
     color: #fff;
-    font-family: 'Lato';
+    font-family: 'Lato', sans-serif;
     font-weight: 300;
     text-align: center;
   }
 
+  input,
+  input:focus {
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+  }
+
   .wrapper {
     position: relative;
-    top: 25%;
+    top: 30%;
     padding: 1rem;
   }
 
@@ -56,36 +46,44 @@
     margin-top: 2rem;
   }
 
-  .search__text {
+  .search__text,
+  .help {
+    position: relative;
     box-sizing: border-box;
     width: 100%;
     max-width: 300px;
+  }
+
+  .search__text {
     padding: 0.75rem;
-    background: #3F4A56;
+    background-color: #3F4A56;
     border-radius: 2px;
     color: #fff;
     font-size: 1.1rem;
   }
 
   .help {
-    width: 300px;
+    height: 0;
     margin: 1rem auto 0;
+    border-right: dashed 1px #3F4A56;
+    transition: height 0.2s linear;
     text-align: left;
+    line-height: 1rem;
+    column-count: 2;
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    overflow: hidden;
   }
 </style>
 
-<!-- markup -->
 <div class="wrapper">
   <time class="time" id="js-time"></time>
-
   <form class="search" id="js-search" autocomplete="off">
-    <input class="search__text" id="js-search-text" type="search" autofocus>
+    <input class="search__text" id="js-search-text" type="text" autofocus>
   </form>
-
   <pre class="help" id="js-help"></pre>
 </div>
 
-<!-- script -->
 <script type="text/javascript">
   ;(function() {
     var Clock = {
@@ -102,42 +100,52 @@
 
       setTime: function() {
         var date = new Date();
-        var time = Clock.zeros(date.getHours()) + ' ' + Clock.zeros(date.getMinutes());
+        var hours = Clock.zeros(date.getHours());
+        var minutes = Clock.zeros(date.getMinutes());
+        var time = hours + ' ' + minutes;
 
         Clock.el.innerHTML = time;
       }
     };
 
-    var Commander = {
+    var Cmdr = {
       searchForm: document.getElementById('js-search'),
       searchText: document.getElementById('js-search-text'),
       searchHelp: document.getElementById('js-help'),
 
-      init: function(commands) {
-        Commander.commands = commands;
-        Commander.searchForm.addEventListener('submit', Commander.search, false);
+      init: function(opts) {
+        Cmdr.default = opts.default;
+        Cmdr.commands = opts.commands;
+        Cmdr.searchForm.addEventListener('submit', Cmdr.search, false);
       },
 
       search: function(e) {
-        var q = Commander.searchText.value;
+        var q = Cmdr.searchText.value;
 
         if (q === '?') {
-          var helpMessage = '';
-
-          Commander.commands.forEach(function(command) {
-            helpMessage += command.key + ': ' + command.url + '\n';
+          Cmdr.commands.forEach(function(command) {
+            Cmdr.searchHelp.innerHTML += command.key + ': ' + command.name + '\n';
           });
 
-          Commander.searchHelp.innerHTML = helpMessage;
-          Commander.searchText.value = '';
+          Cmdr.searchHelp.style.height = Math.ceil(Cmdr.commands.length / 2) + 'rem';
+          Cmdr.searchText.value = '';
         } else {
-          Commander.location = 'https://www.google.com/search?q=' + q;
+          q = q.split(':');
+          Cmdr.location = Cmdr.default + encodeURIComponent(q);
 
-          Commander.commands.forEach(function(command) {
-            if (q === command.key) Commander.location = command.url;
+          Cmdr.commands.forEach(function(command) {
+            if (q[0] === command.key) {
+              Cmdr.location = command.url;
+
+              if (q[1] && command.search) {
+                q.shift();
+                var searchText = encodeURIComponent(q.join(':').trim());
+                Cmdr.location = command.url + command.search + searchText;
+              }
+            }
           });
 
-          window.location.href = Commander.location;
+          window.location.href = Cmdr.location;
         }
 
         e.preventDefault();
@@ -145,15 +153,24 @@
     };
 
     Clock.init();
-
-    // add commands here
-    Commander.init([
-      { key: 'i', url: 'https://inbox.google.com' },
-      { key: 'k', url: 'https://keep.google.com' },
-      { key: 'g', url: 'https://github.com' },
-      { key: 'r', url: 'https://www.reddit.com' },
-      { key: 't', url: 'https://twitter.com' },
-      { key: 'f', url: 'https://www.facebook.com' }
-    ]);
+    Cmdr.init({
+      default: 'https://www.google.com/search?q=',
+      commands: [
+        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+        { key: 'c', name: 'Coinbase', url: 'https://www.coinbase.com' },
+        { key: 'd', name: 'Drive', url: 'https://drive.google.com', search: '/drive/search?q=' },
+        { key: 'e', name: 'ExtraTorrent', url: 'https://extratorrent.cc', search: '/search/?search=' },
+        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
+      ]
+    });
   }());
 </script>
