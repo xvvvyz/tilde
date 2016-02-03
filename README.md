@@ -13,4 +13,5 @@ a                # takes you to amazon.com
 t: donald trump  # searches Twitter for Donald Trump
 g: twitter       # searches GitHub for Twitter
 f                # takes you to facebook.com
+asdf             # searches google for asdf
 ```
