@@ -4,7 +4,7 @@ I was inspired by [/r/startpages](https://www.reddit.com/r/startpages), and this
 
 **Usage:**
 
-It's pretty simple. To go to a site you just enter the corresponding key. To view the available commands, enter a `?`.
+It's pretty simple. To go to a site you just enter the corresponding key. To view the available commands, enter a `?`. If your input doesn't match any of the commands, a generic google search will be triggered.
 
 **Examples:**
 
@@ -14,5 +14,3 @@ t: donald trump  # searches Twitter for Donald Trump
 g: twitter       # searches GitHub for Twitter
 f                # takes you to facebook.com
 ```
-
-You get the idea...
