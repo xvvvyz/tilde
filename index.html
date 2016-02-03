@@ -133,8 +133,8 @@
           Cmdr.searchHelp.style.height = Math.ceil(Cmdr.commands.length / 2) + 'rem';
           Cmdr.searchText.value = '';
         } else {
-          q = q.split(':');
           Cmdr.location = Cmdr.default + encodeURIComponent(q);
+          q = q.split(':');
 
           Cmdr.commands.forEach(function(command) {
             if (q[0] === command.key) {
