@@ -5,26 +5,54 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="x-ua-compatible" content="ie=edge">
 
-<script type="text/javascript">WebFontConfig={google:{families:['Lato:300:latin']}};</script>
-<script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" type="text/javascript" async></script>
+<script>WebFontConfig={google:{families:['Lato:300:latin']}};</script>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
 
 <style type="text/css">
-  body,
-  input {
-    font-family: 'Lato', sans-serif;
+  * {
+    box-sizing: border-box;
   }
 
   body {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    background: #fff;
+    background-color: #fff;
     color: #111;
+    font-family: 'Lato', sans-serif;
+  }
+
+  main {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-98px);
     text-align: center;
+  }
+
+  time {
+    font-size: 5rem;
+    letter-spacing: 6px;
+  }
+
+  form {
+    margin-top: 2rem;
+  }
+
+  input {
+    width: 90%;
+    max-width: 310px;
+    padding: 10px 15px;
+    background-color: #222;
+    border-radius: 2px;
+    color: #fff;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.1rem;
   }
 
   input,
@@ -34,148 +62,152 @@
     -webkit-appearance: none;
   }
 
-  .wrapper {
-    position: relative;
-    top: 30%;
-    padding: 1rem;
-  }
-
-  .time {
-    font-size: 5rem;
-    letter-spacing: 6px;
-  }
-
-  .search {
-    margin-top: 2rem;
-  }
-
-  .search__text,
-  .help {
-    position: relative;
-    box-sizing: border-box;
+  aside {
+    position: fixed;
+    left: -180px;
     width: 100%;
-    max-width: 300px;
+    max-width: 180px;
+    height: 100%;
+    padding: 15px 25px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.4);
+    transition: transform 700ms;
+    overflow: auto;
+    z-index: 1;
   }
 
-  .search__text {
-    padding: 0.75rem;
-    background-color: #222;
-    border-radius: 2px;
-    color: #fff;
-    font-size: 1.1rem;
+  aside[data-toggled='true'] {
+    transform: translateX(180px);
   }
 
-  .help {
-    height: 0;
-    margin: 1rem auto 0;
-    border-right: dashed 1px #ddd;
-    transition: height 0.2s linear;
-    text-align: left;
+  h1 {
+    margin: 0 0 15px;
     line-height: 1rem;
-    column-count: 2;
-    -moz-column-count: 2;
-    -webkit-column-count: 2;
-    overflow: hidden;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    line-height: 1.5em;
+  }
+
+  span {
+    font-family: 'Courier New', monospace;
+  }
+
+  a {
+    color: #000;
+    font-size: 0.8rem;
   }
 </style>
 
-<div class="wrapper">
-  <time class="time" id="js-time"></time>
-  <form class="search" id="js-search" autocomplete="off">
-    <input class="search__text" id="js-search-text" type="text" autofocus>
+<main>
+  <time id="js-clock"></time>
+  <form id="js-search-form" autocomplete="off">
+    <input id="js-search-input" type="text" autofocus>
   </form>
-  <pre class="help" id="js-help"></pre>
-</div>
+</main>
 
-<script type="text/javascript">
-  ;(function() {
-    var Clock = {
-      el: document.getElementById('js-time'),
+<aside id="js-sidebar">
+  <h1>~</h1>
+  <ul id="js-help"></ul>
+</aside>
 
-      init: function() {
-        Clock.setTime();
-        setInterval(Clock.setTime, 1000);
-      },
+<script>
+  'use strict';
 
-      zeros: function(num) {
-        return ('0' + num.toString()).slice(-2);
-      },
+  (function() {
+    var clock = document.getElementById('js-clock');
 
-      setTime: function() {
-        var date = new Date();
-        var hours = Clock.zeros(date.getHours());
-        var minutes = Clock.zeros(date.getMinutes());
-        var time = hours + ' ' + minutes;
+    function leftpad(num) {
+      return ('0' + num.toString()).slice(-2);
+    }
 
-        Clock.el.innerHTML = time;
-      }
-    };
+    function setTime() {
+      var date = new Date();
+      var hours = leftpad(date.getHours());
+      var minutes = leftpad(date.getMinutes());
+      clock.innerHTML = hours + ' ' + minutes;
+    }
 
-    var Cmdr = {
-      searchForm: document.getElementById('js-search'),
-      searchText: document.getElementById('js-search-text'),
-      searchHelp: document.getElementById('js-help'),
+    setTime();
+    setInterval(setTime, 1000);
+  })();
 
-      init: function(opts) {
-        Cmdr.default = opts.default;
-        Cmdr.commands = opts.commands;
-        Cmdr.searchForm.addEventListener('submit', Cmdr.search, false);
-      },
+  (function(opts) {
+    var sidebar = document.getElementById('js-sidebar');
+    var searchForm = document.getElementById('js-search-form');
+    var searchInput = document.getElementById('js-search-input');
+    var searchHelp = document.getElementById('js-help');
 
-      search: function(e) {
-        var q = Cmdr.searchText.value;
+    opts.commands.forEach(function(command) {
+      var li = document.createElement('li');
+      var key = document.createElement('span');
+      var link = document.createElement('a');
 
-        if (q === '?') {
-          Cmdr.commands.forEach(function(command) {
-            Cmdr.searchHelp.innerHTML += command.key + ': ' + command.name + '\n';
-          });
+      key.innerHTML = command.key + ': ';
 
-          Cmdr.searchHelp.style.height = Math.ceil(Cmdr.commands.length / 2) + 'rem';
-          Cmdr.searchText.value = '';
-        } else {
-          Cmdr.location = Cmdr.default + encodeURIComponent(q);
-          q = q.split(':');
+      link.href = command.url;
+      link.innerHTML = command.name;
 
-          Cmdr.commands.forEach(function(command) {
-            if (q[0] === command.key) {
-              Cmdr.location = command.url;
+      li.appendChild(key);
+      li.appendChild(link);
 
-              if (q[1] && command.search) {
-                q.shift();
-                var searchText = encodeURIComponent(q.join(':').trim());
-                Cmdr.location = command.url + command.search + searchText;
-              }
-            }
-          });
-
-          window.location.href = Cmdr.location;
-        }
-
-        e.preventDefault();
-      }
-    };
-
-    Clock.init();
-    Cmdr.init({
-      default: 'https://www.google.com/search?q=',
-      commands: [
-        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-        { key: 'c', name: 'Coinbase', url: 'https://www.coinbase.com' },
-        { key: 'd', name: 'Drive', url: 'https://drive.google.com', search: '/drive/search?q=' },
-        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
-        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
-        { key: 'Y', name: 'YTS', url: 'https://yts.ag'},
-        { key: '3', name: 'localhost:3000', url: 'http://localhost:3000'},
-        { key: '9', name: 'localhost:9000', url: 'http://localhost:9000'},
-      ]
+      searchHelp.appendChild(li);
     });
-  }());
+
+    searchForm.addEventListener('keyup', function() {
+      var q = searchInput.value;
+
+      if (q === '?') {
+        sidebar.setAttribute('data-toggled', true);
+        searchInput.value = '';
+      }
+    });
+
+    searchForm.addEventListener('submit', function(event) {
+      var redirect = opts.defaultCommand + encodeURIComponent(q);
+      var q = searchInput.value.split(opts.delimiter);
+
+      opts.commands.forEach(function(command) {
+        if (q[0] === command.key) {
+          if (q[1] && command.search) {
+            q.shift();
+            var search = encodeURIComponent(q.join(opts.delimiter).trim());
+            redirect = command.url + command.search + search;
+          } else {
+            redirect = command.url;
+          }
+        }
+      });
+
+      window.location.href = redirect;
+      event.preventDefault();
+    }, false);
+  })({
+    delimiter: ' ',
+    defaultCommand: 'https://www.google.com/search?q=',
+    commands: [
+      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+      { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
+      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+      { key: 's', name: 'Stack Exchange', url: 'https://stackexchange.com', search: '/search?q=' },
+      { key: 'S', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' }
+    ]
+  });
 </script>
