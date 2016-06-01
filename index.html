@@ -170,6 +170,10 @@
     });
 
     searchForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      if (searchInput.value === '') return false;
+
       var redirect = opts.defaultCommand + encodeURIComponent(q);
       var q = searchInput.value.split(opts.delimiter);
 
@@ -186,7 +190,6 @@
       });
 
       window.location.href = redirect;
-      event.preventDefault();
     }, false);
   })({
     delimiter: ' ',
