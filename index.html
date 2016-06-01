@@ -23,7 +23,7 @@
     margin: 0;
     padding: 0;
     background-color: #fff;
-    color: #111;
+    color: #222;
     font-family: 'Lato', sans-serif;
   }
 
@@ -40,14 +40,11 @@
     letter-spacing: 6px;
   }
 
-  form {
-    margin-top: 2rem;
-  }
-
   input {
     width: 90%;
     max-width: 310px;
-    padding: 10px 15px;
+    margin-top: 20px;
+    padding: 12px;
     background-color: #222;
     border-radius: 2px;
     color: #fff;
@@ -64,44 +61,55 @@
 
   aside {
     position: fixed;
-    left: -180px;
+    left: 0;
     width: 100%;
-    max-width: 180px;
+    max-width: 190px;
     height: 100%;
-    padding: 15px 25px;
+    padding: 15px 0 0;
     background-color: #fff;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.4);
-    transition: transform 700ms;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
+    transition: 700ms;
+    transform: translateX(-190px);
     overflow: auto;
     z-index: 1;
   }
 
   aside[data-toggled='true'] {
-    transform: translateX(180px);
+    transform: translateX(0);
   }
 
   h1 {
-    margin: 0 0 15px;
+    margin: 0 25px 15px;
     line-height: 1rem;
   }
 
   ul {
-    margin: 0;
+    margin: 0 0 15px;
     padding: 0;
   }
 
   li {
     list-style: none;
-    line-height: 1.5em;
-  }
-
-  span {
-    font-family: 'Courier New', monospace;
   }
 
   a {
-    color: #000;
-    font-size: 0.8rem;
+    display: block;
+    padding: 0 25px;
+    color: #222;
+    line-height: 1.7rem;
+    text-decoration: none;
+  }
+
+  a:hover span:last-of-type {
+    text-decoration: underline;
+  }
+
+  span:first-of-type {
+    font-family: 'Courier New', monospace;
+  }
+
+  span:last-of-type {
+    font-size: 0.9rem;
   }
 </style>
 
@@ -146,36 +154,35 @@
 
     opts.commands.forEach(function(command) {
       var li = document.createElement('li');
-      var key = document.createElement('span');
       var link = document.createElement('a');
+      var key = document.createElement('span');
+      var name = document.createElement('span');
 
       key.innerHTML = command.key + ': ';
+      name.innerHTML = command.name;
 
       link.href = command.url;
-      link.innerHTML = command.name;
+      link.appendChild(key);
+      link.appendChild(name);
 
-      li.appendChild(key);
       li.appendChild(link);
 
       searchHelp.appendChild(li);
     });
 
-    searchForm.addEventListener('keyup', function() {
-      var q = searchInput.value;
-
-      if (q === '?') {
-        sidebar.setAttribute('data-toggled', true);
-        searchInput.value = '';
-      }
-    });
-
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
-      if (searchInput.value === '') return false;
+      var q = searchInput.value
+
+      if (q === '' || q === '?') {
+        sidebar.setAttribute('data-toggled', true);
+        searchInput.value = '';
+        return false;
+      }
 
       var redirect = opts.defaultCommand + encodeURIComponent(q);
-      var q = searchInput.value.split(opts.delimiter);
+      q = q.split(opts.delimiter);
 
       opts.commands.forEach(function(command) {
         if (q[0] === command.key) {
@@ -191,8 +198,12 @@
 
       window.location.href = redirect;
     }, false);
+
+    document.addEventListener('keydown', function(event) {
+      if (event.keyCode === 27) sidebar.removeAttribute('data-toggled');
+    });
   })({
-    delimiter: ' ',
+    delimiter: ':',
     defaultCommand: 'https://www.google.com/search?q=',
     commands: [
       { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
