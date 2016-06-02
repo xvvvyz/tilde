@@ -10,10 +10,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
 
 <style type="text/css">
-  * {
-    box-sizing: border-box;
-  }
-
   body {
     position: absolute;
     top: 0;
@@ -41,6 +37,7 @@
   }
 
   input {
+    box-sizing: border-box;
     width: 90%;
     max-width: 310px;
     margin-top: 20px;
@@ -57,10 +54,12 @@
     border: 0;
     outline: 0;
     -webkit-appearance: none;
+    -moz-appearance: none;
   }
 
   aside {
     position: fixed;
+    box-sizing: border-box;
     left: 0;
     width: 100%;
     max-width: 190px;
@@ -151,6 +150,7 @@
     var searchForm = document.getElementById('js-search-form');
     var searchInput = document.getElementById('js-search-input');
     var searchHelp = document.getElementById('js-help');
+    var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 
     opts.commands.forEach(function(command) {
       var li = document.createElement('li');
@@ -160,20 +160,19 @@
 
       key.innerHTML = command.key + ': ';
       name.innerHTML = command.name;
-
       link.href = command.url;
+
       link.appendChild(key);
       link.appendChild(name);
-
       li.appendChild(link);
-
       searchHelp.appendChild(li);
     });
 
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
-      var q = searchInput.value
+      var q = searchInput.value.trim();
+      var redirect = '';
 
       if (q === '' || q === '?') {
         sidebar.setAttribute('data-toggled', true);
@@ -181,7 +180,12 @@
         return false;
       }
 
-      var redirect = opts.defaultCommand + encodeURIComponent(q);
+      if (q.match(new RegExp(urlRegex))) {
+        redirect = q;
+      } else {
+        redirect = opts.defaultCommand + encodeURIComponent(q);
+      }
+
       q = q.split(opts.delimiter);
 
       opts.commands.forEach(function(command) {
