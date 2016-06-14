@@ -1,10 +1,10 @@
 <!doctype html>
 
-<title>~</title>
-
 <meta charset="utf-8">
-<meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+
+<title>~</title>
 
 <script>WebFontConfig={google:{families:['Lato:300:latin']}};</script>
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
@@ -18,43 +18,76 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #fff;
     color: #222;
     font-family: 'Lato', sans-serif;
+    font-weight: 300;
   }
 
   main {
     position: absolute;
     top: 50%;
-    width: 100%;
+    right: 0;
+    left: 0;
+    width: 90%;
+    max-width: 310px;
+    margin: 0 auto;
     transform: translateY(-98px);
     text-align: center;
   }
 
   time {
+    display: block;
+    margin-bottom: 20px;
     font-size: 5rem;
+    line-height: 6rem;
     letter-spacing: 6px;
+  }
+
+  input,
+  input:focus {
+    margin: 0;
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
   }
 
   input {
     box-sizing: border-box;
-    width: 90%;
-    max-width: 310px;
-    margin-top: 20px;
+    width: 100%;
     padding: 12px;
-    background-color: #222;
+    transition: 0.5s;
+    transform: translateY(-21px);
     border-radius: 2px;
+    background-color: #222;
     color: #fff;
     font-family: 'Lato', sans-serif;
     font-size: 1.1rem;
   }
 
-  input,
-  input:focus {
-    border: 0;
-    outline: 0;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+  input[data-weather="true"] {
+    border-radius: 0 0 2px 2px;
+    transform: translateY(0);
+  }
+
+  .weather {
+    box-sizing: border-box;
+    width: 100%;
+    height: 21px;
+    padding: 9px 12px 0;
+    transition: 0.5s;
+    border-radius: 2px 2px 0 0;
+    background-color: #222;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 0.6rem;
+    text-transform: capitalize;
+    opacity: 0;
+    overflow: auto;
+  }
+
+  .weather[data-toggled="true"] {
+    opacity: 1;
   }
 
   aside {
@@ -99,21 +132,33 @@
     text-decoration: none;
   }
 
-  a:hover span:last-of-type {
+  a:hover .help-name {
     text-decoration: underline;
   }
 
-  span:first-of-type {
+  .help-key {
     font-family: 'Courier New', monospace;
   }
 
-  span:last-of-type {
+  .help-name {
     font-size: 0.9rem;
+  }
+
+  .float-left {
+    float: left;
+  }
+
+  .float-right {
+    float: right;
   }
 </style>
 
 <main>
   <time id="js-clock"></time>
+  <div class="weather" id="js-weather">
+    <div class="float-left" id="js-weather-left"></div>
+    <div class="float-right" id="js-weather-right"></div>
+  </div>
   <form id="js-search-form" autocomplete="off">
     <input id="js-search-input" type="text" autofocus>
   </form>
@@ -125,8 +170,53 @@
 </aside>
 
 <script>
-  'use strict';
+  var config = {
+    commands: [
+      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+      { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
+      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+      { key: 's', name: 'Stack Exchange', url: 'https://stackexchange.com', search: '/search?q=' },
+      { key: 'S', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' }
+    ],
 
+    // if none of the keys are matched, this is triggered
+    // for DuckDuckGo use: https://duckduckgo.com/?q=
+    defaultCommand: 'https://www.google.com/search?q=',
+
+    // the delimiter between the key and your search query
+    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
+    searchDelimiter: ':',
+
+    // location for the weather
+    zipCode: '97405',
+    countryCode: 'us'
+  };
+
+  /**
+   * Helpers
+   */
+  function loadScript(url, callback) {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    if (callback) script.onload = callback;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  /**
+   * Clock
+   */
   (function() {
     var clock = document.getElementById('js-clock');
 
@@ -145,20 +235,22 @@
     setInterval(setTime, 1000);
   })();
 
-  (function(opts) {
+  /**
+   * Help
+   */
+  var Help = (function(config) {
     var sidebar = document.getElementById('js-sidebar');
-    var searchForm = document.getElementById('js-search-form');
-    var searchInput = document.getElementById('js-search-input');
     var searchHelp = document.getElementById('js-help');
-    var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 
-    opts.commands.forEach(function(command) {
+    config.commands.forEach(function(command) {
       var li = document.createElement('li');
       var link = document.createElement('a');
       var key = document.createElement('span');
       var name = document.createElement('span');
 
-      key.innerHTML = command.key + ': ';
+      key.className = 'help-key';
+      key.innerHTML = command.key + config.searchDelimiter + ' ';
+      name.className = 'help-name';
       name.innerHTML = command.name;
       link.href = command.url;
 
@@ -168,31 +260,95 @@
       searchHelp.appendChild(li);
     });
 
+    document.addEventListener('keydown', function(event) {
+      if (event.keyCode === 27) sidebar.removeAttribute('data-toggled');
+    });
+
+    return {
+      toggle: function() {
+        var toggle = sidebar.getAttribute('data-toggled') !== 'true';
+        sidebar.setAttribute('data-toggled', toggle);
+      }
+    };
+  })(config);
+
+  /**
+   * Weather
+   */
+  var Weather = (function(config) {
+    var weather = document.getElementById('js-weather');
+    var leftResults = document.getElementById('js-weather-left');
+    var rightResults = document.getElementById('js-weather-right');
+
+    function kelvinToFahrenheit(temp) {
+      return 9 / 5 * (temp - 273) + 32;
+    }
+
+    loadScript(
+      'https://openweathermap.org/data/2.5/find' +
+      '?callback=Weather.callback' +
+      '&q=' + config.zipCode + ',' + config.countryCode +
+      '&appid=b1b15e88fa797225412429c1c50c122a'
+    );
+
+    return {
+      callback: function(data) {
+        if (!data) return false;
+
+        var location = data.list[0].name;
+        var condition = data.list[0].weather[0].description;
+        var temp = Math.round(kelvinToFahrenheit(data.list[0].main.temp));
+        var left = document.createElement('span');
+        var right = document.createElement('span');
+
+        leftResults.innerHTML = location;
+        rightResults.innerHTML = condition + ' &ndash; ' + temp + '&deg;';
+      },
+
+      toggle: function() {
+        var toggle = weather.getAttribute('data-toggled') !== 'true';
+        Form.searchInput.setAttribute('data-weather', toggle);
+        weather.setAttribute('data-toggled', toggle);
+      }
+    };
+  })(config);
+
+  /**
+   * Form
+   */
+  var Form = (function(config) {
+    var searchForm = document.getElementById('js-search-form');
+    var searchInput = document.getElementById('js-search-input');
+    var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
       var q = searchInput.value.trim();
+      var qSplit = q.split(config.searchDelimiter);
+      var validCommand = false;
       var redirect = '';
 
-      if (q === '' || q === '?') {
-        sidebar.setAttribute('data-toggled', true);
+      if (q === '?') {
+        Help.toggle();
         searchInput.value = '';
+        return false;
+      } else if (q === '') {
+        Weather.toggle();
         return false;
       }
 
       if (q.match(new RegExp(urlRegex))) {
         redirect = q;
       } else {
-        redirect = opts.defaultCommand + encodeURIComponent(q);
+        redirect = config.defaultCommand + encodeURIComponent(q);
       }
 
-      q = q.split(opts.delimiter);
-
-      opts.commands.forEach(function(command) {
-        if (q[0] === command.key) {
-          if (q[1] && command.search) {
-            q.shift();
-            var search = encodeURIComponent(q.join(opts.delimiter).trim());
+      config.commands.forEach(function(command) {
+        if (qSplit[0] === command.key) {
+          if (qSplit[1] && command.search) {
+            qSplit.shift();
+            var search = encodeURIComponent(qSplit.join(config.searchDelimiter).trim());
             redirect = command.url + command.search + search;
           } else {
             redirect = command.url;
@@ -203,29 +359,8 @@
       window.location.href = redirect;
     }, false);
 
-    document.addEventListener('keydown', function(event) {
-      if (event.keyCode === 27) sidebar.removeAttribute('data-toggled');
-    });
-  })({
-    delimiter: ':',
-    defaultCommand: 'https://www.google.com/search?q=',
-    commands: [
-      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-      { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
-      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-      { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
-      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-      { key: 's', name: 'Stack Exchange', url: 'https://stackexchange.com', search: '/search?q=' },
-      { key: 'S', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' }
-    ]
-  });
+    return {
+      searchInput: searchInput
+    };
+  })(config);
 </script>
