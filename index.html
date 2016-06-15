@@ -239,24 +239,29 @@
    * Help
    */
   var Help = (function(config) {
+    var head = document.getElementsByTagName('head')[0];
     var sidebar = document.getElementById('js-sidebar');
     var searchHelp = document.getElementById('js-help');
 
     config.commands.forEach(function(command) {
+      var prefetch = document.createElement('link');
       var li = document.createElement('li');
-      var link = document.createElement('a');
+      var anchor = document.createElement('a');
       var key = document.createElement('span');
       var name = document.createElement('span');
 
+      prefetch.rel = 'prerender';
+      prefetch.href = command.url;
       key.className = 'help-key';
       key.innerHTML = command.key + config.searchDelimiter + ' ';
       name.className = 'help-name';
       name.innerHTML = command.name;
-      link.href = command.url;
+      anchor.href = command.url;
 
-      link.appendChild(key);
-      link.appendChild(name);
-      li.appendChild(link);
+      head.appendChild(prefetch);
+      anchor.appendChild(key);
+      anchor.appendChild(name);
+      li.appendChild(anchor);
       searchHelp.appendChild(li);
     });
 
