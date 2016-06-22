@@ -31,7 +31,7 @@
     width: 90%;
     max-width: 310px;
     margin: 0 auto;
-    transform: translateY(-98px);
+    transform: translateY(-100px);
     text-align: center;
   }
 
@@ -39,7 +39,6 @@
     display: block;
     margin-bottom: 20px;
     font-size: 5rem;
-    line-height: 6rem;
     letter-spacing: 6px;
   }
 
@@ -57,37 +56,11 @@
     width: 100%;
     padding: 12px;
     transition: 0.5s;
-    transform: translateY(-21px);
     border-radius: 2px;
     background-color: #222;
     color: #fff;
     font-family: 'Lato', sans-serif;
     font-size: 1.1rem;
-  }
-
-  input[data-weather="true"] {
-    border-radius: 0 0 2px 2px;
-    transform: translateY(0);
-  }
-
-  .weather {
-    box-sizing: border-box;
-    width: 100%;
-    height: 21px;
-    padding: 9px 12px 0;
-    transition: 0.5s;
-    border-radius: 2px 2px 0 0;
-    background-color: #222;
-    color: #fff;
-    font-size: 0.6rem;
-    line-height: 0.6rem;
-    text-transform: capitalize;
-    opacity: 0;
-    overflow: auto;
-  }
-
-  .weather[data-toggled="true"] {
-    opacity: 1;
   }
 
   aside {
@@ -98,10 +71,10 @@
     max-width: 190px;
     height: 100%;
     padding: 15px 0 0;
-    background-color: #fff;
-    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
     transition: transform 700ms;
     transform: translateX(-205px);
+    background-color: #fff;
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
     overflow: auto;
     z-index: 1;
   }
@@ -143,22 +116,10 @@
   .help-name {
     font-size: 0.9rem;
   }
-
-  .float-left {
-    float: left;
-  }
-
-  .float-right {
-    float: right;
-  }
 </style>
 
 <main>
   <time id="js-clock"></time>
-  <div class="weather" id="js-weather">
-    <div class="float-left" id="js-weather-left"></div>
-    <div class="float-right" id="js-weather-right"></div>
-  </div>
   <form id="js-search-form" autocomplete="off">
     <input id="js-search-input" type="text" autofocus>
   </form>
@@ -197,23 +158,8 @@
 
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
-    searchDelimiter: ':',
-
-    // location for the weather
-    zipCode: '97405',
-    countryCode: 'us'
+    searchDelimiter: ':'
   };
-
-  /**
-   * Helpers
-   */
-  function loadScript(url, callback) {
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    if (callback) script.onload = callback;
-    document.getElementsByTagName('head')[0].appendChild(script);
-  }
 
   /**
    * Clock
@@ -279,47 +225,6 @@
   })(config);
 
   /**
-   * Weather
-   */
-  var Weather = (function(config) {
-    var weather = document.getElementById('js-weather');
-    var leftResults = document.getElementById('js-weather-left');
-    var rightResults = document.getElementById('js-weather-right');
-
-    function kelvinToFahrenheit(temp) {
-      return 9 / 5 * (temp - 273) + 32;
-    }
-
-    loadScript(
-      'https://openweathermap.org/data/2.5/find' +
-      '?callback=Weather.callback' +
-      '&q=' + config.zipCode + ',' + config.countryCode +
-      '&appid=b1b15e88fa797225412429c1c50c122a'
-    );
-
-    return {
-      callback: function(data) {
-        if (!data) return false;
-
-        var location = data.list[0].name;
-        var condition = data.list[0].weather[0].description;
-        var temp = Math.round(kelvinToFahrenheit(data.list[0].main.temp));
-        var left = document.createElement('span');
-        var right = document.createElement('span');
-
-        leftResults.innerHTML = location;
-        rightResults.innerHTML = condition + ' &ndash; ' + temp + '&deg;';
-      },
-
-      toggle: function() {
-        var toggle = weather.getAttribute('data-toggled') !== 'true';
-        Form.searchInput.setAttribute('data-weather', toggle);
-        weather.setAttribute('data-toggled', toggle);
-      }
-    };
-  })(config);
-
-  /**
    * Form
    */
   var Form = (function(config) {
@@ -335,12 +240,9 @@
       var validCommand = false;
       var redirect = '';
 
-      if (q === '?') {
+      if (q === '' || q === '?') {
         Help.toggle();
         searchInput.value = '';
-        return false;
-      } else if (q === '') {
-        Weather.toggle();
         return false;
       }
 
