@@ -4,7 +4,7 @@ Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is t
 
 ## Usage
 
-To go to a site, enter the corresponding key. To view the available commands, enter a `?`. If your input doesn't match any of the commands, a generic google search will be triggered. Enter nothing to toggle the weather.
+To go to a site, enter the corresponding key. To view the available commands, enter a `?`. If your input doesn't match any of the commands, a generic google search will be triggered.
 
 ## Examples
 
