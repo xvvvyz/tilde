@@ -230,7 +230,7 @@
   var Form = (function(config) {
     var searchForm = document.getElementById('js-search-form');
     var searchInput = document.getElementById('js-search-input');
-    var urlRegex = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
+    var urlRegex = /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
 
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
