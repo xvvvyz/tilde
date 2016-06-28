@@ -9,11 +9,12 @@ To go to a site, enter the corresponding key. To view the available commands, en
 ## Examples
 
 ```
-a           # takes you to amazon.com
-t: amazon   # searches Twitter for Amazon
-g: twitter  # searches GitHub for Twitter
-f           # takes you to facebook.com
-facebook    # searches google for Facebook
+a              # takes you to amazon.com
+t: amazon      # searches Twitter for Amazon
+g: twitter     # searches GitHub for Twitter
+r: cats        # searches Reddit for cats
+f              # takes you to facebook.com
+cade scroggins # searches google for me
 ```
 
 You get the idea...
