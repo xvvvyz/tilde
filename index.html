@@ -6,6 +6,37 @@
 
 <title>~</title>
 
+<script>
+  var config = {
+    commands: [
+      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      { key: 'K', name: 'Kickass', url: 'https://kat.cr', search: '/usearch/' },
+      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+      { key: 's', name: 'Stack Exchange', url: 'https://stackexchange.com', search: '/search?q=' },
+      { key: 'S', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
+      { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' }
+    ],
+
+    // if none of the keys are matched, this is triggered
+    // for DuckDuckGo use: https://duckduckgo.com/?q=
+    defaultCommand: 'https://www.google.com/search?q=',
+
+    // the delimiter between the key and your search query
+    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
+    searchDelimiter: ':'
+  };
+</script>
+
 <script>WebFontConfig={google:{families:['Lato:300:latin']}};</script>
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
 
@@ -131,35 +162,6 @@
 </aside>
 
 <script>
-  var config = {
-    commands: [
-      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-      { key: 'K', name: 'Kickass', url: 'https://kat.cr', search: '/usearch/' },
-      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-      { key: 's', name: 'Stack Exchange', url: 'https://stackexchange.com', search: '/search?q=' },
-      { key: 'S', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
-      { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' }
-    ],
-
-    // if none of the keys are matched, this is triggered
-    // for DuckDuckGo use: https://duckduckgo.com/?q=
-    defaultCommand: 'https://www.google.com/search?q=',
-
-    // the delimiter between the key and your search query
-    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
-    searchDelimiter: ':'
-  };
-
   /**
    * Clock
    */
