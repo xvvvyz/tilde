@@ -162,55 +162,54 @@
 </aside>
 
 <script>
-  /**
-   * Clock
-   */
-  (function() {
-    var clock = document.getElementById('js-clock');
+  'use strict';
 
-    function leftpad(num) {
+  function $(s) {
+    return document.querySelector(s);
+  };
+
+  function s2d(s) {
+    var d = document.createElement('div');
+    d.innerHTML = s;
+    return d.firstChild;
+  }
+
+  var Clock = (function() {
+    var clock = $('#js-clock');
+
+    function pad(num) {
       return ('0' + num.toString()).slice(-2);
     }
 
     function setTime() {
       var date = new Date();
-      var hours = leftpad(date.getHours());
-      var minutes = leftpad(date.getMinutes());
-      clock.innerHTML = hours + ' ' + minutes;
+      clock.innerHTML = pad(date.getHours()) + ' ' + pad(date.getMinutes());
     }
 
     setTime();
     setInterval(setTime, 1000);
   })();
 
-  /**
-   * Help
-   */
   var Help = (function(config) {
-    var head = document.getElementsByTagName('head')[0];
-    var sidebar = document.getElementById('js-sidebar');
-    var searchHelp = document.getElementById('js-help');
+    var head = $('head');
+    var sidebar = $('#js-sidebar');
+    var searchHelp = $('#js-help');
 
     config.commands.forEach(function(command) {
-      var prefetch = document.createElement('link');
-      var li = document.createElement('li');
-      var anchor = document.createElement('a');
-      var key = document.createElement('span');
-      var name = document.createElement('span');
+      head.appendChild(s2d(
+        '<link rel="prerender" href="' + command.url + '">'
+      ));
 
-      prefetch.rel = 'prerender';
-      prefetch.href = command.url;
-      key.className = 'help-key';
-      key.innerHTML = command.key + config.searchDelimiter + ' ';
-      name.className = 'help-name';
-      name.innerHTML = command.name;
-      anchor.href = command.url;
-
-      head.appendChild(prefetch);
-      anchor.appendChild(key);
-      anchor.appendChild(name);
-      li.appendChild(anchor);
-      searchHelp.appendChild(li);
+      searchHelp.appendChild(s2d(
+        '<li><a href="' + command.url + '">' +
+          '<span class="help-key">' +
+            command.key + config.searchDelimiter + ' ' +
+          '</span>' +
+          '<span class="help-name">' +
+            command.name +
+          '</span>' +
+        '</a></li>'
+      ));
     });
 
     document.addEventListener('keydown', function(event) {
@@ -225,12 +224,9 @@
     };
   })(config);
 
-  /**
-   * Form
-   */
   var Form = (function(config) {
-    var searchForm = document.getElementById('js-search-form');
-    var searchInput = document.getElementById('js-search-input');
+    var searchForm = $('#js-search-form');
+    var searchInput = $('#js-search-input');
     var urlRegex = /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
 
     searchForm.addEventListener('submit', function(event) {
@@ -268,8 +264,6 @@
       window.location.href = redirect;
     }, false);
 
-    return {
-      searchInput: searchInput
-    };
+    return { searchInput: searchInput };
   })(config);
 </script>
