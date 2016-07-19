@@ -14,7 +14,7 @@ t: amazon      # searches Twitter for Amazon
 g: twitter     # searches GitHub for Twitter
 r: cats        # searches Reddit for cats
 f              # takes you to facebook.com
-cade           # searches google for me
+cats           # searches google for cats
 ```
 
 You get the idea...
