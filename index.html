@@ -1,7 +1,5 @@
 <!doctype html>
 
-<!-- ♥ -->
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
@@ -171,12 +169,6 @@
     return document.querySelector(s);
   };
 
-  function s2d(s) {
-    var d = document.createElement('div');
-    d.innerHTML = s;
-    return d.firstChild;
-  }
-
   var Clock = (function() {
     var clock = $('#js-clock');
 
@@ -199,11 +191,13 @@
     var searchHelp = $('#js-help');
 
     config.commands.forEach(function(command) {
-      head.appendChild(s2d(
+      head.insertAdjacentHTML(
+        'beforeend',
         '<link rel="prerender" href="' + command.url + '">'
-      ));
+      );
 
-      searchHelp.appendChild(s2d(
+      searchHelp.insertAdjacentHTML(
+        'beforeend',
         '<li><a href="' + command.url + '">' +
           '<span class="help-key">' +
             command.key + config.searchDelimiter + ' ' +
@@ -212,7 +206,7 @@
             command.name +
           '</span>' +
         '</a></li>'
-      ));
+      );
     });
 
     document.addEventListener('keydown', function(event) {
