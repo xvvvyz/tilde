@@ -240,11 +240,8 @@
         return false;
       }
 
-      if (q.match(new RegExp(urlRegex))) {
-        redirect = q;
-      } else {
-        redirect = config.defaultCommand + encodeURIComponent(q);
-      }
+      redirect = q.match(new RegExp(urlRegex)) ? q
+        : config.defaultCommand + encodeURIComponent(q);
 
       config.commands.forEach(function(command) {
         if (qSplit[0] === command.key) {
