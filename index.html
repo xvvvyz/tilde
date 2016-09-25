@@ -17,7 +17,7 @@
       { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
       { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
       { key: 'm', name: 'Medblogs', url: 'https://mbchb.dundee.ac.uk' },
-      { ket: 'p', name: 'Photos', url: 'https://photos.google.com', search: '/search/'},
+      { key: 'p', name: 'Photos', url: 'https://photos.google.com', search: '/search/'},
       { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
       { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
       { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
@@ -238,10 +238,10 @@
 
       redirect = q.match(new RegExp(urlRegex)) ? q
         : config.defaultCommand + encodeURIComponent(q);
-
+      
       config.commands.forEach(function(command) {
-        if (qSplit[0] === command.key) {
-          if (qSplit[1] && command.search) {
+        if (qSplit[0] === command.key) { 
+          if (qSplit[1] && command.search) { // Search query!
             qSplit.shift();
             var search = encodeURIComponent(qSplit.join(config.searchDelimiter).trim());
             redirect = command.url + command.search + search;
