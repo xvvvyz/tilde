@@ -222,42 +222,40 @@
   })(config);
 
   var Form = (function(config) {
+    var urlRegex = /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
     var searchForm = $('#js-search-form');
     var searchInput = $('#js-search-input');
-    var urlRegex = /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
 
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
       var q = searchInput.value.trim();
-      var qSplit = q.split(config.searchDelimiter);
-      var validCommand = false;
-      var redirect = '';
 
       if (q === '' || q === '?') {
         Help.toggle();
         searchInput.value = '';
-        return false;
-      }
+      } else {
+        var qSplit = q.split(config.searchDelimiter);
+        var qIsUrl = q.match(new RegExp(urlRegex));
+        var redirect = '';
 
-      redirect = q.match(new RegExp(urlRegex)) ? q
-        : config.defaultCommand + encodeURIComponent(q);
+        if (qIsUrl) redirect = q;
+        else redirect = config.defaultCommand + encodeURIComponent(q);
 
-      config.commands.forEach(function(command) {
-        if (qSplit[0] === command.key) {
-          if (qSplit[1] && command.search) {
-            qSplit.shift();
-            var search = encodeURIComponent(qSplit.join(config.searchDelimiter).trim());
-            redirect = command.url + command.search + search;
-          } else {
-            redirect = command.url;
+        config.commands.forEach(function(command) {
+          if (qSplit[0] === command.key) {
+            if (qSplit[1] && command.search) {
+              qSplit.shift();
+              var search = encodeURIComponent(qSplit[0].trim());
+              redirect = command.url + command.search + search;
+            } else {
+              redirect = command.url;
+            }
           }
-        }
-      });
+        });
 
-      window.location.href = redirect;
+        window.location.href = redirect;
+      }
     }, false);
-
-    return { searchInput: searchInput };
   })(config);
 </script>
