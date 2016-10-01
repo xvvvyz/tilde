@@ -6,38 +6,6 @@
 
 <title>~</title>
 
-<script>
-  var config = {
-    commands: [
-      { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-      { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-      { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-      { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
-      { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-      { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-      { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-      { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
-      { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-      { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-      { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-      { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-      { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-      { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-      { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
-      { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
-      { key: '8', name: '0.0.0.0:8080', url: 'http://0.0.0.0:8080' }
-    ],
-
-    // if none of the keys are matched, this is triggered
-    // for Duck Duck Go use: https://duckduckgo.com/?q=
-    defaultCommand: 'https://www.google.com/search?q=',
-
-    // the delimiter between the key and your search query
-    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
-    searchDelimiter: ':'
-  };
-</script>
-
 <script>WebFontConfig={google:{families:['Lato:300:latin']}};</script>
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
 
@@ -165,6 +133,51 @@
 <script>
   'use strict';
 
+  var config = {
+    categories: [
+      { name: "Media", commands: [
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
+      ] },
+      { name: "Social", commands: [
+        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
+        { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+      ] },
+      { name: "News", commands: [
+        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+      ] },
+      { name: "Shopping", commands: [
+        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+        { key: 'm', name: 'Massdrop', url: 'https://www.massdrop.com', search: '/' },
+      ] },
+      { name: "Education", commands: [
+        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
+        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+      ] },
+      { name: "Tools", commands: [
+        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+        { key: 'D', name: 'DuckDuckGo', url: 'https://duckduckgo.com', search: '/?q=' },
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'G', name: 'Google', url: 'https://www.google.com', search: '/search?q=' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      ] },
+    ],
+
+    // if none of the keys are matched, this is used for searching
+    defaultSearch: 'https://www.google.com/search?q=',
+
+    // the delimiter between the key and your search query
+    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
+    searchDelimiter: ':'
+  };
+
   function $(s) {
     return document.querySelector(s);
   };
@@ -190,23 +203,25 @@
     var sidebar = $('#js-sidebar');
     var searchHelp = $('#js-help');
 
-    config.commands.forEach(function(command) {
-      head.insertAdjacentHTML(
-        'beforeend',
-        '<link rel="prerender" href="' + command.url + '">'
-      );
+    config.categories.forEach(function(category) {
+      category.commands.forEach(function(command) {
+        head.insertAdjacentHTML(
+          'beforeend',
+          '<link rel="prerender" href="' + command.url + '">'
+        );
 
-      searchHelp.insertAdjacentHTML(
-        'beforeend',
-        '<li><a href="' + command.url + '">' +
-          '<span class="help-key">' +
-            command.key + config.searchDelimiter + ' ' +
-          '</span>' +
-          '<span class="help-name">' +
-            command.name +
-          '</span>' +
-        '</a></li>'
-      );
+        searchHelp.insertAdjacentHTML(
+          'beforeend',
+          '<li><a href="' + command.url + '">' +
+            '<span class="help-key">' +
+              command.key + config.searchDelimiter + ' ' +
+            '</span>' +
+            '<span class="help-name">' +
+              command.name +
+            '</span>' +
+          '</a></li>'
+        );
+      });
     });
 
     document.addEventListener('keydown', function(event) {
@@ -240,18 +255,20 @@
         var redirect = '';
 
         if (qIsUrl) redirect = q;
-        else redirect = config.defaultCommand + encodeURIComponent(q);
+        else redirect = config.defaultSearch + encodeURIComponent(q);
 
-        config.commands.forEach(function(command) {
-          if (qSplit[0] === command.key) {
-            if (qSplit[1] && command.search) {
-              qSplit.shift();
-              var search = encodeURIComponent(qSplit[0].trim());
-              redirect = command.url + command.search + search;
-            } else {
-              redirect = command.url;
+        config.categories.forEach(function(category) {
+          category.commands.forEach(function(command) {
+            if (qSplit[0] === command.key) {
+              if (qSplit[1] && command.search) {
+                qSplit.shift();
+                var search = encodeURIComponent(qSplit[0].trim());
+                redirect = command.url + command.search + search;
+              } else {
+                redirect = command.url;
+              }
             }
-          }
+          });
         });
 
         window.location.href = redirect;
