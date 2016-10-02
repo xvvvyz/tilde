@@ -57,64 +57,109 @@
     padding: 12px;
     transition: 0.5s;
     border-radius: 2px;
-    background-color: #222;
+    background: #222;
     color: #fff;
     font-family: 'Lato', sans-serif;
     font-size: 1.1rem;
   }
 
-  aside {
-    position: fixed;
-    box-sizing: border-box;
-    left: 0;
-    width: 100%;
-    max-width: 190px;
-    height: 100%;
-    padding: 15px 0 0;
-    transition: transform 700ms;
-    transform: translateX(-205px);
-    background-color: #fff;
-    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
-    overflow: auto;
-    z-index: 1;
-  }
-
-  aside[data-toggled='true'] {
-    transform: translateX(0);
-  }
-
-  h1 {
-    margin: 0 25px 15px;
-    line-height: 1rem;
-  }
-
-  ul {
-    margin: 0 0 15px;
-    padding: 0;
-  }
-
+  ul,
   li {
+    padding: 0;
     list-style: none;
   }
 
-  a {
+  .overlay {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    transition: 200ms;
+    background: #222;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 1;
+    overflow: auto;
+  }
+
+  .overlay[data-toggled='true'] {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .lists {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: auto;
+  }
+
+  .category {
+    width: 160px;
+    margin: 10px;
+  }
+
+  .category-name {
+    margin: 0;
+    padding: 14px;
+    border-radius: 2px 2px 0 0;
+    background: #30a388;
+    color: #19725f;
+    font-size: .7rem;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .command {
+    transition: background 200ms;
+    background: #333;
+  }
+
+  .command:hover {
+    background: #2f2f2f;
+  }
+
+  .command:nth-child(even) {
+    background: #3a3a3a;
+  }
+
+  .command:nth-child(even):hover {
+    background: #393939;
+  }
+
+  .command:last-of-type {
+    border-radius: 0 0 2px 2px;
+  }
+
+  .command a {
     display: block;
-    padding: 0 25px;
-    color: #222;
-    line-height: 1.7rem;
+    padding: 14px 12px;
+    color: #eee;
+    font-size: .8rem;
+    line-height: 1.3rem;
     text-decoration: none;
   }
 
-  a:hover .help-name {
-    text-decoration: underline;
-  }
-
-  .help-key {
+  .command-key {
+    display: block;
+    width: 32px;
+    margin-right: 10px;
+    float: left;
+    border-radius: 2px;
+    background: #292929;
     font-family: 'Courier New', monospace;
+    text-align: center;
   }
 
-  .help-name {
-    font-size: 0.9rem;
+  @media (min-width: 740px) {
+    .overlay {
+      align-items: center;
+    }
   }
 </style>
 
@@ -125,9 +170,8 @@
   </form>
 </main>
 
-<aside id="js-sidebar">
-  <h1>~</h1>
-  <ul id="js-help"></ul>
+<aside id="js-overlay" class="overlay">
+  <ul id="js-lists" class="lists"></ul>
 </aside>
 
 <script>
@@ -135,11 +179,15 @@
 
   var config = {
     categories: [
-      { name: "Media", commands: [
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
-        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
+      { name: "Tools", commands: [
+        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      ] },
+      { name: "News", commands: [
+        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
       ] },
       { name: "Social", commands: [
         { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
@@ -147,26 +195,24 @@
         { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
         { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
       ] },
-      { name: "News", commands: [
-        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-      ] },
-      { name: "Shopping", commands: [
-        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-        { key: 'm', name: 'Massdrop', url: 'https://www.massdrop.com', search: '/' },
+      { name: "Media", commands: [
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 'T', name: 'Twitch', url: 'https://www.twitch.tv/directory/following' },
+        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
+        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
       ] },
       { name: "Education", commands: [
         { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
         { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
         { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
       ] },
-      { name: "Tools", commands: [
-        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-        { key: 'D', name: 'DuckDuckGo', url: 'https://duckduckgo.com', search: '/?q=' },
-        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'G', name: 'Google', url: 'https://www.google.com', search: '/search?q=' },
-        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+
+      { name: "Shopping", commands: [
+        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
+        { key: 'C', name: 'Craigslist', url: 'https://portland.craigslist.org', search: '/search/sss?query='},
+        { key: 'm', name: 'Massdrop', url: 'https://www.massdrop.com', search: '/' },
       ] },
     ],
 
@@ -199,39 +245,52 @@
   })();
 
   var Help = (function(config) {
+    var charRegex = /[a-zA-Z0-9-_ ]/;
     var head = $('head');
-    var sidebar = $('#js-sidebar');
-    var searchHelp = $('#js-help');
+    var overlay = $('#js-overlay');
+    var lists = $('#js-lists');
+    var categoryItems = '';
 
     config.categories.forEach(function(category) {
-      category.commands.forEach(function(command) {
-        head.insertAdjacentHTML(
-          'beforeend',
-          '<link rel="prerender" href="' + command.url + '">'
-        );
+      var commandItems = '';
 
-        searchHelp.insertAdjacentHTML(
-          'beforeend',
-          '<li><a href="' + command.url + '">' +
-            '<span class="help-key">' +
-              command.key + config.searchDelimiter + ' ' +
-            '</span>' +
-            '<span class="help-name">' +
-              command.name +
-            '</span>' +
-          '</a></li>'
+      category.commands.forEach(function(command) {
+        var prerenderLink = '<link rel="prerender" href="' + command.url + '">';
+        head.insertAdjacentHTML('beforeend', prerenderLink);
+
+        commandItems += (
+          '<li class="command">' +
+            '<a href="' + command.url + '">' +
+              '<span class="command-key">' + command.key + '</span>' +
+              '<span class="command-name">' + command.name + '</span>' +
+            '</a>' +
+          '</li>'
         );
       });
+
+      lists.insertAdjacentHTML(
+        'beforeend',
+        '<li class="category">' +
+          '<h2 class="category-name">' + category.name + '</h2>' +
+          '<ul>' + commandItems + '</ul>' +
+        '</li>'
+      );
     });
 
     document.addEventListener('keydown', function(event) {
-      if (event.keyCode === 27) sidebar.removeAttribute('data-toggled');
+      var isEscape = event.keyCode === 27;
+      var isAlphaNum = charRegex.test(String.fromCharCode(event.keyCode));
+
+      if (isEscape || isAlphaNum) {
+        overlay.removeAttribute('data-toggled');
+        Form.focus();
+      }
     });
 
     return {
       toggle: function() {
-        var toggle = sidebar.getAttribute('data-toggled') !== 'true';
-        sidebar.setAttribute('data-toggled', toggle);
+        var toggle = overlay.getAttribute('data-toggled') !== 'true';
+        overlay.setAttribute('data-toggled', toggle);
       }
     };
   })(config);
@@ -274,5 +333,11 @@
         window.location.href = redirect;
       }
     }, false);
+
+    return {
+      focus: function() {
+        searchInput.focus();
+      }
+    };
   })(config);
 </script>
