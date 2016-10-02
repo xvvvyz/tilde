@@ -65,6 +65,7 @@
 
   ul,
   li {
+    margin: 0;
     padding: 0;
     list-style: none;
   }
@@ -78,13 +79,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    padding: 10px;
     transition: 200ms;
     background: #222;
     visibility: hidden;
     opacity: 0;
     z-index: 1;
-    overflow: auto;
   }
 
   .overlay[data-toggled='true'] {
@@ -96,12 +95,13 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    padding-bottom: 20px;
     overflow: auto;
   }
 
   .category {
     width: 160px;
-    margin: 10px;
+    margin: 20px 10px 0;
   }
 
   .category-name {
