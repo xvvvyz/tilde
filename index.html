@@ -6,8 +6,7 @@
 
 <title>~</title>
 
-<script>WebFontConfig={google:{families:['Lato:300:latin']}};</script>
-<script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async></script>
+<link href="https://fonts.googleapis.com/css?family=Lato:300" rel="stylesheet">
 
 <style type="text/css">
   body {
@@ -74,7 +73,6 @@
     position: fixed;
     display: flex;
     justify-content: center;
-    box-sizing: border-box;
     top: 0;
     left: 0;
     width: 100%;
@@ -83,7 +81,6 @@
     background: #222;
     visibility: hidden;
     opacity: 0;
-    z-index: 1;
   }
 
   .overlay[data-toggled='true'] {
@@ -199,7 +196,7 @@
         { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
         { key: 'T', name: 'Twitch', url: 'https://www.twitch.tv/directory/following' },
         { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/weather?search_query=' },
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
         { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
       ] },
       { name: "Education", commands: [
@@ -208,7 +205,6 @@
         { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
         { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
       ] },
-
       { name: "Shopping", commands: [
         { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
         { key: 'C', name: 'Craigslist', url: 'https://portland.craigslist.org', search: '/search/sss?query='},
@@ -221,7 +217,19 @@
 
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
-    searchDelimiter: ':'
+    searchDelimiter: ':',
+
+    // set to true to instantly redirect when a key is matched.
+    // you'll have to put a space before any search queries to
+    // prevent unwanted redirects.
+    instantRedirect: false,
+
+    // the delimiter between the hours and minutes in the clock
+    clockDelimiter: '&nbsp;',
+
+    // when the input matches this regular expression, you will
+    // be redirected directly to the input url
+    urlRegex: /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i
   };
 
   function $(s) {
@@ -231,33 +239,30 @@
   var Clock = (function() {
     var clock = $('#js-clock');
 
-    function pad(num) {
+    var pad = function(num) {
       return ('0' + num.toString()).slice(-2);
     }
 
-    function setTime() {
+    var setTime = function() {
       var date = new Date();
-      clock.innerHTML = pad(date.getHours()) + ' ' + pad(date.getMinutes());
+      var hours = pad(date.getHours());
+      var minutes = pad(date.getMinutes());
+
+      clock.innerHTML = hours + config.clockDelimiter + minutes;
     }
 
     setTime();
     setInterval(setTime, 1000);
   })();
 
-  var Help = (function(config) {
-    var charRegex = /[a-zA-Z0-9-_ ]/;
-    var head = $('head');
+  var Help = (function() {
     var overlay = $('#js-overlay');
     var lists = $('#js-lists');
-    var categoryItems = '';
 
     config.categories.forEach(function(category) {
       var commandItems = '';
 
       category.commands.forEach(function(command) {
-        var prerenderLink = '<link rel="prerender" href="' + command.url + '">';
-        head.insertAdjacentHTML('beforeend', prerenderLink);
-
         commandItems += (
           '<li class="command">' +
             '<a href="' + command.url + '">' +
@@ -277,67 +282,72 @@
       );
     });
 
-    document.addEventListener('keydown', function(event) {
-      var isEscape = event.keyCode === 27;
-      var isAlphaNum = charRegex.test(String.fromCharCode(event.keyCode));
-
-      if (isEscape || isAlphaNum) {
-        overlay.removeAttribute('data-toggled');
-        Form.focus();
-      }
-    });
-
     return {
-      toggle: function() {
-        var toggle = overlay.getAttribute('data-toggled') !== 'true';
+      toggle: function(show) {
+        var toggle = typeof show !== 'undefined' ? show :
+          overlay.getAttribute('data-toggled') !== 'true';
+
         overlay.setAttribute('data-toggled', toggle);
       }
     };
-  })(config);
+  })();
 
-  var Form = (function(config) {
-    var urlRegex = /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
+  var Form = (function() {
     var searchForm = $('#js-search-form');
     var searchInput = $('#js-search-input');
+
+    document.addEventListener('keypress', function(event) {
+      var char = String.fromCharCode(event.which);
+
+      if (char.length && event.which !== 13) {
+        Help.toggle(false);
+        searchInput.focus();
+      }
+
+      if (config.instantRedirect) {
+        config.categories.forEach(function(category) {
+          category.commands.forEach(function(command) {
+            if (command.key === searchInput.value + char) {
+              window.location.href = command.url;
+            }
+          });
+        });
+      }
+    });
 
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
       var q = searchInput.value.trim();
 
-      if (q === '' || q === '?') {
+      if (!q) {
         Help.toggle();
         searchInput.value = '';
-      } else {
-        var qSplit = q.split(config.searchDelimiter);
-        var qIsUrl = q.match(new RegExp(urlRegex));
-        var redirect = '';
+        return false;
+      }
 
-        if (qIsUrl) redirect = q;
-        else redirect = config.defaultSearch + encodeURIComponent(q);
+      var qSplit = q.split(config.searchDelimiter);
+      var qIsUrl = q.match(new RegExp(config.urlRegex));
+      var redirect = '';
 
-        config.categories.forEach(function(category) {
-          category.commands.forEach(function(command) {
-            if (qSplit[0] === command.key) {
-              if (qSplit[1] && command.search) {
-                qSplit.shift();
-                var search = encodeURIComponent(qSplit[0].trim());
-                redirect = command.url + command.search + search;
-              } else {
-                redirect = command.url;
-              }
+      if (qIsUrl) redirect = q;
+      else redirect = config.defaultSearch + encodeURIComponent(q);
+
+      config.categories.forEach(function(category) {
+        category.commands.forEach(function(command) {
+          if (qSplit[0] === command.key) {
+            if (qSplit[1] && command.search) {
+              qSplit.shift();
+              var search = encodeURIComponent(qSplit[0].trim());
+              redirect = command.url + command.search + search;
+            } else {
+              redirect = command.url;
             }
-          });
+          }
         });
+      });
 
-        window.location.href = redirect;
-      }
+      window.location.href = redirect;
     }, false);
-
-    return {
-      focus: function() {
-        searchInput.focus();
-      }
-    };
-  })(config);
+  })();
 </script>
