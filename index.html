@@ -212,11 +212,11 @@
       ] },
     ],
 
-    // if none of the keys are matched, this is used for searching
+    // if none of the keys are matched, this is used for searching.
     defaultSearch: 'https://www.google.com/search?q=',
 
-    // the delimiter between the key and your search query
-    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
+    // the delimiter between the key and your search query.
+    // e.g. to search GitHub for potatoes you'd type "g:potatoes".
     searchDelimiter: ':',
 
     // set to true to instantly redirect when a key is matched.
@@ -224,11 +224,11 @@
     // prevent unwanted redirects.
     instantRedirect: false,
 
-    // the delimiter between the hours and minutes in the clock
+    // the delimiter between the hours and minutes in the clock.
     clockDelimiter: '&nbsp;',
 
     // when the input matches this regular expression, you will
-    // be redirected directly to the input url
+    // be redirected directly to the input url.
     urlRegex: /^(?:(http|https)?:\/\/)?(?:[\w-]+\.)+([a-z]|[A-Z]|[0-9]){2,6}/i,
 
     // if "urlRegex" matches but this doesn't, "http://" will be
@@ -326,7 +326,6 @@
 
       if (!q) {
         Help.toggle();
-        searchInput.value = '';
         return false;
       }
 
