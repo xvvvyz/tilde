@@ -229,7 +229,11 @@
 
     // when the input matches this regular expression, you will
     // be redirected directly to the input url
-    urlRegex: /(\b(https?|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i
+    urlRegex: /^(?:(http|https)?:\/\/)?(?:[\w-]+\.)+([a-z]|[A-Z]|[0-9]){2,6}/i,
+
+    // if "urlRegex" matches but this doesn't, "http://" will be
+    // prepended to the beginning of the query before redirecting.
+    protocolRegex: /^[a-zA-Z]+:\/\//i
   };
 
   function $(s) {
@@ -327,10 +331,11 @@
       }
 
       var qSplit = q.split(config.searchDelimiter);
-      var qIsUrl = q.match(new RegExp(config.urlRegex));
+      var qIsUrl = q.match(config.urlRegex);
+      var qHasProtocol = q.match(config.protocolRegex);
       var redirect = '';
 
-      if (qIsUrl) redirect = q;
+      if (qIsUrl) redirect = qHasProtocol ? q : 'http://' + q;
       else redirect = config.defaultSearch + encodeURIComponent(q);
 
       config.categories.forEach(function(category) {
