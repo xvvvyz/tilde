@@ -219,6 +219,10 @@
     // e.g. to search GitHub for potatoes you'd type "g:potatoes".
     searchDelimiter: ':',
 
+    // the delimiter between the key and a path.
+    // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn".
+    pathDelimiter: '/',
+
     // set to true to instantly redirect when a key is matched.
     // you'll have to put a space before any search queries to
     // prevent unwanted redirects.
@@ -329,7 +333,8 @@
         return false;
       }
 
-      var qSplit = q.split(config.searchDelimiter);
+      var qSplitSearch = q.split(config.searchDelimiter);
+      var qSplitPath = q.split(config.pathDelimiter);
       var qIsUrl = q.match(config.urlRegex);
       var qHasProtocol = q.match(config.protocolRegex);
       var redirect = '';
@@ -337,18 +342,32 @@
       if (qIsUrl) redirect = qHasProtocol ? q : 'http://' + q;
       else redirect = config.defaultSearch + encodeURIComponent(q);
 
+      var breakLoop = false;
+
       config.categories.forEach(function(category) {
         category.commands.forEach(function(command) {
-          if (qSplit[0] === command.key) {
-            if (qSplit[1] && command.search) {
-              qSplit.shift();
-              var search = encodeURIComponent(qSplit[0].trim());
+          var isSearch = qSplitSearch[0] === command.key;
+          var isPath = qSplitPath[0] === command.key;
+
+          if (isSearch || isPath) {
+            if (qSplitSearch[1] && command.search) {
+              qSplitSearch.shift();
+              var search = encodeURIComponent(qSplitSearch.join(config.searchDelimiter).trim());
               redirect = command.url + command.search + search;
+            } else if (qSplitPath[1]) {
+              qSplitPath.shift();
+              var path = qSplitPath.join(config.pathDelimiter).trim();
+              redirect = command.url + '/' + path;
             } else {
               redirect = command.url;
             }
+
+            breakLoop = true;
+            return;
           }
         });
+
+        if (breakLoop) return;
       });
 
       window.location.href = redirect;
