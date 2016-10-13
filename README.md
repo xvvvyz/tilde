@@ -4,17 +4,16 @@ Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is t
 
 ## Usage
 
-To go to a site, enter the corresponding key. To view the available commands, press `enter`. If your input doesn't match any of the commands, a generic google search will be triggered.
+To go to a site, enter the corresponding key. To view the available sites, press `enter`. If your input doesn't match any of the commands, a generic google search will be triggered.
 
 ## Examples
 
 ```
-a              # takes you to amazon.com
-t: amazon      # searches Twitter for Amazon
-g: twitter     # searches GitHub for Twitter
-r: cats        # searches Reddit for cats
-f              # takes you to facebook.com
-cats           # searches google for cats
+t                # takes you to Twitter
+u/new            # takes you to the new photos on Unsplash
+r/r/unixporn     # takes you to the unixporn subreddit
+a: zen mind      # searches Amazon for zen mind
+cats             # searches Google for cats
 ```
 
 You get the idea...
