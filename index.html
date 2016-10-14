@@ -347,8 +347,8 @@
         if (!exists) queries.push([q, 1]);
 
         queries = queries.sort(function(current, next) {
-          return current[1] < next[1];
-        });
+          return current[1] > next[1];
+        }).reverse();
 
         localStorage.setItem('queries', JSON.stringify(queries));
       },
