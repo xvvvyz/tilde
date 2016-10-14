@@ -389,6 +389,15 @@
     var searchForm = $('#js-search-form');
     var searchInput = $('#js-search-input');
 
+    var execute = function(query, redirect) {
+      Suggestions.add(query);
+      Suggestions.show('');
+      searchInput.value = '';
+
+      if (config.newTab) window.open(redirect, '_blank');
+      else window.location.href = redirect;
+    }
+
     var keyPress = function(event) {
       var char = String.fromCharCode(event.which);
 
@@ -400,8 +409,11 @@
       if (config.instantRedirect) {
         config.categories.forEach(function(category) {
           category.commands.forEach(function(command) {
-            if (command.key === searchInput.value + char) {
-              window.location.href = command.url;
+            var query = searchInput.value + char;
+
+            if (command.key === query) {
+              event.preventDefault();
+              execute(query, command.url);
             }
           });
         });
@@ -458,12 +470,7 @@
         if (breakLoop) return;
       });
 
-      Suggestions.add(q);
-      Suggestions.show('');
-      searchInput.value = '';
-
-      if (config.newTab) window.open(redirect, '_blank');
-      else window.location.href = redirect;
+      execute(q, redirect);
     }
 
     var keyUp = function(event) {
