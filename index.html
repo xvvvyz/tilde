@@ -1,5 +1,79 @@
 <!doctype html>
 
+<script>
+  'use strict';
+
+  var config = {
+    categories: [
+      { name: "Education", commands: [
+        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
+        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
+      ] },
+      { name: "Media", commands: [
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
+        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
+      ] },
+      { name: "News", commands: [
+        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
+        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 'T', name: 'Codrops', url: 'http://tympanus.net/codrops', search: '/?search-type=posts&s=' },
+      ] },
+      { name: "Social", commands: [
+        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
+        { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+      ] },
+      { name: "Tools", commands: [
+        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      ] },
+    ],
+
+    // if none of the keys are matched, this is used for searching.
+    defaultSearch: 'https://www.google.com/search?q=',
+
+    // the delimiter between the key and your search query.
+    // e.g. to search GitHub for potatoes you'd type "g:potatoes".
+    searchDelimiter: ':',
+
+    // the delimiter between the key and a path.
+    // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn".
+    pathDelimiter: '/',
+
+    // set to true to instantly redirect when a key is matched.
+    // you'll have to put a space before any search queries to
+    // prevent unwanted redirects.
+    instantRedirect: false,
+
+    // suggest your most popular searches as you type.
+    suggestions: true,
+
+    // max amount of suggestions to display.
+    suggestionsLimit: 5,
+
+    // open queries in a new tab.
+    newTab: true,
+
+    // the delimiter between the hours and minutes in the clock.
+    clockDelimiter: '&nbsp;',
+
+    // when the input matches this regular expression, you will
+    // be redirected directly to the input url.
+    urlRegex: /^(?:(http|https)?:\/\/)?(?:[\w-]+\.)+([a-z]|[A-Z]|[0-9]){2,6}/i,
+
+    // if "urlRegex" matches but this doesn't, "http://" will be
+    // prepended to the beginning of the query before redirecting.
+    protocolRegex: /^[a-zA-Z]+:\/\//i
+  };
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
@@ -197,75 +271,6 @@
 </aside>
 
 <script>
-  'use strict';
-
-  var config = {
-    categories: [
-      { name: "Education", commands: [
-        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
-        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
-        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
-      ] },
-      { name: "Media", commands: [
-        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
-        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
-      ] },
-      { name: "News", commands: [
-        { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-        { key: 'T', name: 'Codrops', url: 'http://tympanus.net/codrops', search: '/?search-type=posts&s=' },
-      ] },
-      { name: "Social", commands: [
-        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
-        { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
-        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-      ] },
-      { name: "Tools", commands: [
-        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-      ] },
-    ],
-
-    // if none of the keys are matched, this is used for searching.
-    defaultSearch: 'https://www.google.com/search?q=',
-
-    // the delimiter between the key and your search query.
-    // e.g. to search GitHub for potatoes you'd type "g:potatoes".
-    searchDelimiter: ':',
-
-    // the delimiter between the key and a path.
-    // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn".
-    pathDelimiter: '/',
-
-    // set to true to instantly redirect when a key is matched.
-    // you'll have to put a space before any search queries to
-    // prevent unwanted redirects.
-    instantRedirect: false,
-
-    // suggest your most popular searches as you type.
-    suggestions: true,
-
-    // max amount of suggestions to display.
-    suggestionsLimit: 5,
-
-    // the delimiter between the hours and minutes in the clock.
-    clockDelimiter: '&nbsp;',
-
-    // when the input matches this regular expression, you will
-    // be redirected directly to the input url.
-    urlRegex: /^(?:(http|https)?:\/\/)?(?:[\w-]+\.)+([a-z]|[A-Z]|[0-9]){2,6}/i,
-
-    // if "urlRegex" matches but this doesn't, "http://" will be
-    // prepended to the beginning of the query before redirecting.
-    protocolRegex: /^[a-zA-Z]+:\/\//i
-  };
-
   function $(s) {
     return document.querySelector(s);
   };
@@ -384,10 +389,6 @@
     var searchForm = $('#js-search-form');
     var searchInput = $('#js-search-input');
 
-    var keyUp = function(event) {
-      Suggestions.show(searchInput.value.trim());
-    }
-
     var keyPress = function(event) {
       var char = String.fromCharCode(event.which);
 
@@ -458,12 +459,20 @@
       });
 
       Suggestions.add(q);
-      window.location.href = redirect;
+      Suggestions.show('');
+      searchInput.value = '';
+
+      if (config.newTab) window.open(redirect, '_blank');
+      else window.location.href = redirect;
     }
 
-    searchInput.addEventListener('keyup', keyUp);
+    var keyUp = function(event) {
+      Suggestions.show(searchInput.value.trim());
+    }
+
     document.addEventListener('keypress', keyPress);
     searchForm.addEventListener('submit', submit, false);
+    searchInput.addEventListener('keyup', keyUp);
 
     return {
       submitWithThis: function() {
