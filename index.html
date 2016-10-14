@@ -201,15 +201,23 @@
 
   var config = {
     categories: [
-      { name: "Tools", commands: [
-        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
-        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      { name: "Education", commands: [
+        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
+        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
+        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
+        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
+      ] },
+      { name: "Media", commands: [
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
+        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
+        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
       ] },
       { name: "News", commands: [
         { key: 'h', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
         { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
         { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 'T', name: 'Codrops', url: 'http://tympanus.net/codrops', search: '/?search-type=posts&s=' },
       ] },
       { name: "Social", commands: [
         { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
@@ -217,23 +225,10 @@
         { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
         { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
       ] },
-      { name: "Media", commands: [
-        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-        { key: 'T', name: 'Twitch', url: 'https://www.twitch.tv/directory/following' },
-        { key: 'u', name: 'Unsplash', url: 'https://unsplash.com', search: '/search?keyword=' },
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
-        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
-      ] },
-      { name: "Education", commands: [
-        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
-        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
-        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
-      ] },
-      { name: "Shopping", commands: [
-        { key: 'a', name: 'Amazon', url: 'https://www.amazon.com', search: '/s/?field-keywords=' },
-        { key: 'C', name: 'Craigslist', url: 'https://portland.craigslist.org', search: '/search/sss?query='},
-        { key: 'm', name: 'Massdrop', url: 'https://www.massdrop.com', search: '/' },
+      { name: "Tools", commands: [
+        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
       ] },
     ],
 
