@@ -43,23 +43,16 @@
 
   input,
   input:focus {
+    box-sizing: border-box;
+    width: 100%;
     margin: 0;
     border: 0;
+    background: #222;
     outline: 0;
     -webkit-appearance: none;
     -moz-appearance: none;
-  }
-
-  input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 12px;
-    transition: 0.5s;
-    border-radius: 2px;
-    background: #222;
     color: #fff;
     font-family: 'Lato', sans-serif;
-    font-size: 1.1rem;
   }
 
   ul,
@@ -69,18 +62,47 @@
     list-style: none;
   }
 
+  .search-input {
+    padding: 12px;
+    border-radius: 2px;
+    font-size: 1.1rem;
+  }
+
+  body[search-suggestions='true'] .search-input {
+    border-radius: 2px 2px 0 0;
+  }
+
+  .search-suggestions {
+    border-radius: 0 0 2px 2px;
+    overflow: hidden;
+  }
+
+  .search-suggestion {
+    padding: 14px 12px;
+    transition: 0.5s;
+    font-size: .8rem;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .search-suggestion:hover,
+  .search-suggestion:focus {
+    background: #30a388;
+  }
+
   .overlay {
     position: fixed;
-    display: flex;
-    justify-content: center;
+    box-sizing: border-box;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    padding: 0 10px;
     transition: 200ms;
     background: #222;
     visibility: hidden;
     opacity: 0;
+    overflow: auto;
   }
 
   .overlay[data-toggled='true'] {
@@ -118,7 +140,7 @@
   }
 
   .command:hover {
-    background: #2f2f2f;
+    background: #313131;
   }
 
   .command:nth-child(even) {
@@ -126,7 +148,7 @@
   }
 
   .command:nth-child(even):hover {
-    background: #393939;
+    background: #383838;
   }
 
   .command:last-of-type {
@@ -155,6 +177,8 @@
 
   @media (min-width: 740px) {
     .overlay {
+      display: flex;
+      justify-content: center;
       align-items: center;
     }
   }
@@ -163,7 +187,8 @@
 <main>
   <time id="js-clock"></time>
   <form id="js-search-form" autocomplete="off">
-    <input id="js-search-input" type="text" autofocus>
+    <input id="js-search-input" class="search-input" type="text" autofocus>
+    <ul id="js-search-suggestions" class="search-suggestions"></ul>
   </form>
 </main>
 
@@ -227,6 +252,12 @@
     // you'll have to put a space before any search queries to
     // prevent unwanted redirects.
     instantRedirect: false,
+
+    // suggest your most popular searches as you type.
+    suggestions: true,
+
+    // max amount of suggestions to display.
+    suggestionsLimit: 5,
 
     // the delimiter between the hours and minutes in the clock.
     clockDelimiter: '&nbsp;',
@@ -300,11 +331,69 @@
     };
   })();
 
+  var Suggestions = (function() {
+    var searchSuggestions = $('#js-search-suggestions');
+    var queries = JSON.parse(localStorage.getItem('queries')) || [];
+
+    return {
+      add: function(q) {
+        var exists = false;
+
+        queries.forEach(function(query) {
+          if (query.q === q) {
+            query.c++;
+            exists = true;
+          }
+        });
+
+        if (!exists) queries.push({ q: q, c: 1});
+
+        queries = queries.sort(function(current, next) {
+          return current.c < next.c;
+        });
+
+        localStorage.setItem('queries', JSON.stringify(queries));
+      },
+
+      show: function(input) {
+        searchSuggestions.innerHTML = '';
+        document.body.setAttribute('search-suggestions', false);
+
+        if (!config.suggestions || !input) return false;
+
+        queries
+          .filter(function(query) {
+            var matchesQuery = query.q.match(new RegExp('^' + input));
+            return input && matchesQuery && input !== query.q;
+          })
+          .slice(0, config.suggestionsLimit).forEach(function(query) {
+            searchSuggestions.insertAdjacentHTML(
+              'beforeend',
+              '<li>' +
+                '<input ' +
+                  'class="search-suggestion"' +
+                  'type="button" ' +
+                  'onclick="Form.submitWithThis.call(this)"' +
+                  'value="' + query.q + '"' +
+                '>' +
+              '</li>'
+            );
+
+            document.body.setAttribute('search-suggestions', true)
+          });
+      }
+    };
+  })();
+
   var Form = (function() {
     var searchForm = $('#js-search-form');
     var searchInput = $('#js-search-input');
 
-    document.addEventListener('keypress', function(event) {
+    var keyUp = function(event) {
+      Suggestions.show(searchInput.value.trim());
+    }
+
+    var keyPress = function(event) {
       var char = String.fromCharCode(event.which);
 
       if (char.length && event.which !== 13) {
@@ -321,10 +410,10 @@
           });
         });
       }
-    });
+    };
 
-    searchForm.addEventListener('submit', function(event) {
-      event.preventDefault();
+    var submit = function(event) {
+      if (event) event.preventDefault();
 
       var q = searchInput.value.trim();
 
@@ -338,11 +427,10 @@
       var qIsUrl = q.match(config.urlRegex);
       var qHasProtocol = q.match(config.protocolRegex);
       var redirect = '';
+      var breakLoop = false;
 
       if (qIsUrl) redirect = qHasProtocol ? q : 'http://' + q;
       else redirect = config.defaultSearch + encodeURIComponent(q);
-
-      var breakLoop = false;
 
       config.categories.forEach(function(category) {
         category.commands.forEach(function(command) {
@@ -352,7 +440,11 @@
           if (isSearch || isPath) {
             if (qSplitSearch[1] && command.search) {
               qSplitSearch.shift();
-              var search = encodeURIComponent(qSplitSearch.join(config.searchDelimiter).trim());
+
+              var search = encodeURIComponent(
+                qSplitSearch.join(config.searchDelimiter).trim()
+              );
+
               redirect = command.url + command.search + search;
             } else if (qSplitPath[1]) {
               qSplitPath.shift();
@@ -370,7 +462,19 @@
         if (breakLoop) return;
       });
 
+      Suggestions.add(q);
       window.location.href = redirect;
-    }, false);
+    }
+
+    searchInput.addEventListener('keyup', keyUp);
+    document.addEventListener('keypress', keyPress);
+    searchForm.addEventListener('submit', submit, false);
+
+    return {
+      submitWithThis: function() {
+        searchInput.value = this.value;
+        submit();
+      }
+    };
   })();
 </script>
