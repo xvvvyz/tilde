@@ -365,7 +365,7 @@
 
         queries
           .filter(function(query) {
-            var matchesQuery = query[0].match(new RegExp(input));
+            var matchesQuery = query[0].indexOf(input) !== -1;
             return input && matchesQuery && input !== query[0];
           })
           .slice(0, config.suggestionsLimit).forEach(function(query) {
