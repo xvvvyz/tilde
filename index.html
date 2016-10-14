@@ -335,6 +335,8 @@
 
     return {
       add: function(q) {
+        if (q.length < 2) return;
+
         var exists = false;
 
         queries.forEach(function(query) {
