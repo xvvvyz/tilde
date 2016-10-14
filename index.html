@@ -338,16 +338,16 @@
         var exists = false;
 
         queries.forEach(function(query) {
-          if (query.q === q) {
-            query.c++;
+          if (query[0] === q) {
+            query[1]++;
             exists = true;
           }
         });
 
-        if (!exists) queries.push({ q: q, c: 1});
+        if (!exists) queries.push([q, 1]);
 
         queries = queries.sort(function(current, next) {
-          return current.c < next.c;
+          return current[1] < next[1];
         });
 
         localStorage.setItem('queries', JSON.stringify(queries));
@@ -361,8 +361,8 @@
 
         queries
           .filter(function(query) {
-            var matchesQuery = query.q.match(new RegExp('^' + input));
-            return input && matchesQuery && input !== query.q;
+            var matchesQuery = query[0].match(new RegExp('^' + input));
+            return input && matchesQuery && input !== query[0];
           })
           .slice(0, config.suggestionsLimit).forEach(function(query) {
             searchSuggestions.insertAdjacentHTML(
@@ -372,7 +372,7 @@
                   'class="search-suggestion"' +
                   'type="button" ' +
                   'onclick="Form.submitWithThis.call(this)"' +
-                  'value="' + query.q + '"' +
+                  'value="' + query[0] + '"' +
                 '>' +
               '</li>'
             );
