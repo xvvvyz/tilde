@@ -38,6 +38,6 @@ If you enter in a full domain or URL, you will be redirected to said domain or U
 
 There's a slew of options that you can configure. Just open up the `index.html` file and read through them!
 
-## Beyond
+## License
 
 Feel free to use this and modify it however you like.
