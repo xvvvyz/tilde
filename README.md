@@ -1,5 +1,8 @@
 # Tilde
 
+[![Release](https://img.shields.io/badge/website-cadejscroggins.github.io/tilde/-blue.svg)](https://cadejscroggins.github.io/tilde/)
+[![Release](https://img.shields.io/github/release/cadejscroggins/tilde.svg)](https://github.com/cadejscroggins/tilde/releases)
+
 Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to have a homepage for your browser that is functional and sexy.
 
 ## Usage
@@ -33,7 +36,7 @@ If you enter in a full domain or URL, you will be redirected to said domain or U
 
 ## Configuration
 
-There's a shlew of options that you can configure. Just open up the `index.html` file and read through them!
+There's a slew of options that you can configure. Just open up the `index.html` file and read through them!
 
 ## Beyond
 
