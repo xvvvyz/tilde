@@ -25,7 +25,7 @@ You can search any of the sites by typing a colon after the site's key, followed
 You can go to a specific location on a site by typing a forward slash after the site's key, followed by the location on the site you'd like to be redirected to. For example:
 
 * Entering `r/r/unixporn` would redirect you to [www.reddit.com/r/unixporn](https://www.reddit.com/r/unixporn)
-* Entering `u/new` would redirect you to [unsplash.com/new](https://unsplash.com/new).
+* Entering `h/popular` would redirect you to [hypem.com/popular](http://hypem.com/popular).
 
 ### URL Redirects
 
