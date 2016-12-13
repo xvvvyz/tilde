@@ -5,33 +5,22 @@
 
   var config = {
     categories: [
-      { name: "Education", commands: [
+      { name: "Learn", commands: [
         { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
         { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
         { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
         { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
       ] },
-      { name: "Media", commands: [
+      { name: "Listen", commands: [
         { key: 'h', name: 'Hypem', url: 'http://hypem.com', search: '/search/' },
+        { key: 'l', name: 'Line Radio', url: 'https://linerad.io', search: '/#/' },
         { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
         { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
-        { key: 'Y', name: 'YTS', url: 'https://yts.ag', search: '/browse-movies/' },
       ] },
-      { name: "News", commands: [
-        { key: 'H', name: 'Hacker News', url: 'https://hn.algolia.com', search: '/?query=' },
-        { key: 'p', name: 'Product Hunt', url: 'https://www.producthunt.com', search: '/search?q=' },
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-        { key: 'T', name: 'Codrops', url: 'http://tympanus.net/codrops', search: '/?search-type=posts&s=' },
-      ] },
-      { name: "Social", commands: [
-        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-        { key: 'f', name: 'Facebook', url: 'https://www.facebook.com', search: '/search/top/?q=' },
-        { key: 'I', name: 'Instagram', url: 'https://www.instagram.com' },
-        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-      ] },
-      { name: "Tools", commands: [
+      { name: "Work", commands: [
         { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
         { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
+        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
         { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
       ] },
     ],
@@ -92,7 +81,7 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    color: #222;
+    color: #333;
     font-family: 'Lato', sans-serif;
   }
 
