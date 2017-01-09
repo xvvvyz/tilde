@@ -9,19 +9,26 @@
         { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
         { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
         { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
-        { key: 'w', name: 'Wikipedia', url: 'https://en.wikipedia.org', search: '/wiki/' },
       ] },
       { name: "Listen", commands: [
         { key: 'h', name: 'Hypem', url: 'http://hypem.com', search: '/search/' },
         { key: 'l', name: 'Line Radio', url: 'https://linerad.io', search: '/#/' },
         { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
-        { key: 'y', name: 'YouTube', url: 'https://www.youtube.com', search: '/results?search_query=' },
       ] },
       { name: "Work", commands: [
-        { key: 'd', name: 'Drive', url: 'https://drive.google.com/drive', search: '/search?q=' },
         { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'i', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
+        { key: 'm', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
         { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      ] },
+      { name: "People", commands: [
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+        { key: 'i', name: 'Instagram', url: 'https://www.instagram.com', search: '/' },
+      ] },
+      { name: "Download", commands: [
+        { key: 'T', name: 'The Pirate Bay', url: 'https://thepiratebay.org', search: '/search/' },
+        { key: 'Y', name: 'YIFY', url: 'https://yts.ag', search: '/browse-movies/' },
+        { key: '7', name: '7digital', url: 'https://us.7digital.com', search: '/search?q=' },
       ] },
     ],
 
@@ -182,7 +189,7 @@
   }
 
   .category {
-    width: 160px;
+    width: 175px;
     margin: 20px 10px 0;
   }
 
@@ -191,7 +198,7 @@
     padding: 14px;
     border-radius: 2px 2px 0 0;
     background: #30a388;
-    color: #165b4b;
+    color: #000;
     font-size: .7rem;
     text-transform: uppercase;
     text-align: center;
