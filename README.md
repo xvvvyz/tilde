@@ -16,7 +16,8 @@ To go to a site, enter the corresponding key. To view the available sites and th
 
 You can search any of the sites by typing a colon after the site's key, followed by your search query. For example:
 
-* Entering `s: radiohead` would search [SoundCloud for radiohead](https://soundcloud.com/search?q=radiohead).
+* Entering `g:tilde` would search [GitHub for tilde](https://github.com/search?q=tilde).
+* Entering `s:radiohead` would search [SoundCloud for radiohead](https://soundcloud.com/search?q=radiohead).
 
 ### Specific Locations
 
