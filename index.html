@@ -41,7 +41,7 @@
     instantRedirect: false,
 
     // suggest your most popular queries as you type.
-    suggestions: false,
+    suggestions: true,
 
     // max amount of suggestions to display.
     suggestionsLimit: 4,
@@ -403,8 +403,12 @@
 
   class Suggester {
     constructor(influencers) {
+      this._inputEl = $.el('#js-search-input');
       this._suggestionsEl = $.el('#js-search-suggestions');
+      this._suggestionEls = [];
       this._influencers = influencers;
+      this._handleKeydown = this._handleKeydown.bind(this);
+      this._registerEvents();
     }
 
     setClickEventCallback(callback) {
@@ -425,6 +429,7 @@
               this._appendSuggestion(suggestion);
             });
 
+            this._suggestionEls = $.els('.js-search-suggestion');
             this._registerClickEvents();
           });
         });
@@ -460,18 +465,54 @@
       document.body.setAttribute('search-suggestions', false);
     }
 
-    _getClickEvent(el, callback) {
-      el.addEventListener('click', callback);
+    _focusNext() {
+      if (this._suggestionEls) {
+        const active = document.activeElement;
+
+        if (active.classList.contains('js-search-suggestion')) {
+          this._suggestionEls.forEach((el, index) => {
+            const nextSuggestion = this._suggestionEls[index + 1];
+            if (el === active && nextSuggestion) nextSuggestion.focus();
+          });
+        } else {
+          this._suggestionEls[0].focus();
+        }
+      }
+    }
+
+    _focusPrevious() {
+      if (this._suggestionEls) {
+        const active = document.activeElement;
+
+        if (active.classList.contains('js-search-suggestion')) {
+          this._suggestionEls.forEach((el, index) => {
+            if (el === active) {
+              const previousSuggestion = this._suggestionEls[index - 1];
+              if (previousSuggestion) previousSuggestion.focus();
+              else this._inputEl.focus();
+            }
+          });
+        }
+      }
+    }
+
+    _handleKeydown(event) {
+      const isCtrlN = event.which === 78 && event.ctrlKey;
+      const isCtrlP = event.which === 80 && event.ctrlKey;
+      if (isCtrlN || isCtrlP) event.preventDefault();
+      if (isCtrlN) this._focusNext();
+      if (isCtrlP) this._focusPrevious();
     }
 
     _registerClickEvents() {
-      this._suggestionEls = $.els('.js-search-suggestion');
+      this._suggestionEls.forEach(el => {
+        const callback = this._clickEventCallback.bind(null, el.value);
+        el.addEventListener('click', callback);
+      });
+    }
 
-      if (typeof this._suggestionEls !== 'undefined') {
-        this._suggestionEls.forEach(el => {
-          this._getClickEvent(el, this._clickEventCallback.bind(null, el.value));
-        });
-      }
+    _registerEvents() {
+      document.addEventListener('keydown', this._handleKeydown);
     }
 
     _removeClickEvent(el, callback) {
@@ -575,8 +616,8 @@
 
     _handleKeypress(event) {
       const newChar = String.fromCharCode(event.which);
-      const isEnterKey = event.which !== 13;
       const isNotEmpty = newChar.length;
+      const isEnterKey = event.which !== 13;
 
       if (isNotEmpty && isEnterKey) {
         this._help.toggle(false);
