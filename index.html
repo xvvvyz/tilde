@@ -569,6 +569,10 @@
       });
     }
 
+    _clearInput() {
+      this._inputEl.value = '';
+    }
+
     _handleKeypress(event) {
       const newChar = String.fromCharCode(event.which);
       const isEnterKey = event.which !== 13;
@@ -613,7 +617,8 @@
       if (event) event.preventDefault();
       const query = this._inputEl.value.trim();
 
-      if (!query) {
+      if (!query || query === '?') {
+        this._clearInput();
         this._help.toggle();
       } else {
         this._history.addItem(query);
