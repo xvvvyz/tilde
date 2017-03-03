@@ -3,11 +3,6 @@
 <script>
   const CONFIG = {
     categories: [
-      { name: "Learn", commands: [
-        { key: 'c', name: 'Coursera', url: 'https://www.coursera.org', search: '/courses?query=' },
-        { key: 'e', name: 'Egghead', url: 'https://egghead.io', search: '/search?q=' },
-        { key: 'K', name: 'Khan Academy', url: 'https://www.khanacademy.org', search: '/search?page_search_query=' },
-      ] },
       { name: "Listen", commands: [
         { key: 'h', name: 'Hypem', url: 'http://hypem.com', search: '/search/' },
         { key: 'l', name: 'Line Radio', url: 'https://linerad.io', search: '/#/' },
@@ -17,6 +12,11 @@
         { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
         { key: 'm', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
         { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
+      ] },
+      { name: "Social", commands: [
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
+        { key: 'i', name: 'Instagram', url: 'https://www.instagram.com', search: '/' },
       ] },
       { name: "Download", commands: [
         { key: 'T', name: 'The Pirate Bay', url: 'https://thepiratebay.org', search: '/search/' },
