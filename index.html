@@ -277,13 +277,8 @@
 
 <script>
   const $ = {
-    el: s => {
-      return document.querySelector(s);
-    },
-
-    els: s => {
-      return document.querySelectorAll(s);
-    },
+    el: s => document.querySelector(s),
+    els: s => document.querySelectorAll(s),
   };
 
   class Clock {
@@ -314,7 +309,9 @@
     constructor() {
       this._overlayEl = $.el('#js-overlay');
       this._listsEl = $.el('#js-lists');
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._buildAndAppendLists();
+      this._registerEvents();
     }
 
     toggle(show) {
@@ -345,6 +342,14 @@
           </a>
         </li>`
       )).join('');
+    }
+
+    _handleKeydown(event) {
+      if (event.which === 27) this.toggle(false);
+    }
+
+    _registerEvents() {
+      document.addEventListener('keydown', this._handleKeydown);
     }
   }
 
@@ -482,7 +487,7 @@
     }
 
     _focusNext() {
-      if (this._suggestionEls) {
+      if (this._suggestionEls.length) {
         const active = document.activeElement;
 
         if (active.classList.contains('js-search-suggestion')) {
@@ -497,7 +502,7 @@
     }
 
     _focusPrevious() {
-      if (this._suggestionEls) {
+      if (this._suggestionEls.length) {
         const active = document.activeElement;
 
         if (active.classList.contains('js-search-suggestion')) {
