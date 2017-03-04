@@ -336,7 +336,7 @@
     _buildListCommands(category) {
       return category.commands.map(({ url, key, name }) => (
         `<li class="command">
-          <a href="${url}">
+          <a href="${url}" target="${CONFIG.newTab ? '_blank' : '_self'}">
             <span class="command-key">${key}</span>
             <span class="command-name">${name}</span>
           </a>
