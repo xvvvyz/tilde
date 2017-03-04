@@ -1,15 +1,13 @@
 # Tilde
 
-[![Release](https://img.shields.io/github/release/cadejscroggins/tilde.svg)](https://github.com/cadejscroggins/tilde/releases)
-
 Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to have a homepage for your browser that is functional and sexy.
 
 ## Usage
 
 To go to a site, enter the corresponding key. To view the available sites and their keys, press `enter`. If your input doesn't match any of the commands, a generic Google search will be triggered. For example:
 
-* Entering `t` would redirect you to [twitter.com](https://twitter.com).
 * Entering `r` would redirect you to [www.reddit.com](https://www.reddit.com).
+* Entering `t` would redirect you to [twitter.com](https://twitter.com).
 * Entering `cats` would search [Google for cats](https://encrypted.google.com/search?q=cats).
 
 ### Searching
