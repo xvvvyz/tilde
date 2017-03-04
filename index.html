@@ -345,7 +345,8 @@
     }
 
     _handleKeydown(event) {
-      if (event.which === 27) this.toggle(false);
+      const isEsc = event.which === 27;
+      if (isEsc) this.toggle(false);
     }
 
     _registerEvents() {
@@ -366,21 +367,15 @@
       this._setHistoryCache();
     }
 
-    getPromise(query) {
+    getSuggestionsPromise(query) {
       return new Promise(resolve => {
-        if (CONFIG.suggestionsLimit < 1) resolve([]);
-
-        const suggestions = this._getHistory()
+        const suggestions = this._history
           .filter(item => this._itemContainsQuery(query, item[0]))
           .slice(0, CONFIG.suggestionsLimit)
           .map(item => item[0]);
 
         resolve(suggestions);
       });
-    }
-
-    _getHistory() {
-      return this._history;
     }
 
     _getHistoryCache() {
@@ -429,27 +424,19 @@
       this._suggestionEls = [];
       this._influencers = influencers;
       this._handleKeydown = this._handleKeydown.bind(this);
-      this._registerEvents();
+      document.addEventListener('keydown', this._handleKeydown);
     }
 
-    setClickEventCallback(callback) {
-      this._clickEventCallback = callback;
-    }
-
-    suggest(input) {
+    suggest(input, clickCallback = () => {}) {
       this._clearSuggestions();
       if (!input) return;
+      this._handleClick = clickCallback;
 
       this._influencers
-        .map(influencer => influencer.getPromise(input))
+        .map(influencer => influencer.getSuggestionsPromise(input))
         .forEach(promise => {
           promise.then(suggestions => {
-            this._clearClickEvents();
-
-            suggestions.forEach(suggestion => {
-              this._appendSuggestion(suggestion);
-            });
-
+            suggestions.forEach(item => this._appendSuggestion(item));
             this._suggestionEls = $.els('.js-search-suggestion');
             this._registerClickEvents();
           });
@@ -457,8 +444,6 @@
     }
 
     _appendSuggestion(suggestion) {
-      if (this._suggestionsEl.children.length === CONFIG.suggestionsLimit) return false;
-
       this._suggestionsEl.insertAdjacentHTML(
         'beforeend',
         `<li>
@@ -474,14 +459,14 @@
     }
 
     _clearClickEvents() {
-      if (typeof this._suggestionEls !== 'undefined') {
-        this._suggestionEls.forEach(el => {
-          this._removeClickEvent(el, this._clickEventCallback.bind(null, el.value));
-        });
-      }
+      this._suggestionEls.forEach(el => {
+        const callback = this._handleClick.bind(null, el.value);
+        el.removeEventListener('click', callback);
+      });
     }
 
     _clearSuggestions() {
+      this._clearClickEvents();
       this._suggestionsEl.innerHTML = '';
       document.body.setAttribute('search-suggestions', false);
     }
@@ -527,17 +512,8 @@
 
     _registerClickEvents() {
       this._suggestionEls.forEach(el => {
-        const callback = this._clickEventCallback.bind(null, el.value);
-        el.addEventListener('click', callback);
+        el.addEventListener('click', this._handleClick.bind(null, el.value));
       });
-    }
-
-    _registerEvents() {
-      document.addEventListener('keydown', this._handleKeydown);
-    }
-
-    _removeClickEvent(el, callback) {
-      el.removeEventListener('click', callback);
     }
   }
 
@@ -580,7 +556,7 @@
           keypressEvent.preventDefault();
           callback(command.url);
         }
-      })
+      });
     }
 
     _loopThroughCommands(callback) {
@@ -601,7 +577,7 @@
     _prepSearch(command, query) {
       if (!command.search) return command.url;
       const baseUrl = this._stripUrlPath(command.url);
-      const search = this._shiftAndTrimAndEncode(query, CONFIG.searchDelimiter);
+      const search = this._shiftAndTrimAndEncode(query);
       const searchPath = command.search.replace('{}', search);
       return `${baseUrl}${searchPath}`;
     }
@@ -611,8 +587,9 @@
       return arr.join(delimiter).trim();
     }
 
-    _shiftAndTrimAndEncode(arr, delimiter) {
-      return encodeURIComponent(this._shiftAndTrim(arr, delimiter));
+    _shiftAndTrimAndEncode(arr) {
+      const clean = this._shiftAndTrim(arr, CONFIG.searchDelimiter);
+      return encodeURIComponent(clean);
     }
 
     _stripUrlPath(url) {
@@ -623,10 +600,10 @@
   }
 
   class Form {
-    constructor(help, history, suggestionAggregator, queryParser) {
+    constructor(help, history, suggester, queryParser) {
       this._help = help;
       this._history = history;
-      this._suggestionAggregator = suggestionAggregator;
+      this._suggester = suggester;
       this._queryParser = queryParser;
       this._formEl = $.el('#js-search-form');
       this._inputEl = $.el('#js-search-input');
@@ -636,10 +613,6 @@
       this._handleKeyup = this._handleKeyup.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
       this._registerEvents();
-
-      this._suggestionAggregator.setClickEventCallback(value => {
-        this._submitWithValue(value)
-      });
     }
 
     _clearInput() {
@@ -668,7 +641,10 @@
     _handleKeyup(event) {
       if (this._inputElVal !== this._inputEl.value) {
         if (CONFIG.suggestions) {
-          this._suggestionAggregator.suggest(this._inputEl.value.trim());
+          this._suggester.suggest(
+            this._inputEl.value.trim(),
+            this._submitWithValue
+          );
         }
 
         this._inputElVal = this._inputEl.value;
@@ -695,7 +671,7 @@
         this._help.toggle();
       } else {
         this._history.addItem(query);
-        this._suggestionAggregator.suggest('');
+        this._suggester.suggest('');
         this._inputEl.value = '';
         this._redirect(this._queryParser.generateRedirect(query));
       }
@@ -710,7 +686,7 @@
   const clock = new Clock();
   const help = new Help();
   const history = new History();
-  const aggregator = new Suggester([history]);
+  const suggester = new Suggester([history]);
   const parser = new QueryParser();
-  const form = new Form(help, history, aggregator, parser);
+  const form = new Form(help, history, suggester, parser);
 </script>
