@@ -3,30 +3,35 @@
 <script>
   const CONFIG = {
     categories: [
+      { name: "Work", commands: [
+        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q={}' },
+        { key: 'm', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/{}' },
+        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text={}' },
+      ] },
+      { name: "Lurk", commands: [
+        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q={}' },
+        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q={}' },
+        { key: 'i', name: 'Instagram', url: 'https://www.instagram.com', search: false },
+      ] },
       { name: "Listen", commands: [
-        { key: 'h', name: 'Hypem', url: 'http://hypem.com', search: '/search/' },
-        { key: 'l', name: 'Line Radio', url: 'https://linerad.io', search: '/#/' },
-        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com', search: '/search?q=' },
+        { key: 'h', name: 'Hypem', url: 'http://hypem.com/popular?workaround=lol', search: '/search/{}' },
+        { key: 'l', name: 'Line Radio', url: 'https://linerad.io', search: '/#/{}' },
+        { key: 's', name: 'SoundCloud', url: 'https://soundcloud.com/discover', search: '/search?q={}' },
       ] },
-      { name: "Tools", commands: [
-        { key: 'g', name: 'GitHub', url: 'https://github.com', search: '/search?q=' },
-        { key: 'm', name: 'Inbox', url: 'https://inbox.google.com', search: '/search/' },
-        { key: 'k', name: 'Keep', url: 'https://keep.google.com', search: '/#search/text=' },
-      ] },
-      { name: "Social", commands: [
-        { key: 'r', name: 'Reddit', url: 'https://www.reddit.com', search: '/search?q=' },
-        { key: 't', name: 'Twitter', url: 'https://twitter.com', search: '/search?q=' },
-        { key: 'i', name: 'Instagram', url: 'https://www.instagram.com', search: '/' },
+      { name: "Watch", commands: [
+        { key: 'y', name: 'YouTube', url: 'https://youtube.com/feed/subscriptions', search: '/results?search_query={}' },
+        { key: 'n', name: 'Netflix', url: 'https://www.netflix.com/browse', search: '/search?q={}' },
+        { key: 'w', name: 'Twitch', url: 'https://www.twitch.tv/directory/following', search: false },
       ] },
       { name: "Download", commands: [
-        { key: 'T', name: 'The Pirate Bay', url: 'https://thepiratebay.org', search: '/search/' },
-        { key: 'Y', name: 'YIFY', url: 'https://yts.ag', search: '/browse-movies/' },
-        { key: '7', name: '7digital', url: 'https://us.7digital.com', search: '/search?q=' },
+        { key: 'T', name: 'The Pirate Bay', url: 'https://thepiratebay.org', search: '/search/{}' },
+        { key: 'Y', name: 'YIFY', url: 'https://yts.ag/browse-movies/0/1080p/all/7/latest', search: '/browse-movies/{}/1080p/all/0/rating' },
+        { key: '7', name: '7digital', url: 'https://us.7digital.com', search: '/search?q={}' },
       ] },
     ],
 
     // if none of the keys are matched, this is used for searching.
-    defaultSearch: 'https://encrypted.google.com/search?q=',
+    defaultSearch: 'https://encrypted.google.com/search?q={}',
 
     // the delimiter between the key and your search query.
     // e.g. to search GitHub for potatoes you'd type "g:potatoes".
@@ -532,7 +537,8 @@
 
   class QueryParser {
     generateRedirect(query) {
-      let redirectUrl = CONFIG.defaultSearch + encodeURIComponent(query);
+      const encodedQuery = encodeURIComponent(query);
+      let redirectUrl = CONFIG.defaultSearch.replace('{}', encodedQuery);
 
       if (query.match(CONFIG.urlRegex)) {
         const hasProtocol = query.match(CONFIG.protocolRegex);
@@ -581,13 +587,17 @@
     }
 
     _prepPath(command, query) {
+      const baseUrl = this._stripUrlPath(command.url);
       const path = this._shiftAndTrim(query, CONFIG.pathDelimiter);
-      return `${command.url}/${path}`;
+      return `${baseUrl}/${path}`;
     }
 
     _prepSearch(command, query) {
+      if (!command.search) return command.url;
+      const baseUrl = this._stripUrlPath(command.url);
       const search = this._shiftAndTrimAndEncode(query, CONFIG.searchDelimiter);
-      return `${command.url}${command.search}${search}`;
+      const searchPath = command.search.replace('{}', search);
+      return `${baseUrl}${searchPath}`;
     }
 
     _shiftAndTrim(arr, delimiter) {
@@ -597,6 +607,12 @@
 
     _shiftAndTrimAndEncode(arr, delimiter) {
       return encodeURIComponent(this._shiftAndTrim(arr, delimiter));
+    }
+
+    _stripUrlPath(url) {
+      const parser = document.createElement('a');
+      parser.href = url;
+      return `${parser.protocol}//${parser.hostname}`;
     }
   }
 
