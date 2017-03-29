@@ -136,7 +136,7 @@
     font-size: 1.1rem;
   }
 
-  body[search-suggestions='true'] .search-input {
+  .search-input.bottom-no-radius {
     border-radius: 2px 2px 0 0;
   }
 
@@ -356,15 +356,14 @@
 
   class History {
     constructor() {
-      this._dbName = 'history';
-      this._history = this._getHistoryCache();
+      this._history = this._getFromStorage('history');
     }
 
     addItem(query) {
-      if (!this._isValidQuery(query)) return false;
+      if (query.length < 2) return;
       this._updateHistory(query);
       this._sortHistory();
-      this._setHistoryCache();
+      this._saveToStorage('history', this._history);
     }
 
     getSuggestionsPromise(query) {
@@ -378,12 +377,8 @@
       });
     }
 
-    _getHistoryCache() {
-      return JSON.parse(localStorage.getItem(this._dbName)) || [];
-    }
-
-    _isValidQuery(item) {
-      return item.length > 1;
+    _getFromStorage(name) {
+      return JSON.parse(localStorage.getItem(name)) || [];
     }
 
     _itemContainsQuery(query, item) {
@@ -391,8 +386,8 @@
       return query && match && query !== item;
     }
 
-    _setHistoryCache() {
-      localStorage.setItem(this._dbName, JSON.stringify(this._history));
+    _saveToStorage(name, data) {
+      localStorage.setItem(name, JSON.stringify(data));
     }
 
     _sortHistory() {
@@ -429,6 +424,7 @@
 
     suggest(input, clickCallback = () => {}) {
       this._clearSuggestions();
+      input = input.trim();
       if (!input) return;
       this._handleClick = clickCallback;
 
@@ -455,7 +451,7 @@
         </li>`
       );
 
-      document.body.setAttribute('search-suggestions', true);
+      this._inputEl.classList.add('bottom-no-radius');
     }
 
     _clearClickEvents() {
@@ -468,7 +464,7 @@
     _clearSuggestions() {
       this._clearClickEvents();
       this._suggestionsEl.innerHTML = '';
-      document.body.setAttribute('search-suggestions', false);
+      this._inputEl.classList.remove('bottom-no-radius');
     }
 
     _focusNext() {
@@ -608,15 +604,15 @@
       this._formEl = $.el('#js-search-form');
       this._inputEl = $.el('#js-search-input');
       this._inputElVal = '';
+      this._bindMethods();
+      this._registerEvents();
+    }
+
+    _bindMethods() {
       this._handleKeypress = this._handleKeypress.bind(this);
       this._submitForm = this._submitForm.bind(this);
       this._handleKeyup = this._handleKeyup.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
-      this._registerEvents();
-    }
-
-    _clearInput() {
-      this._inputEl.value = '';
     }
 
     _handleKeypress(event) {
@@ -639,14 +635,8 @@
     }
 
     _handleKeyup(event) {
-      if (this._inputElVal !== this._inputEl.value) {
-        if (CONFIG.suggestions) {
-          this._suggester.suggest(
-            this._inputEl.value.trim(),
-            this._submitWithValue
-          );
-        }
-
+      if (CONFIG.suggestions && this._inputElVal !== this._inputEl.value) {
+        this._suggester.suggest(this._inputEl.value, this._submitWithValue);
         this._inputElVal = this._inputEl.value;
       }
     }
@@ -667,7 +657,7 @@
       const query = this._inputEl.value.trim();
 
       if (!query || query === '?') {
-        this._clearInput();
+        this._inputEl.value = '';
         this._help.toggle();
       } else {
         this._history.addItem(query);
@@ -682,7 +672,9 @@
       this._submitForm();
     }
   }
+</script>
 
+<script>
   const clock = new Clock();
   const help = new Help();
   const history = new History();
