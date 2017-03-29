@@ -391,9 +391,9 @@
     }
 
     _sortHistory() {
-      this._history = this._history.sort(function(current, next) {
-        return current[1] > next[1];
-      }).reverse();
+      this._history = this._history
+        .sort((current, next) => current[1] - next[1])
+        .reverse();
     }
 
     _updateHistory(query) {
