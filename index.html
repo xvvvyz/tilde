@@ -278,7 +278,7 @@
 <script>
   const $ = {
     el: s => document.querySelector(s),
-    els: s => document.querySelectorAll(s),
+    els: s => [].slice.call(document.querySelectorAll(s) || []),
   };
 
   class Clock {
