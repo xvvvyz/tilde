@@ -499,11 +499,13 @@
     }
 
     _handleKeydown(event) {
+      const isDown = event.which === 40;
+      const isUp = event.which === 38;
       const isCtrlN = event.which === 78 && event.ctrlKey;
       const isCtrlP = event.which === 80 && event.ctrlKey;
-      if (isCtrlN || isCtrlP) event.preventDefault();
-      if (isCtrlN) this._focusNext();
-      if (isCtrlP) this._focusPrevious();
+      if (isDown || isDown || isCtrlN || isCtrlP) event.preventDefault();
+      if (isDown || isCtrlN) this._focusNext();
+      if (isUp || isCtrlP) this._focusPrevious();
     }
 
     _registerClickEvents() {
