@@ -561,8 +561,7 @@
       CONFIG.categories
         .map(category => category.commands)
         .forEach(commands => commands.forEach(command => {
-          let done = callback(command);
-          if (done) return;
+          if (callback(command)) return;
         }));
     }
 
