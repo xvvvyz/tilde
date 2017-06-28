@@ -41,15 +41,23 @@
     // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn".
     pathDelimiter: '/',
 
-    // set to true to instantly redirect when a key is matched.
-    // put a space before any search queries to prevent unwanted redirects.
+    // instantly redirect when a key is matched.
+    // put a space before any other queries to prevent unwanted redirects.
     instantRedirect: false,
 
-    // suggest your most popular queries as you type.
-    suggestions: false,
+    // give suggestions as you type.
+    suggestions: true,
 
-    // max amount of suggestions to display.
+    // max amount of suggestions that will ever be displayed.
     suggestionsLimit: 4,
+
+    // the order and limit for each suggestion influencer.
+    // the following would give you 1 suggestion from your search history
+    // and 4 suggestions from Duck Duck Go.
+    influencers: [
+      { name: 'History', limit: 1 },
+      { name: 'DuckDuckGo', limit: 4 },
+    ],
 
     // open queries in a new tab.
     newTab: true,
@@ -279,6 +287,12 @@
   const $ = {
     el: s => document.querySelector(s),
     els: s => [].slice.call(document.querySelectorAll(s) || []),
+
+    jsonp: url => {
+      let script = document.createElement('script');
+      script.src = url;
+      $.el('head').appendChild(script);
+    },
   };
 
   class Clock {
@@ -355,7 +369,8 @@
   }
 
   class History {
-    constructor() {
+    constructor(suggestionsLimit = 0) {
+      this._suggestionsLimit = suggestionsLimit;
       this._history = this._getFromStorage('history');
     }
 
@@ -370,7 +385,7 @@
       return new Promise(resolve => {
         const suggestions = this._history
           .filter(item => this._itemContainsQuery(query, item[0]))
-          .slice(0, CONFIG.suggestionsLimit)
+          .slice(0, this._suggestionsLimit)
           .map(item => item[0]);
 
         resolve(suggestions);
@@ -382,8 +397,7 @@
     }
 
     _itemContainsQuery(query, item) {
-      const match = item.indexOf(query) !== -1;
-      return query && match && query !== item;
+      return query && item.indexOf(query) !== -1;
     }
 
     _saveToStorage(name, data) {
@@ -412,31 +426,56 @@
     }
   }
 
+  class DuckDuckGo {
+    constructor(suggestionsLimit = 0) {
+      this._endpoint = 'https://duckduckgo.com/ac';
+      this._callback = 'autocompleteCallback';
+      this._suggestionsLimit = suggestionsLimit;
+    }
+
+    addItem() {}
+
+    getSuggestionsPromise(query) {
+      return new Promise(resolve => {
+        this._resolve = resolve;
+        window[this._callback] = this._handleResponse.bind(this);
+        $.jsonp(`${this._endpoint}?callback=${this._callback}&q=${query}`);
+      });
+    }
+
+    _handleResponse(res) {
+      const suggestions = res.slice(0, this._suggestionsLimit)
+        .map(i => i.phrase);
+
+      this._resolve(suggestions);
+    }
+  }
+
   class Suggester {
     constructor(influencers) {
       this._inputEl = $.el('#js-search-input');
       this._suggestionsEl = $.el('#js-search-suggestions');
+      this._totalSuggestions = 0;
       this._suggestionEls = [];
       this._influencers = influencers;
       this._handleKeydown = this._handleKeydown.bind(this);
       document.addEventListener('keydown', this._handleKeydown);
     }
 
-    suggest(input, clickCallback = () => {}) {
-      this._clearSuggestions();
-      input = input.trim();
-      if (!input) return;
-      this._handleClick = clickCallback;
+    add(query) {
+      this._influencers.forEach(i => i.addItem(query));
+    }
 
-      this._influencers
-        .map(influencer => influencer.getSuggestionsPromise(input))
-        .forEach(promise => {
-          promise.then(suggestions => {
-            suggestions.forEach(item => this._appendSuggestion(item));
-            this._suggestionEls = $.els('.js-search-suggestion');
-            this._registerClickEvents();
-          });
-        });
+    suggest(input, clickCallback = () => {}) {
+      input = input.trim();
+
+      if (!input) {
+        this._clearSuggestions();
+        return;
+      }
+
+      this._handleClick = clickCallback;
+      this._suggest(input);
     }
 
     _appendSuggestion(suggestion) {
@@ -452,6 +491,7 @@
       );
 
       this._inputEl.classList.add('bottom-no-radius');
+      return ++this._totalSuggestions === CONFIG.suggestionsLimit;
     }
 
     _clearClickEvents() {
@@ -462,9 +502,15 @@
     }
 
     _clearSuggestions() {
+      this._totalSuggestions = 0;
       this._clearClickEvents();
       this._suggestionsEl.innerHTML = '';
       this._inputEl.classList.remove('bottom-no-radius');
+    }
+
+    // [[1, 2], [1, 2, 3, 4]] -> [1, 2, 3, 4]
+    _flattenAndUnique(array) {
+      return [...new Set([].concat.apply([], array))];
     }
 
     _focusNext() {
@@ -498,6 +544,11 @@
       }
     }
 
+    _gatherInfluencers(input) {
+      return this._influencers
+        .map(influencer => influencer.getSuggestionsPromise(input));
+    }
+
     _handleKeydown(event) {
       const isDown = event.which === 40;
       const isUp = event.which === 38;
@@ -511,6 +562,18 @@
     _registerClickEvents() {
       this._suggestionEls.forEach(el => {
         el.addEventListener('click', this._handleClick.bind(null, el.value));
+      });
+    }
+
+    _suggest(input) {
+      Promise.all(this._gatherInfluencers(input)).then(res => {
+        this._clearSuggestions();
+
+        this._flattenAndUnique(res)
+          .some(item => this._appendSuggestion(item));
+
+        this._suggestionEls = $.els('.js-search-suggestion');
+        this._registerClickEvents();
       });
     }
   }
@@ -597,9 +660,8 @@
   }
 
   class Form {
-    constructor(help, history, suggester, queryParser) {
+    constructor(help, suggester, queryParser) {
       this._help = help;
-      this._history = history;
       this._suggester = suggester;
       this._queryParser = queryParser;
       this._formEl = $.el('#js-search-form');
@@ -636,7 +698,10 @@
     }
 
     _handleKeyup(event) {
-      if (CONFIG.suggestions && this._inputElVal !== this._inputEl.value) {
+      if (
+        CONFIG.suggestions &&
+        this._inputElVal.trim() !== this._inputEl.value.trim()
+      ) {
         this._suggester.suggest(this._inputEl.value, this._submitWithValue);
         this._inputElVal = this._inputEl.value;
       }
@@ -661,7 +726,7 @@
         this._inputEl.value = '';
         this._help.toggle();
       } else {
-        this._history.addItem(query);
+        this._suggester.add(query);
         this._suggester.suggest('');
         this._inputEl.value = '';
         this._redirect(this._queryParser.generateRedirect(query));
@@ -678,8 +743,12 @@
 <script>
   const clock = new Clock();
   const help = new Help();
-  const history = new History();
-  const suggester = new Suggester([history]);
+  const influencers = { History: History, DuckDuckGo: DuckDuckGo };
+
+  const suggester = new Suggester(
+    CONFIG.influencers.map(i => new influencers[i.name](i.limit))
+  );
+
   const parser = new QueryParser();
-  const form = new Form(help, history, suggester, parser);
+  const form = new Form(help, suggester, parser);
 </script>
