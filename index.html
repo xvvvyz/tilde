@@ -123,10 +123,9 @@
   button:focus {
     box-sizing: border-box;
     width: 100%;
-    margin: 0;
     border: 0;
     outline: 0;
-    background: #222;
+    background: transparent;
     color: #fff;
     font-family: 'Lato', sans-serif;
     -webkit-appearance: none;
@@ -140,9 +139,11 @@
     list-style: none;
   }
 
-  .search-input {
+  .search-input,
+  .search-input:focus {
     padding: 12px;
     border-radius: 2px;
+    background: #222;
     font-size: 1.1rem;
   }
 
@@ -151,13 +152,21 @@
   }
 
   .search-suggestions {
+    display: none;
+    padding: 4px 0;
     border-radius: 0 0 2px 2px;
+    background: #111;
     overflow: hidden;
   }
 
+  .search-suggestions.active {
+    display: block;
+  }
+
   .search-suggestion {
-    padding: 12px;
-    transition: .2s;
+    margin: -4px 0;
+    padding: 10px 12px;
+    transition: background .2s;
     font-size: .8rem;
     text-align: left;
     cursor: pointer;
@@ -165,8 +174,7 @@
 
   .search-suggestion:hover,
   .search-suggestion:focus {
-    background: #00d2ff;
-    color: #000;
+    background: #333;
   }
 
   .overlay {
@@ -495,6 +503,7 @@
         </li>`
       );
 
+      this._suggestionsEl.classList.add('active');
       this._inputEl.classList.add('bottom-no-radius');
       return ++this._totalSuggestions === CONFIG.suggestionsLimit;
     }
@@ -510,6 +519,7 @@
       this._totalSuggestions = 0;
       this._clearClickEvents();
       this._suggestionsEl.innerHTML = '';
+      this._suggestionsEl.classList.remove('active');
       this._inputEl.classList.remove('bottom-no-radius');
     }
 
