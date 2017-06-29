@@ -704,7 +704,7 @@
     _handleKeyup(event) {
       const oldVal = this._inputElVal;
       const newVal = this._inputEl.value.trim();
-      this._inputElVal = this._inputEl.value;
+      this._inputElVal = newVal;
 
       if (CONFIG.suggestions && oldVal !== newVal) {
         this._suggester.suggest(newVal, this._submitWithValue);
