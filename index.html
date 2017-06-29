@@ -554,7 +554,7 @@
       const isUp = event.which === 38;
       const isCtrlN = event.which === 78 && event.ctrlKey;
       const isCtrlP = event.which === 80 && event.ctrlKey;
-      if (isDown || isDown || isCtrlN || isCtrlP) event.preventDefault();
+      if (isDown || isUp || isCtrlN || isCtrlP) event.preventDefault();
       if (isDown || isCtrlN) this._focusNext();
       if (isUp || isCtrlP) this._focusPrevious();
     }
