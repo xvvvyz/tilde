@@ -118,7 +118,9 @@
   }
 
   input,
-  input:focus {
+  button,
+  input:focus,
+  button:focus {
     box-sizing: border-box;
     width: 100%;
     margin: 0;
@@ -428,7 +430,7 @@
 
   class DuckDuckGo {
     constructor(suggestionsLimit = 0) {
-      this._endpoint = 'https://duckduckgo.com/ac';
+      this._endpoint = 'https://duckduckgo.com/ac/';
       this._callback = 'autocompleteCallback';
       this._suggestionsLimit = suggestionsLimit;
     }
@@ -467,8 +469,6 @@
     }
 
     suggest(input, clickCallback = () => {}) {
-      input = input.trim();
-
       if (!input) {
         this._clearSuggestions();
         return;
@@ -478,15 +478,20 @@
       this._suggest(input);
     }
 
-    _appendSuggestion(suggestion) {
+    _appendSuggestion(suggestion, input) {
+      const suggestionHtml = suggestion
+        .replace(new RegExp(input, 'g'), `<b>${input}</b>`);
+
       this._suggestionsEl.insertAdjacentHTML(
         'beforeend',
         `<li>
-          <input
-            class="js-search-suggestion search-suggestion"
+          <button
             type="button"
-            value="${suggestion}"
+            class="js-search-suggestion search-suggestion"
+            data-suggestion="${suggestion}"
           >
+            ${suggestionHtml}
+          </button>
         </li>`
       );
 
@@ -561,7 +566,8 @@
 
     _registerClickEvents() {
       this._suggestionEls.forEach(el => {
-        el.addEventListener('click', this._handleClick.bind(null, el.value));
+        const value = el.getAttribute('data-suggestion');
+        el.addEventListener('click', this._handleClick.bind(null, value));
       });
     }
 
@@ -570,7 +576,7 @@
         this._clearSuggestions();
 
         this._flattenAndUnique(res)
-          .some(item => this._appendSuggestion(item));
+          .some(item => this._appendSuggestion(item, input));
 
         this._suggestionEls = $.els('.js-search-suggestion');
         this._registerClickEvents();
@@ -680,6 +686,7 @@
 
     _handleKeypress(event) {
       const newChar = String.fromCharCode(event.which);
+      const newQuery = this._inputEl.value + newChar;
       const isNotEmpty = newChar.length;
       const isEnterKey = event.which !== 13;
 
@@ -689,21 +696,18 @@
       }
 
       if (CONFIG.instantRedirect) {
-        this._queryParser.instantRedirect(
-          event,
-          this._inputEl.value + newChar,
-          this._submitWithValue
-        );
+        this._queryParser
+          .instantRedirect(event, newQuery, this._submitWithValue);
       }
     }
 
     _handleKeyup(event) {
-      if (
-        CONFIG.suggestions &&
-        this._inputElVal.trim() !== this._inputEl.value.trim()
-      ) {
-        this._suggester.suggest(this._inputEl.value, this._submitWithValue);
-        this._inputElVal = this._inputEl.value;
+      const oldVal = this._inputElVal;
+      const newVal = this._inputEl.value.trim();
+      this._inputElVal = this._inputEl.value;
+
+      if (CONFIG.suggestions && oldVal !== newVal) {
+        this._suggester.suggest(newVal, this._submitWithValue);
       }
     }
 
