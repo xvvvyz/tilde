@@ -172,8 +172,8 @@
     cursor: pointer;
   }
 
-  .search-suggestion:hover,
-  .search-suggestion:focus {
+  .search-suggestion:focus,
+  .search-suggestion.highlight {
     background: #333;
   }
 
@@ -297,11 +297,26 @@
   const $ = {
     el: s => document.querySelector(s),
     els: s => [].slice.call(document.querySelectorAll(s) || []),
+    isDown: e => ['c-n', 'down'].includes($.key(e)),
+    isUp: e => ['c-p', 'up'].includes($.key(e)),
 
     jsonp: url => {
       let script = document.createElement('script');
       script.src = url;
       $.el('head').appendChild(script);
+    },
+
+    key: e => {
+      const ctrl = e.ctrlKey;
+
+      switch (e.which) {
+        case 13: return 'enter';
+        case 27: return 'escape';
+        case 38: return 'up';
+        case 40: return 'down';
+        case 78: return ctrl ? 'c-n' : 'n';
+        case 80: return ctrl ? 'c-p' : 'n';
+      }
     },
   };
 
@@ -368,9 +383,8 @@
       )).join('');
     }
 
-    _handleKeydown(event) {
-      const isEsc = event.which === 27;
-      if (isEsc) this.toggle(false);
+    _handleKeydown(e) {
+      if ($.key(e) === 'escape') this.toggle(false);
     }
 
     _registerEvents() {
@@ -503,8 +517,7 @@
         </li>`
       );
 
-      this._suggestionsEl.classList.add('active');
-      this._inputEl.classList.add('bottom-no-radius');
+      this._showSuggestions();
       return ++this._totalSuggestions === CONFIG.suggestionsLimit;
     }
 
@@ -516,11 +529,10 @@
     }
 
     _clearSuggestions() {
-      this._totalSuggestions = 0;
+      this._hideSuggestions();
       this._clearClickEvents();
       this._suggestionsEl.innerHTML = '';
-      this._suggestionsEl.classList.remove('active');
-      this._inputEl.classList.remove('bottom-no-radius');
+      this._totalSuggestions = 0;
     }
 
     // [[1, 2], [1, 2, 3, 4]] -> [1, 2, 3, 4]
@@ -529,33 +541,29 @@
     }
 
     _focusNext() {
-      if (this._suggestionEls.length) {
-        const active = document.activeElement;
+      const active = $.el('.highlight');
 
-        if (active.classList.contains('js-search-suggestion')) {
-          this._suggestionEls.forEach((el, index) => {
-            const nextSuggestion = this._suggestionEls[index + 1];
-            if (el === active && nextSuggestion) nextSuggestion.focus();
-          });
-        } else {
-          this._suggestionEls[0].focus();
-        }
+      if (active) {
+        this._suggestionEls.forEach((el, index) => {
+          const next = this._suggestionEls[index + 1];
+          if (el === active && next) this._highlight(next);
+        });
+      } else {
+        this._highlight(this._suggestionEls[0]);
       }
     }
 
     _focusPrevious() {
-      if (this._suggestionEls.length) {
-        const active = document.activeElement;
+      const active = $.el('.highlight');
 
-        if (active.classList.contains('js-search-suggestion')) {
-          this._suggestionEls.forEach((el, index) => {
-            if (el === active) {
-              const previousSuggestion = this._suggestionEls[index - 1];
-              if (previousSuggestion) previousSuggestion.focus();
-              else this._inputEl.focus();
-            }
-          });
-        }
+      if (active) {
+        this._suggestionEls.forEach((el, index) => {
+          if (el === active) {
+            const previous = this._suggestionEls[index - 1];
+            this._noHighlight();
+            if (previous) this._highlight(previous);
+          }
+        });
       }
     }
 
@@ -564,24 +572,46 @@
         .map(influencer => influencer.getSuggestionsPromise(input));
     }
 
-    _handleKeydown(event) {
-      const isDown = event.which === 40;
-      const isUp = event.which === 38;
-      const isCtrlN = event.which === 78 && event.ctrlKey;
-      const isCtrlP = event.which === 80 && event.ctrlKey;
-      if (isDown || isUp || isCtrlN || isCtrlP) event.preventDefault();
-      if (isDown || isCtrlN) this._focusNext();
-      if (isUp || isCtrlP) this._focusPrevious();
+    _handleKeydown(e) {
+      if ($.isDown(e) || $.isUp(e)) e.preventDefault();
+      if ($.isDown(e)) this._focusNext();
+      if ($.isUp(e)) this._focusPrevious();
     }
 
-    _registerClickEvents() {
+    _highlight(el) {
+      this._noHighlight();
+      el.classList.add('highlight');
+      this._inputEl.value = el.getAttribute('data-suggestion');
+      this._inputEl.focus()
+    }
+
+    _noHighlight() {
+      this._inputEl.value = this._originalValue;
+      this._suggestionEls.forEach(el => el.classList.remove('highlight'));
+    }
+
+    _showSuggestions() {
+      this._inputEl.classList.add('bottom-no-radius');
+      this._suggestionsEl.classList.add('active');
+    }
+
+    _hideSuggestions() {
+      this._inputEl.classList.remove('bottom-no-radius');
+      this._suggestionsEl.classList.remove('active');
+    }
+
+    _registerEvents() {
       this._suggestionEls.forEach(el => {
         const value = el.getAttribute('data-suggestion');
+        el.addEventListener('mouseover', this._highlight.bind(this, el));
+        el.addEventListener('mouseout', this._noHighlight.bind(this));
         el.addEventListener('click', this._handleClick.bind(null, value));
       });
     }
 
     _suggest(input) {
+      this._originalValue = this._inputEl.value;
+
       Promise.all(this._gatherInfluencers(input)).then(res => {
         this._clearSuggestions();
 
@@ -589,7 +619,7 @@
           .some(item => this._appendSuggestion(item, input));
 
         this._suggestionEls = $.els('.js-search-suggestion');
-        this._registerClickEvents();
+        this._registerEvents();
       });
     }
   }
@@ -694,29 +724,29 @@
       this._submitWithValue = this._submitWithValue.bind(this);
     }
 
-    _handleKeypress(event) {
-      const newChar = String.fromCharCode(event.which);
+    _handleKeypress(e) {
+      const newChar = String.fromCharCode(e.which);
       const newQuery = this._inputEl.value + newChar;
       const isNotEmpty = newChar.length;
-      const isEnterKey = event.which !== 13;
 
-      if (isNotEmpty && isEnterKey) {
+      if (isNotEmpty && $.key(e) !== 'enter') {
         this._help.toggle(false);
         this._inputEl.focus();
       }
 
       if (CONFIG.instantRedirect) {
         this._queryParser
-          .instantRedirect(event, newQuery, this._submitWithValue);
+          .instantRedirect(e, newQuery, this._submitWithValue);
       }
     }
 
-    _handleKeyup(event) {
+    _handleKeyup(e) {
       const oldVal = this._inputElVal;
       const newVal = this._inputEl.value.trim();
+      const ignored = $.isDown(e) || $.isUp(e);
       this._inputElVal = newVal;
 
-      if (CONFIG.suggestions && oldVal !== newVal) {
+      if (CONFIG.suggestions && oldVal !== newVal && !ignored) {
         this._suggester.suggest(newVal, this._submitWithValue);
       }
     }
@@ -732,8 +762,8 @@
       this._formEl.addEventListener('submit', this._submitForm, false);
     }
 
-    _submitForm(event) {
-      if (event) event.preventDefault();
+    _submitForm(e) {
+      if (e) e.preventDefault();
       const query = this._inputEl.value.trim();
 
       if (!query || query === '?') {
