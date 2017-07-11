@@ -35,7 +35,7 @@ If you enter in a full domain or URL, you will be redirected to said domain or U
 
 ## Configuration
 
-The above is just the beginning. Read through the [index.html](index.html) `CONFIG` object to get a full sense of what Tilde can do for you.
+The above is just the beginning. Open up the [index.html](index.html) file and read through the `CONFIG`!
 
 ## License
 
