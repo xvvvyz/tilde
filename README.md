@@ -2,6 +2,8 @@
 
 Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to have a homepage for your browser that is functional and sexy.
 
+![Screenshot](SCREENSHOT.png?raw=true "Screenshot")
+
 ## Usage
 
 To go to a site, enter the corresponding key. To view the available sites and their keys, press `enter`. If your input doesn't match any of the commands, a generic Google search will be triggered. For example:
@@ -33,7 +35,7 @@ If you enter in a full domain or URL, you will be redirected to said domain or U
 
 ## Configuration
 
-There's a slew of options that you can configure. Just open up the `index.html` file and read through them!
+The above is just the beginning. Read through the [index.html](index.html) `CONFIG` object to get a full sense of what Tilde can do for you.
 
 ## License
 
