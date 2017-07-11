@@ -22,6 +22,11 @@
       ['y', 'YouTube', 'https://youtube.com/feed/subscriptions', '/results?search_query={}'],
     ],
 
+    // default search suggestions for the specified queries
+    defaultSuggestions: {
+      'r': ['r/r/unixporn', 'r/r/startpages'],
+    },
+
     // the categories & commands that show up on the help overlay
     // use the exact name of each command
     categories: {
@@ -54,17 +59,19 @@
     suggestionsLimit: 4,
 
     // the order and limit for each suggestion influencer
-    // the following would give you 2 suggestion from your search history
-    // and 4 suggestions from Duck Duck Go.
+    // "Default" suggestions come from CONFIG.defaultSuggestions
+    // "DuckDuckGo" suggestions come from the duck duck go search api
+    // "History" suggestions come from your previously entered queries
     influencers: [
+      { name: 'Default', limit: 4 },
       { name: 'History', limit: 2 },
       { name: 'DuckDuckGo', limit: 4 },
     ],
 
-    // open queries in a new tab.
+    // open queries in a new tab
     newTab: true,
 
-    // the delimiter between the hours and minutes in the clock.
+    // the delimiter between the hours and minutes in the clock
     clockDelimiter: '&nbsp;',
   };
 </script>
@@ -421,7 +428,40 @@
     getSuggestions() {}
   }
 
-  class History extends Influencer {
+  class DefaultInfluencer extends Influencer {
+    constructor({ defaultSuggestions }) {
+      super(...arguments);
+      this._defaultSuggestions = defaultSuggestions;
+    }
+
+    getSuggestions(query) {
+      return new Promise(resolve => {
+        const suggestions = this._defaultSuggestions[query];
+        resolve(suggestions ? suggestions.slice(0, this._limit) : []);
+      });
+    }
+  }
+
+  class DuckDuckGoInfluencer extends Influencer {
+    constructor() {
+      super(...arguments);
+    }
+
+    getSuggestions(query) {
+      return new Promise(resolve => {
+        const endpoint = 'https://duckduckgo.com/ac/';
+        const callback = 'autocompleteCallback';
+
+        window[callback] = res => {
+          resolve(res.slice(0, this._limit).map(i => i.phrase));
+        };
+
+        $.jsonp(`${endpoint}?callback=${callback}&q=${query}`);
+      });
+    }
+  }
+
+  class HistoryInfluencer extends Influencer {
     constructor() {
       super(...arguments);
       this._storeName = 'history';
@@ -476,25 +516,6 @@
 
     _sort(history) {
       return history.sort((current, next) => current[1] - next[1]).reverse();
-    }
-  }
-
-  class DuckDuckGo extends Influencer {
-    constructor() {
-      super(...arguments);
-    }
-
-    getSuggestions(query) {
-      return new Promise(resolve => {
-        const endpoint = 'https://duckduckgo.com/ac/';
-        const callback = 'autocompleteCallback';
-
-        window[callback] = res => {
-          resolve(res.slice(0, this._limit).map(i => i.phrase));
-        };
-
-        $.jsonp(`${endpoint}?callback=${callback}&q=${query}`);
-      });
     }
   }
 
@@ -846,12 +867,16 @@
 
   const getInfluencers = () => {
     const availableInfluencers = {
-      DuckDuckGo: DuckDuckGo,
-      History: History,
+      Default: DefaultInfluencer,
+      DuckDuckGo: DuckDuckGoInfluencer,
+      History: HistoryInfluencer,
     };
 
     return CONFIG.influencers.map(i => {
-      return new availableInfluencers[i.name]({ limit: i.limit });
+      return new availableInfluencers[i.name]({
+        limit: i.limit,
+        defaultSuggestions: CONFIG.defaultSuggestions,
+      });
     });
   };
 
