@@ -3,12 +3,23 @@
 <script>
   const CONFIG = {
 
+    // the categories & commands that show up on the help overlay
+    // use the exact name of each command
+    categories: {
+      'Work': ['GitHub', 'Inbox', 'Keep'],
+      'Lurk': ['Instagram', 'Reddit', 'Twitter'],
+      'Listen': ['Hypem', 'Line Radio', 'SoundCloud'],
+      'Watch': ['Netflix', 'Twitch', 'YouTube'],
+      'Download': ['7digital', 'TPB', 'YIFY'],
+    },
+
     // the key, name, url and search path for your commands
     // if none of the specified keys are matched, the '*' key is used
     // if the key is set to null, the command is disabled
     commands: [
       ['*', 'Google', 'https://encrypted.google.com', '/search?q={}'],
       ['7', '7digital', 'https://us.7digital.com', '/search?q={}'],
+      ['f', 'Facebook', 'https://www.facebook.com', '/search/top/?q={}'],
       ['g', 'GitHub', 'https://github.com', '/search?q={}'],
       ['h', 'Hypem', 'http://hypem.com/popular', '/search/{}'],
       ['m', 'Inbox', 'https://inbox.google.com', '/search/{}'],
@@ -25,20 +36,36 @@
       ['y', 'YouTube', 'https://youtube.com/feed/subscriptions', '/results?search_query={}'],
     ],
 
+    // give suggestions as you type
+    suggestions: true,
+
+    // max amount of suggestions that will ever be displayed
+    suggestionsLimit: 5,
+
+    // the order and limit for each suggestion influencer
+    // "Default" suggestions come from CONFIG.defaultSuggestions
+    // "DuckDuckGo" suggestions come from the duck duck go search api
+    // "History" suggestions come from your previously entered queries
+    influencers: [
+      { name: 'Default', limit: 5 },
+      { name: 'History', limit: 2 },
+      { name: 'DuckDuckGo', limit: 5 },
+    ],
+
     // default search suggestions for the specified queries
     defaultSuggestions: {
-      'r': ['r/r/unixporn', 'r/r/startpages'],
+      'g': ['g/issues', 'g/pulls', 'gist.github.com', 'g/cadejscroggins'],
+      'l': ['l:electronic', 'l:chill', 'l:focus', 'l:sleep', 'l:ambient'],
+      'r': ['r/r/unixporn', 'r/r/startpages', 'r/r/webdev', 'r/r/technology', 'r/r/portland'],
+      's': ['s/you/likes', 's/discover/the-upload'],
     },
 
-    // the categories & commands that show up on the help overlay
-    // use the exact name of each command
-    categories: {
-      'Work': ['GitHub', 'Inbox', 'Keep'],
-      'Lurk': ['Instagram', 'Reddit', 'Twitter'],
-      'Listen': ['Hypem', 'Line Radio', 'SoundCloud'],
-      'Watch': ['Netflix', 'Twitch', 'YouTube'],
-      'Download': ['7digital', 'TPB', 'YIFY'],
-    },
+    // instantly redirect when a key is matched
+    // put a space before any other queries to prevent unwanted redirects
+    instantRedirect: false,
+
+    // open queries in a new tab
+    newTab: true,
 
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
@@ -47,29 +74,6 @@
     // the delimiter between the key and a path
     // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn"
     pathDelimiter: '/',
-
-    // instantly redirect when a key is matched
-    // put a space before any other queries to prevent unwanted redirects
-    instantRedirect: false,
-
-    // give suggestions as you type
-    suggestions: true,
-
-    // max amount of suggestions that will ever be displayed
-    suggestionsLimit: 4,
-
-    // the order and limit for each suggestion influencer
-    // "Default" suggestions come from CONFIG.defaultSuggestions
-    // "DuckDuckGo" suggestions come from the duck duck go search api
-    // "History" suggestions come from your previously entered queries
-    influencers: [
-      { name: 'Default', limit: 4 },
-      { name: 'History', limit: 2 },
-      { name: 'DuckDuckGo', limit: 4 },
-    ],
-
-    // open queries in a new tab
-    newTab: true,
 
     // the delimiter between the hours and minutes in the clock
     clockDelimiter: '&nbsp;',
@@ -136,7 +140,6 @@
   }
 
   #search-form {
-    transition: background .2s;
     background: #111;
     z-index: 2;
   }
@@ -253,6 +256,7 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    transition: opacity .1s;
     visibility: hidden;
     opacity: 0;
   }
