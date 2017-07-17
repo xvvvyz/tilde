@@ -9,8 +9,9 @@
       'Work': ['GitHub', 'Inbox', 'Keep'],
       'Lurk': ['Instagram', 'Reddit', 'Twitter'],
       'Listen': ['Hypem', 'Line Radio', 'SoundCloud'],
+      'Look': ['Codrops', 'Photos', 'Unsplash'],
       'Watch': ['Netflix', 'Twitch', 'YouTube'],
-      'Download': ['7digital', 'TPB', 'YIFY'],
+      'Download': ['7digital', 'The Pirate Bay', 'YTS'],
     },
 
     // the key, name, url and search path for your commands
@@ -19,20 +20,24 @@
     commands: [
       ['*', 'Google', 'https://encrypted.google.com', '/search?q={}'],
       ['7', '7digital', 'https://us.7digital.com', '/search?q={}'],
+      ['T', 'The Pirate Bay', 'https://thepiratebay.org', '/search/{}'],
+      ['Y', 'YTS', 'https://yts.ag/browse-movies/0/1080p/all/7/latest', '/browse-movies/{}/1080p/all/0/rating'],
+      ['a', 'Analytics', 'https://analytics.google.com', null],
+      ['c', 'Codrops', 'https://tympanus.net/codrops', '?search-type=posts&s={}'],
       ['f', 'Facebook', 'https://www.facebook.com', '/search/top/?q={}'],
       ['g', 'GitHub', 'https://github.com', '/search?q={}'],
       ['h', 'Hypem', 'http://hypem.com/popular', '/search/{}'],
-      ['m', 'Inbox', 'https://inbox.google.com', '/search/{}'],
       ['i', 'Instagram', 'https://www.instagram.com', false],
       ['k', 'Keep', 'https://keep.google.com', '/#search/text={}'],
       ['l', 'Line Radio', 'https://linerad.io', '/#{}'],
+      ['m', 'Inbox', 'https://inbox.google.com', '/search/{}'],
       ['n', 'Netflix', 'https://www.netflix.com/browse', '/search?q={}'],
+      ['p', 'Photos', 'https://photos.google.com', '/search/{}'],
       ['r', 'Reddit', 'https://www.reddit.com', '/search?q={}'],
       ['s', 'SoundCloud', 'https://soundcloud.com/discover', '/search?q={}'],
-      ['T', 'TPB', 'https://thepiratebay.org', '/search/{}'],
-      ['w', 'Twitch', 'https://www.twitch.tv/directory/following', null],
       ['t', 'Twitter', 'https://twitter.com', '/search?q={}'],
-      ['Y', 'YIFY', 'https://yts.ag/browse-movies/0/1080p/all/7/latest', '/browse-movies/{}/1080p/all/0/rating'],
+      ['u', 'Unsplash', 'https://unsplash.com/new', '/search/{}'],
+      ['w', 'Twitch', 'https://www.twitch.tv/directory/following', null],
       ['y', 'YouTube', 'https://youtube.com/feed/subscriptions', '/results?search_query={}'],
     ],
 
@@ -54,7 +59,7 @@
 
     // default search suggestions for the specified queries
     defaultSuggestions: {
-      'g': ['g/issues', 'g/pulls', 'gist.github.com', 'g/cadejscroggins'],
+      'g': ['g/issues', 'g/pulls', 'gist.github.com', 'g/cadejscroggins', 'g/cadejscroggins/tilde'],
       'l': ['l:electronic', 'l:chill', 'l:focus', 'l:sleep', 'l:ambient'],
       'r': ['r/r/unixporn', 'r/r/startpages', 'r/r/webdev', 'r/r/technology', 'r/r/portland'],
       's': ['s/you/likes', 's/discover/the-upload'],
@@ -140,14 +145,16 @@
   }
 
   #search-form {
+    padding: 1em;
     background: #111;
+    box-sizing: border-box;
     z-index: 2;
   }
 
   #search-input,
   #search-input:focus {
     margin-bottom: 20px;
-    font-size: 3em;
+    font-size: 1.5em;
     font-weight: 900;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -155,8 +162,8 @@
 
   #search-suggestions {
     display: none;
+    flex-wrap: wrap;
     justify-content: center;
-    overflow: hidden;
   }
 
   body.suggestions #search-suggestions {
@@ -189,7 +196,7 @@
   }
 
   .category {
-    margin-bottom: 3em;
+    margin: 1.5em 0;
   }
 
   .category:last-of-type {
@@ -276,7 +283,7 @@
     text-align: center;
   }
 
-  @media (min-width: 1200px) {
+  @media (min-width: 800px) {
     #help {
       display: flex;
       justify-content: center;
@@ -286,17 +293,23 @@
 
     #help>ul {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       width: 100%;
+      max-width: 1300px;
     }
 
     .category {
-      min-width: 18vw;
-      margin-bottom: 0;
+      min-width: calc(100% / 3);
     }
 
-    .category:last-of-type {
-      min-width: 0;
+    .category:nth-child(3n+3) {
+      min-width: 190px;
+    }
+
+    #search-input,
+    #search-input:focus {
+      font-size: 3em;
     }
   }
 </style>
@@ -844,7 +857,7 @@
           }
 
         default:
-          if ($.isUp(e) || $.isDown(e)) break;
+          if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) break;
           $.bodyClassAdd('form');
           this._inputEl.focus();
       }
