@@ -3,8 +3,11 @@
 <script>
   const CONFIG = {
 
-    // the key, name, redirect url and search path for your commands
+    // the key, name, url and search path for your commands
+    // if none of the specified keys are matched, the '*' key is used
+    // if the key is set to null, the command is disabled
     commands: [
+      ['*', 'Google', 'https://encrypted.google.com', '/search?q={}'],
       ['7', '7digital', 'https://us.7digital.com', '/search?q={}'],
       ['g', 'GitHub', 'https://github.com', '/search?q={}'],
       ['h', 'Hypem', 'http://hypem.com/popular', '/search/{}'],
@@ -36,9 +39,6 @@
       'Watch': ['Netflix', 'Twitch', 'YouTube'],
       'Download': ['7digital', 'TPB', 'YIFY'],
     },
-
-    // if none of the specified keys are matched, this is used for searching
-    defaultSearch: 'https://encrypted.google.com/search?q={}',
 
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
@@ -83,10 +83,7 @@
 <title>~</title>
 
 <style type="text/css">
-  @font-face {
-    font-family: 'Lato';
-    src: url('https://fonts.gstatic.com/s/lato/v11/22JRxvfANxSmnAhzbFH8PgLUuEpTyoUstqEm5AMlJo4.woff2') format('woff2');
-  }
+  @import url('https://fonts.googleapis.com/css?family=Lato:400,900');
 
   body {
     position: absolute;
@@ -96,27 +93,9 @@
     height: 100%;
     margin: 0;
     padding: 0;
+    transition: background .2s;
+    font-family: Lato, sans-serif;
     color: #222;
-    font-family: 'Lato', sans-serif;
-  }
-
-  main {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    left: 0;
-    width: 90%;
-    max-width: 310px;
-    margin: 0 auto;
-    transform: translateY(-100px);
-    text-align: center;
-  }
-
-  time {
-    display: block;
-    margin-bottom: 20px;
-    font-size: 5rem;
-    letter-spacing: 6px;
   }
 
   input,
@@ -126,11 +105,13 @@
     display: block;
     box-sizing: border-box;
     width: 100%;
+    margin: 0;
     border: 0;
     outline: 0;
     background: transparent;
     color: #fff;
-    font-family: 'Lato', sans-serif;
+    font-family: Lato, sans-serif;
+    text-align: center;
     -webkit-appearance: none;
     -moz-appearance: none;
   }
@@ -142,77 +123,75 @@
     list-style: none;
   }
 
-  #search-input,
-  #search-input:focus {
-    padding: 12px;
-    border-radius: 2px;
-    background: #222;
-    font-size: 1.1rem;
+  a {
+    color: inherit;
   }
 
-  body.suggestions #search-input {
-    border-radius: 2px 2px 0 0;
+  #clock {
+    display: block;
+    font-size: 6rem;
+    letter-spacing: .05em;
+  }
+
+  #search-form {
+    background: #111;
+    z-index: 2;
+  }
+
+  #search-input,
+  #search-input:focus {
+    margin-bottom: 20px;
+    font-size: 3em;
+    font-weight: 900;
+    letter-spacing: .05em;
+    text-transform: uppercase;
   }
 
   #search-suggestions {
     display: none;
-    padding: 4px 0;
-    border-radius: 0 0 2px 2px;
-    background: #111;
+    justify-content: center;
     overflow: hidden;
   }
 
   body.suggestions #search-suggestions {
-    display: block;
+    display: flex;
   }
 
   .search-suggestion {
-    margin: -4px 0;
-    padding: 10px 12px;
-    transition: background .2s;
-    font-size: .8rem;
-    text-align: left;
+    padding: 1em;
+    white-space: nowrap;
+    font-size: 1.1em;
     cursor: pointer;
   }
 
   .search-suggestion:focus,
   .search-suggestion.highlight {
-    background: #333;
+    background-color: #fff;
+    color: #222;
+  }
+
+  .search-suggestion b {
+    font-weight: 400;
+    text-decoration: line-through;
   }
 
   #help {
-    position: fixed;
-    top: 0;
-    left: 0;
-    visibility: hidden;
-    overflow: auto;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
     padding: 8vw;
-    transition: visibility .2s, opacity .2s, transform .4s;
-    transform: translateY(10px);
-    opacity: 0;
-    background: #606c88;
-    background: -webkit-linear-gradient(to right, #3f4c6b, #606c88);
-    background: linear-gradient(to right, #3f4c6b, #606c88);
-    font-size: 1.2rem;
-  }
-
-  body.help #help {
-    visibility: visible;
-    transform: translateY(0);
-    opacity: 1;
+    background: #fff;
+    font-size: 1.3rem;
+    z-index: 1;
   }
 
   .category {
-    width: 100%;
     margin-bottom: 3em;
+  }
+
+  .category:last-of-type {
+    margin-bottom: 0;
   }
 
   .category-name {
     margin: 0 0 2em;
-    color: rgba(255, 255, 255, .6);
     font-size: .7em;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -222,8 +201,7 @@
     display: block;
     position: relative;
     padding: .5em 0;
-    color: #fff;
-    font-size: 1em;
+    font-size: .9em;
     line-height: 2em;
     text-decoration: none;
   }
@@ -234,7 +212,8 @@
     width: 2.5em;
     margin-right: 1em;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, .1);
+    background-color: #222;
+    color: #fff;
     font-size: .8em;
     text-align: center;
   }
@@ -253,7 +232,7 @@
     height: 2px;
     transition: .2s;
     transform: translateX(-2em);
-    background-color: rgba(255, 255, 255, .2);
+    background-color: #222;
     opacity: 0;
   }
 
@@ -262,37 +241,71 @@
     opacity: 1;
   }
 
-  @media (min-width: 1000px) {
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    transition: opacity .3s;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  body.help #help.overlay,
+  body.form #search-form.overlay {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .middle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+
+  @media (min-width: 1200px) {
     #help {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 2em;
-      font-size: 1.3vw;
     }
 
     #help>ul {
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
       width: 100%;
     }
 
     .category {
-      width: 10em;
+      min-width: 18vw;
       margin-bottom: 0;
+    }
+
+    .category:last-of-type {
+      min-width: 0;
     }
   }
 </style>
 
-<main>
+<div class="middle">
   <time id="clock"></time>
-  <form id="search-form" autocomplete="off">
-    <input id="search-input" type="text" autofocus>
-    <ul id="search-suggestions"></ul>
-  </form>
-</main>
+</div>
 
-<aside id="help"></aside>
+<form class="overlay" id="search-form" autocomplete="off" spellcheck="false">
+  <div class="middle">
+    <input id="search-input" type="text">
+    <ul id="search-suggestions"></ul>
+  </div>
+</form>
+
+<aside class="overlay" id="help"></aside>
 
 <script>
   const $ = {
@@ -319,12 +332,17 @@
         case 8: return 'backspace';
         case 9: return shift ? 's-tab' : 'tab';
         case 13: return 'enter';
+        case 16: return 'shift';
+        case 17: return 'ctrl';
+        case 18: return 'alt';
         case 27: return 'escape';
         case 38: return 'up';
         case 40: return 'down';
         case 46: return 'delete';
         case 78: return ctrl ? 'c-n' : 'n';
         case 80: return ctrl ? 'c-p' : 'n';
+        case 91: return 'super';
+        case 191: return '?';
       }
     },
   };
@@ -453,7 +471,11 @@
         const callback = 'autocompleteCallback';
 
         window[callback] = res => {
-          resolve(res.slice(0, this._limit).map(i => i.phrase));
+          const suggestions = res.map(i => i.phrase)
+            .filter(suggestion => suggestion !== query)
+            .slice(0, this._limit);
+
+          resolve(suggestions);
         };
 
         $.jsonp(`${endpoint}?callback=${callback}&q=${query}`);
@@ -484,9 +506,9 @@
     getSuggestions(query) {
       return new Promise(resolve => {
         const suggestions = this._getHistory()
-          .filter(([item]) => this._itemContainsQuery(query, item))
-          .slice(0, this._limit)
-          .map(([item]) => item);
+          .map(([item]) => item)
+          .filter(item => this._itemContainsQuery(query, item))
+          .slice(0, this._limit);
 
         resolve(suggestions);
       });
@@ -502,7 +524,7 @@
     }
 
     _itemContainsQuery(query, item) {
-      return query && item.indexOf(query) !== -1;
+      return query && query !== item && item.indexOf(query) !== -1;
     }
 
     _save(history) {
@@ -552,9 +574,9 @@
 
       Promise.all(this._getInfluencerPromises(input)).then(res => {
         const suggestions = this._flattenAndUnique(res);
+        this._clearSuggestions();
 
         if (suggestions.length) {
-          this._clearSuggestions();
           this._appendSuggestions(suggestions, input);
           this._registerSuggestionEvents();
           $.bodyClassAdd('suggestions');
@@ -677,9 +699,8 @@
   }
 
   class QueryParser {
-    constructor({ commands, defaultSearch, pathDelimiter, searchDelimiter }) {
+    constructor({ commands, pathDelimiter, searchDelimiter }) {
       this._commands = commands;
-      this._defaultSearch = defaultSearch;
       this._searchDelimiter = searchDelimiter;
       this._pathDelimiter = pathDelimiter;
       this._protocolRegex = /^[a-zA-Z]+:\/\//i;
@@ -687,8 +708,7 @@
     }
 
     generateRedirect(query) {
-      const encodedQuery = encodeURIComponent(query);
-      let redirectUrl = this._defaultSearch.replace('{}', encodedQuery);
+      let redirectUrl;
 
       if (query.match(this._urlRegex)) {
         const hasProtocol = query.match(this._protocolRegex);
@@ -711,6 +731,10 @@
             }
 
             return true;
+          }
+
+          if (key === '*') {
+            redirectUrl = this._prepSearch(url, searchPath, query);
           }
         });
       }
@@ -736,10 +760,13 @@
       return this._stripUrlPath(url) + '/' + path;
     }
 
-    _prepSearch(url, searchPath, splitSearch) {
+    _prepSearch(url, searchPath, query) {
       if (!searchPath) return url;
       const baseUrl = this._stripUrlPath(url);
-      const query = this._shiftAndTrim(splitSearch, this._searchDelimiter);
+
+      query = query.constructor !== Array ? query.trim()
+        : this._shiftAndTrim(query, this._searchDelimiter);
+
       const urlQuery = encodeURIComponent(query);
       searchPath = searchPath.replace('{}', urlQuery);
       return baseUrl + searchPath;
@@ -773,6 +800,7 @@
 
     _bindMethods() {
       this._clearPreview = this._clearPreview.bind(this);
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._handleKeypress = this._handleKeypress.bind(this);
       this._handleKeyup = this._handleKeyup.bind(this);
       this._previewValue = this._previewValue.bind(this);
@@ -783,6 +811,7 @@
     _clearInput() {
       this._inputEl.value = '';
       this._inputElVal = '';
+      $.bodyClassRemove('form');
     }
 
     _clearPreview() {
@@ -790,13 +819,38 @@
       this._inputEl.focus();
     }
 
+    _handleKeydown(e) {
+      switch ($.key(e)) {
+        case 'alt':
+        case 'ctrl':
+        case 'enter':
+        case 'shift':
+        case 'super':
+          break;
+
+        case 'escape':
+          this._clearInput();
+          break;
+
+        case '?':
+          if (!this._inputElVal) {
+            e.preventDefault();
+            this._help.toggle();
+            break;
+          }
+
+        default:
+          if ($.isUp(e) || $.isDown(e)) break;
+          $.bodyClassAdd('form');
+          this._inputEl.focus();
+      }
+    }
+
     _handleKeypress(e) {
       const newChar = String.fromCharCode(e.which);
       const newQuery = this._inputEl.value + newChar;
       const validChar = newChar.length && $.key(e) !== 'enter';
       const queryDiffers = this._inputElVal !== newQuery;
-
-      if (validChar) this._help.toggle(false);
 
       if (
         this._instantRedirect &&
@@ -811,6 +865,7 @@
 
     _handleKeyup(e) {
       const newQuery = this._inputEl.value;
+      if (!newQuery) $.bodyClassRemove('form');
 
       if (this._suggester && $.isRemove(e) && this._inputElVal !== newQuery) {
         this._suggester.suggest(newQuery);
@@ -828,6 +883,7 @@
     }
 
     _registerEvents() {
+      document.addEventListener('keydown', this._handleKeydown);
       this._inputEl.addEventListener('keypress', this._handleKeypress);
       this._inputEl.addEventListener('keyup', this._handleKeyup);
       this._formEl.addEventListener('submit', this._submitForm, false);
@@ -840,13 +896,8 @@
       if (e) e.preventDefault();
       const query = this._inputEl.value.trim();
       this._clearInput();
-
-      if (!query || query === '?') {
-        this._help.toggle();
-      } else {
-        this._suggester.success(query);
-        this._redirect(this._queryParser.generateRedirect(query));
-      }
+      this._suggester.success(query);
+      this._redirect(this._queryParser.generateRedirect(query));
     }
 
     _submitWithValue(value) {
@@ -890,7 +941,6 @@
   const getQueryParser = () => {
     return new QueryParser({
       commands: CONFIG.commands,
-      defaultSearch: CONFIG.defaultSearch,
       pathDelimiter: CONFIG.pathDelimiter,
       searchDelimiter: CONFIG.searchDelimiter,
     });
