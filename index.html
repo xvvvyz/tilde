@@ -3,42 +3,34 @@
 <script>
   const CONFIG = {
 
-    // the categories & commands that show up on the help overlay
-    // use the exact name of each command
-    categories: {
-      'Work': ['GitHub', 'Inbox', 'Keep'],
-      'Lurk': ['Instagram', 'Reddit', 'Twitter'],
-      'Listen': ['Hypem', 'Line Radio', 'SoundCloud'],
-      'Look': ['Codrops', 'Photos', 'Unsplash'],
-      'Watch': ['Netflix', 'Twitch', 'YouTube'],
-      'Download': ['7digital', 'The Pirate Bay', 'YTS'],
-    },
-
-    // the key, name, url and search path for your commands
+    // the category, key, name, url, search path and color for your commands
     // if none of the specified keys are matched, the '*' key is used
-    // if the key is set to null, the command is disabled
     commands: [
-      ['*', 'Google', 'https://encrypted.google.com', '/search?q={}'],
-      ['7', '7digital', 'https://us.7digital.com', '/search?q={}'],
-      ['T', 'The Pirate Bay', 'https://thepiratebay.org', '/search/{}'],
-      ['Y', 'YTS', 'https://yts.ag/browse-movies/0/1080p/all/7/latest', '/browse-movies/{}/1080p/all/0/rating'],
-      ['a', 'Analytics', 'https://analytics.google.com', null],
-      ['c', 'Codrops', 'https://tympanus.net/codrops', '?search-type=posts&s={}'],
-      ['f', 'Facebook', 'https://www.facebook.com', '/search/top/?q={}'],
-      ['g', 'GitHub', 'https://github.com', '/search?q={}'],
-      ['h', 'Hypem', 'http://hypem.com/popular', '/search/{}'],
-      ['i', 'Instagram', 'https://www.instagram.com', false],
-      ['k', 'Keep', 'https://keep.google.com', '/#search/text={}'],
-      ['l', 'Line Radio', 'https://linerad.io', '/#{}'],
-      ['m', 'Inbox', 'https://inbox.google.com', '/search/{}'],
-      ['n', 'Netflix', 'https://www.netflix.com/browse', '/search?q={}'],
-      ['p', 'Photos', 'https://photos.google.com', '/search/{}'],
-      ['r', 'Reddit', 'https://www.reddit.com', '/search?q={}'],
-      ['s', 'SoundCloud', 'https://soundcloud.com/discover', '/search?q={}'],
-      ['t', 'Twitter', 'https://twitter.com', '/search?q={}'],
-      ['u', 'Unsplash', 'https://unsplash.com/new', '/search/{}'],
-      ['w', 'Twitch', 'https://www.twitch.tv/directory/following', null],
-      ['y', 'YouTube', 'https://youtube.com/feed/subscriptions', '/results?search_query={}'],
+      [null, 'Google', '*', 'https://encrypted.google.com', '/search?q={}', '#111'],
+      ['Work', 'Analytics', 'a', 'https://analytics.google.com', null, '#ff6d00'],
+      ['Work', 'GitHub', 'g', 'https://github.com', '/search?q={}', '#333'],
+      ['Work', 'Inbox', 'I', 'https://inbox.google.com', '/search/{}', '#4285f4'],
+      ['Work', 'Keep', 'k', 'https://keep.google.com', '/#search/text={}', '#fb0'],
+      ['Look', 'Codrops', 'C', 'https://tympanus.net/codrops', '?search-type=posts&s={}', '#0099cc'],
+      ['Look', 'Hunt', 'H', 'https://www.producthunt.com', '/search?q={}', '#da552f'],
+      ['Look', 'Photos', 'P', 'https://photos.google.com', '/search/{}', '#34a853'],
+      ['Look', 'Unsplash', 'u', 'https://unsplash.com/new', '/search/{}', '#000'],
+      ['Lurk', 'Facebook', 'f', 'https://www.facebook.com', '/search/top/?q={}', '#3b5998'],
+      ['Lurk', 'Instagram', 'i', 'https://www.instagram.com', false, '#833ab4'],
+      ['Lurk', 'Reddit', 'r', 'https://www.reddit.com', '/search?q={}', '#5f99cf'],
+      ['Lurk', 'Twitter', 't', 'https://twitter.com', '/search?q={}', '#1da1f2'],
+      ['Listen', 'Hypem', 'h', 'https://hypem.com/popular', '/search/{}', '#83c441'],
+      ['Listen', 'Line Radio', 'l', 'https://linerad.io', '/#{}', '#39CCCC'],
+      ['Listen', 'Pandora', 'p', 'https://www.pandora.com', '/artist/{}', '#005483'],
+      ['Listen', 'SoundCloud', 's', 'https://soundcloud.com/discover', '/search?q={}', '#ff8800'],
+      ['Watch', 'Academy', 'A', 'https://www.khanacademy.org/', '/search?page_search_query={}', '#9cb443'],
+      ['Watch', 'Netflix', 'n', 'https://www.netflix.com/browse', '/search?q={}', '#e50914'],
+      ['Watch', 'Twitch', 'T', 'https://www.twitch.tv/directory/following', null, '#6441a5'],
+      ['Watch', 'YouTube', 'y', 'https://youtube.com/feed/subscriptions', '/results?search_query={}', '#cd201f'],
+      ['Download', '7digital', '7', 'https://us.7digital.com', '/search?q={}', '#07606e'],
+      ['Download', 'Sky Torrents', 'S', 'https://skytorrents.in', '/search/all/ed/1?q={}', '#00d1b2'],
+      ['Download', 'The Pirate Bay', 'b', 'https://thepiratebay.org', '/search/{}', '#4c4132'],
+      ['Download', 'YTS', 'Y', 'https://yts.ag/browse-movies/0/1080p/all/7/latest', '/browse-movies/{}/1080p/all/0/rating', '#2f2f2f'],
     ],
 
     // give suggestions as you type
@@ -72,6 +64,9 @@
     // open queries in a new tab
     newTab: true,
 
+    // dynamic background colors when command domains are matched
+    colors: true,
+
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
     searchDelimiter: ':',
@@ -86,6 +81,7 @@
 </script>
 
 <meta charset="utf-8">
+<meta http-equiv="x-dns-prefetch-control" content="on">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 
@@ -140,6 +136,7 @@
 
   #clock {
     display: block;
+    margin-top: -.06em;
     font-size: 6rem;
     letter-spacing: .05em;
   }
@@ -147,12 +144,18 @@
   #search-form {
     padding: 1em;
     background: #111;
+    transition: background-color .5s;
     box-sizing: border-box;
     z-index: 2;
   }
 
+  #search-form>div {
+    width: 100%;
+  }
+
   #search-input,
   #search-input:focus {
+    width: 100%;
     margin-bottom: 20px;
     font-size: 1.5em;
     font-weight: 900;
@@ -177,18 +180,33 @@
     cursor: pointer;
   }
 
-  .search-suggestion:focus,
   .search-suggestion.highlight {
     background-color: #fff;
     color: #222;
   }
 
   .search-suggestion b {
+    position: relative;
     font-weight: 400;
-    text-decoration: line-through;
+  }
+
+  .search-suggestion b::after {
+    content: ' ';
+    position: absolute;
+    top: 51%;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background-color: #fff;
+    opacity: .8;
+  }
+
+  .search-suggestion.highlight b::after {
+    opacity: 0;
   }
 
   #help {
+    display: block;
     padding: 8vw;
     background: #fff;
     font-size: 1.3rem;
@@ -196,7 +214,7 @@
   }
 
   .category {
-    margin: 1.5em 0;
+    margin-bottom: 2rem;
   }
 
   .category:last-of-type {
@@ -204,7 +222,7 @@
   }
 
   .category-name {
-    margin: 0 0 2em;
+    margin: 0 0 2rem;
     font-size: .7em;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -213,10 +231,14 @@
   .command a {
     display: block;
     position: relative;
-    padding: .5em 0;
+    margin: 1em 0;
     font-size: .9em;
     line-height: 2em;
     text-decoration: none;
+  }
+
+  .command:last-of-type a {
+    margin-bottom: 0;
   }
 
   .command-key {
@@ -263,48 +285,32 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    transition: opacity .1s;
     visibility: hidden;
-    opacity: 0;
   }
 
   body.help #help.overlay,
   body.form #search-form.overlay {
     visibility: visible;
-    opacity: 1;
   }
 
-  .middle {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    left: 0;
-    transform: translateY(-50%);
-    text-align: center;
+  .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
   }
 
-  @media (min-width: 800px) {
-    #help {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2em;
+  @media (min-width: 500px) {
+    .categories {
+      display: grid;
+      grid-template-columns: 250px 175px;
+      justify-content: space-around;
     }
 
-    #help>ul {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      max-width: 1300px;
-    }
-
-    .category {
-      min-width: calc(100% / 3);
-    }
-
-    .category:nth-child(3n+3) {
-      min-width: 190px;
+    .category:nth-last-child(2) {
+      margin-bottom: 0;
     }
 
     #search-input,
@@ -312,28 +318,52 @@
       font-size: 3em;
     }
   }
+
+  @media (min-width: 1000px) {
+    #help {
+      display: flex;
+      padding: 0;
+    }
+
+    .category {
+      margin: 2rem 0;
+    }
+
+    .categories {
+      grid-template-columns: repeat(2, 300px) 175px;
+    }
+  }
+
+  @media (min-width: 1700px) {
+    .categories {
+      grid-template-columns: repeat(5, 250px) 175px;
+    }
+  }
 </style>
 
-<div class="middle">
+<div class="center">
   <time id="clock"></time>
 </div>
 
-<form class="overlay" id="search-form" autocomplete="off" spellcheck="false">
-  <div class="middle">
+<form class="overlay center" id="search-form" autocomplete="off" spellcheck="false">
+  <div>
     <input id="search-input" type="text">
     <ul id="search-suggestions"></ul>
   </div>
 </form>
 
-<aside class="overlay" id="help"></aside>
+<aside class="overlay center" id="help"></aside>
 
 <script>
   const $ = {
-    bodyClassRemove: c => $.el('body').classList.remove(c),
     bodyClassAdd: c => $.el('body').classList.add(c),
+    bodyClassHas: c => $.el('body').classList.contains(c),
+    bodyClassRemove: c => $.el('body').classList.remove(c),
     el: s => document.querySelector(s),
     els: s => [].slice.call(document.querySelectorAll(s) || []),
     escapeRegex: s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
+    ieq: (a, b) => a.toLowerCase() === b.toLowerCase(),
+    iin: (a, b) => a.toLowerCase().indexOf(b.toLowerCase()) !== -1,
     isDown: e => ['c-n', 'down', 'tab'].includes($.key(e)),
     isRemove: e => ['backspace', 'delete'].includes($.key(e)),
     isUp: e => ['c-p', 'up', 's-tab'].includes($.key(e)),
@@ -362,7 +392,7 @@
         case 78: return ctrl ? 'c-n' : 'n';
         case 80: return ctrl ? 'c-p' : 'n';
         case 91: return 'super';
-        case 191: return '?';
+        case 191: return shift ? '?' : '/';
       }
     },
   };
@@ -393,11 +423,10 @@
   }
 
   class Help {
-    constructor({ commands, categories, newTab }) {
+    constructor(options) {
       this._el = $.el('#help');
-      this._commands = commands;
-      this._categories = categories;
-      this._newTab = newTab;
+      this._commands = options.commands;
+      this._newTab = options.newTab;
       this._toggled = false;
       this._buildAndAppendLists();
       this._bindMethods();
@@ -415,37 +444,42 @@
 
     _buildAndAppendLists() {
       const lists = document.createElement('ul');
+      lists.classList.add('categories');
 
-      for (let name in this._categories) {
+      this._getCategories().forEach(category => {
         lists.insertAdjacentHTML(
           'beforeend',
           `<li class="category">
-            <h2 class="category-name">${name}</h2>
-            <ul>${this._buildListCommands(this._categories[name])}</ul>
+            <h2 class="category-name">${category}</h2>
+            <ul>${this._buildListCommands(category)}</ul>
           </li>`
         );
-      }
+      });
 
       this._el.appendChild(lists);
     }
 
-    _buildListCommands(commandNames) {
-      return commandNames.map(commandName => {
-        const [key, name, url] = this._getCommandFromName(commandName);
-
-        return (
-          `<li class="command">
-            <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
-              <span class="command-key">${key}</span>
-              <span class="command-name">${name}</span>
-            </a>
-          </li>`
-        );
+    _buildListCommands(category) {
+      return this._commands.map(([cmdCategory, name, key, url]) => {
+        if (cmdCategory === category) {
+          return (
+            `<li class="command">
+              <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
+                <span class="command-key">${key}</span>
+                <span class="command-name">${name}</span>
+              </a>
+            </li>`
+          );
+        }
       }).join('');
     }
 
-    _getCommandFromName(commandName) {
-      return this._commands.filter(([key, name]) => name === commandName)[0];
+    _getCategories() {
+      const categories = this._commands
+        .map(([category]) => category)
+        .filter(category => category);
+
+      return [...new Set(categories)];
     }
 
     _handleKeydown(e) {
@@ -458,12 +492,27 @@
   }
 
   class Influencer {
-    constructor({ limit }) {
-      this._limit = limit;
+    constructor(options) {
+      this._limit = options.limit;
+      this._queryParser = options.queryParser;
     }
 
     addItem() {}
     getSuggestions() {}
+
+    _addSearchPrefix(items, query) {
+      const searchPrefix = this._getSearchPrefix(query)
+      return items.map(s => searchPrefix ? searchPrefix + s : s);
+    }
+
+    _getSearchPrefix(query) {
+      const { isSearch, key, split } = this._parseQuery(query);
+      return isSearch ? `${key}${split} ` : false;
+    }
+
+    _parseQuery(query) {
+      return this._queryParser.parse(query);
+    }
   }
 
   class DefaultInfluencer extends Influencer {
@@ -481,21 +530,24 @@
   }
 
   class DuckDuckGoInfluencer extends Influencer {
-    constructor() {
+    constructor({ queryParser }) {
       super(...arguments);
     }
 
-    getSuggestions(query) {
+    getSuggestions(rawQuery) {
+      const { query } = this._parseQuery(rawQuery);
+      if (!query) return Promise.resolve([]);
+
       return new Promise(resolve => {
         const endpoint = 'https://duckduckgo.com/ac/';
         const callback = 'autocompleteCallback';
 
         window[callback] = res => {
           const suggestions = res.map(i => i.phrase)
-            .filter(suggestion => suggestion !== query)
-            .slice(0, this._limit);
+            .filter(s => !$.ieq(s, query))
+            .slice(0, this._limit)
 
-          resolve(suggestions);
+          resolve(this._addSearchPrefix(suggestions, rawQuery));
         };
 
         $.jsonp(`${endpoint}?callback=${callback}&q=${query}`);
@@ -514,7 +566,7 @@
       let exists;
 
       const history = this._getHistory().map(([item, count]) => {
-        const match = item === query;
+        const match = $.ieq(item, query);
         if (match) exists = true;
         return [item, match ? count + 1 : count];
       });
@@ -544,7 +596,7 @@
     }
 
     _itemContainsQuery(query, item) {
-      return query && query !== item && item.indexOf(query) !== -1;
+      return query && !$.ieq(item, query) && $.iin(item, query);
     }
 
     _save(history) {
@@ -562,10 +614,10 @@
   }
 
   class Suggester {
-    constructor({ influencers, limit }) {
+    constructor(options) {
       this._el = $.el('#search-suggestions');
-      this._influencers = influencers;
-      this._limit = limit;
+      this._influencers = options.influencers;
+      this._limit = options.limit;
       this._suggestionEls = [];
       this._bindMethods();
       this._registerEvents();
@@ -606,7 +658,7 @@
 
     _appendSuggestions(suggestions, input) {
       suggestions.some((suggestion, i) => {
-        const match = new RegExp($.escapeRegex(input), 'g');
+        const match = new RegExp($.escapeRegex(input), 'ig');
         const suggestionHtml = suggestion.replace(match, `<b>${input}</b>`);
 
         this._el.insertAdjacentHTML(
@@ -719,16 +771,16 @@
   }
 
   class QueryParser {
-    constructor({ commands, pathDelimiter, searchDelimiter }) {
-      this._commands = commands;
-      this._searchDelimiter = searchDelimiter;
-      this._pathDelimiter = pathDelimiter;
+    constructor(options) {
+      this._commands = options.commands;
+      this._searchDelimiter = options.searchDelimiter;
+      this._pathDelimiter = options.pathDelimiter;
       this._protocolRegex = /^[a-zA-Z]+:\/\//i;
-      this._urlRegex = /^(?:(http|https)?:\/\/)?(?:[\w-]+\.)+([a-z]|[A-Z]|[0-9]){2,6}/i;
+      this._urlRegex = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
     }
 
     parse(query) {
-      const res = { query: query };
+      const res = { query: query, split: null };
 
       if (query.match(this._urlRegex)) {
         const hasProtocol = query.match(this._protocolRegex);
@@ -737,16 +789,22 @@
         const splitSearch = query.split(this._searchDelimiter);
         const splitPath = query.split(this._pathDelimiter);
 
-        this._commands.some(([key, name, url, searchPath]) => {
-          const isSearch = splitSearch[0] === key;
-          const isPath = splitPath[0] === key;
+        this._commands.some(([category, name, key, url, searchPath]) => {
+          res.isKey = query === key;
+          res.isSearch = !res.isKey && splitSearch[0] === key;
+          res.isPath = !res.isKey && splitPath[0] === key;
 
-          if (isSearch || isPath) {
-            if (splitSearch[1] && searchPath) {
-              res.query = this._shiftAndTrim(splitSearch, this._searchDelimiter);
+          if (res.isKey || res.isSearch || res.isPath) {
+            res.key = key;
+
+            if (res.isSearch && searchPath) {
+              res.split = this._searchDelimiter;
+              res.query = this._shiftAndTrim(splitSearch, res.split);
               res.redirect = this._prepSearch(url, searchPath, res.query);
-            } else if (splitPath[1]) {
-              res.redirect = this._prepPath(url, splitPath);
+            } else if (res.isPath) {
+              res.split = this._pathDelimiter;
+              res.path = this._shiftAndTrim(splitPath, res.split);
+              res.redirect = this._prepPath(url, res.path);
             } else {
               res.redirect = url;
             }
@@ -760,24 +818,26 @@
         });
       }
 
+      res.color = this._getColorFromUrl(res.redirect);
       return res;
     }
 
-    instantRedirect(query, callback) {
-      let exists;
+    _getColorFromUrl(url) {
+      const domain = this._getHostname(url);
+      const color = this._commands
+        .filter(c => this._getHostname(c[3]) === domain)
+        .map(c => c[5])[0];
 
-      this._commands.forEach(([key, name, url]) => {
-        if (key === query) {
-          callback(url);
-          exists = true;
-        }
-      });
-
-      return exists;
+      return color || null;
     }
 
-    _prepPath(url, splitPath) {
-      const path = this._shiftAndTrim(splitPath, this._pathDelimiter);
+    _getHostname(url) {
+      const parser = document.createElement('a');
+      parser.href = url;
+      return parser.hostname.replace(/^www./, '');
+    }
+
+    _prepPath(url, path) {
       return this._stripUrlPath(url) + '/' + path;
     }
 
@@ -802,14 +862,15 @@
   }
 
   class Form {
-    constructor({ help, instantRedirect, newTab, suggester, queryParser }) {
+    constructor(options) {
       this._formEl = $.el('#search-form');
       this._inputEl = $.el('#search-input');
-      this._help = help;
-      this._suggester = suggester;
-      this._queryParser = queryParser;
-      this._instantRedirect = instantRedirect;
-      this._newTab = newTab;
+      this._colors = options.colors;
+      this._help = options.help;
+      this._suggester = options.suggester;
+      this._queryParser = options.queryParser;
+      this._instantRedirect = options.instantRedirect;
+      this._newTab = options.newTab;
       this._inputElVal = '';
       this._bindMethods();
       this._registerEvents();
@@ -834,33 +895,24 @@
     _clearPreview() {
       this._inputEl.value = this._inputElVal;
       this._inputEl.focus();
+      this._setBackgroundFromQuery(this._inputElVal);
     }
 
     _handleKeydown(e) {
+      if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
+
       switch ($.key(e)) {
         case 'alt':
         case 'ctrl':
         case 'enter':
         case 'shift':
-        case 'super':
-          break;
-
-        case 'escape':
-          this._clearInput();
-          break;
-
-        case '?':
-          if (!this._inputElVal) {
-            e.preventDefault();
-            this._help.toggle();
-            break;
-          }
-
-        default:
-          if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) break;
-          $.bodyClassAdd('form');
-          this._inputEl.focus();
+        case 'super': return;
+        case 'escape': this._clearInput(); return;
+        case '?': if (!$.bodyClassHas('form')) this._help.toggle(); return;
       }
+
+      $.bodyClassAdd('form');
+      this._inputEl.focus();
     }
 
     _handleKeypress(e) {
@@ -868,12 +920,12 @@
       const newQuery = this._inputEl.value + newChar;
       const validChar = newChar.length && $.key(e) !== 'enter';
       const queryDiffers = this._inputElVal !== newQuery;
+      const { isKey, color } = this._queryParser.parse(newQuery);
+      this._setBackground(color);
 
-      if (
-        this._instantRedirect &&
-        this._queryParser.instantRedirect(newQuery, this._submitWithValue)
-      ) {
+      if (this._instantRedirect && isKey) {
         e.preventDefault();
+        this._submitWithValue(newQuery);
       } else if (this._suggester && validChar && queryDiffers) {
         this._suggester.suggest(newQuery);
         this._inputElVal = newQuery;
@@ -882,9 +934,12 @@
 
     _handleKeyup(e) {
       const newQuery = this._inputEl.value;
-      if (!newQuery) $.bodyClassRemove('form');
+      const queryDiffers = this._inputElVal !== newQuery;
+      this._setBackgroundFromQuery(newQuery);
 
-      if (this._suggester && $.isRemove(e) && this._inputElVal !== newQuery) {
+      if (!newQuery) {
+        $.bodyClassRemove('form');
+      } else if (this._suggester && $.isRemove(e) && queryDiffers) {
         this._suggester.suggest(newQuery);
         this._inputElVal = newQuery;
       }
@@ -892,6 +947,7 @@
 
     _previewValue(value) {
       this._inputEl.value = value;
+      this._setBackgroundFromQuery(value);
     }
 
     _redirect(redirect) {
@@ -904,16 +960,29 @@
       this._inputEl.addEventListener('keypress', this._handleKeypress);
       this._inputEl.addEventListener('keyup', this._handleKeyup);
       this._formEl.addEventListener('submit', this._submitForm, false);
-      this._suggester.setOnClick(this._submitWithValue);
-      this._suggester.setOnHighlight(this._previewValue);
-      this._suggester.setOnUnhighlight(this._clearPreview);
+
+      if (this._suggester) {
+        this._suggester.setOnClick(this._submitWithValue);
+        this._suggester.setOnHighlight(this._previewValue);
+        this._suggester.setOnUnhighlight(this._clearPreview);
+      }
+    }
+
+    _setBackground(color) {
+      this._formEl.style.backgroundColor = color;
+    }
+
+    _setBackgroundFromQuery(query) {
+      if (this._colors) {
+        this._setBackground(this._queryParser.parse(query).color);
+      }
     }
 
     _submitForm(e) {
       if (e) e.preventDefault();
-      const query = this._inputEl.value.trim();
+      const query = this._inputEl.value;
+      if (this._suggester) this._suggester.success(query);
       this._clearInput();
-      this._suggester.success(query);
       this._redirect(this._queryParser.parse(query).redirect);
     }
 
@@ -927,7 +996,6 @@
 <script>
   const getHelp = () => {
     return new Help({
-      categories: CONFIG.categories,
       commands: CONFIG.commands,
       newTab: CONFIG.newTab,
     });
@@ -943,6 +1011,7 @@
     return CONFIG.influencers.map(i => {
       return new availableInfluencers[i.name]({
         limit: i.limit,
+        queryParser: getQueryParser(),
         defaultSuggestions: CONFIG.defaultSuggestions,
       });
     });
@@ -968,6 +1037,7 @@
   });
 
   new Form({
+    colors: CONFIG.colors,
     help: getHelp(),
     instantRedirect: CONFIG.instantRedirect,
     newTab: CONFIG.newTab,
