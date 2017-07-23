@@ -77,6 +77,10 @@
 
     // the delimiter between the hours and minutes in the clock
     clockDelimiter: '&nbsp;',
+
+    // note: you can pass in your search query via the q query param
+    // e.g. going to file:///path/to/tilde/index.html?q=hamsters is equivalent
+    // to typing "hamsters" and pressing enter
   };
 </script>
 
@@ -874,6 +878,7 @@
       this._inputElVal = '';
       this._bindMethods();
       this._registerEvents();
+      this._loadQueryParam();
     }
 
     _bindMethods() {
@@ -943,6 +948,11 @@
         this._suggester.suggest(newQuery);
         this._inputElVal = newQuery;
       }
+    }
+
+    _loadQueryParam() {
+      const q = new URLSearchParams(window.location.search).get('q');
+      if (q) this._submitWithValue(q);
     }
 
     _previewValue(value) {
