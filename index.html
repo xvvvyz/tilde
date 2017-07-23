@@ -77,6 +77,11 @@
 
     // the delimiter between the hours and minutes in the clock
     clockDelimiter: '&nbsp;',
+
+    // allows this landing page to act as a search page
+    // e.g. going to file:///path/to/tilde/index.html?action=hamsters
+    // will be equivalent to typing "hamsters" and pressing enter
+    actionQueryParameter: 'action',
   };
 </script>
 
@@ -883,7 +888,7 @@
       this._handleKeyup = this._handleKeyup.bind(this);
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
-      this._submitWithValue = this._submitWithValue.bind(this);
+      this.submitWithValue = this.submitWithValue.bind(this);
     }
 
     _clearInput() {
@@ -925,7 +930,7 @@
 
       if (this._instantRedirect && isKey) {
         e.preventDefault();
-        this._submitWithValue(newQuery);
+        this.submitWithValue(newQuery);
       } else if (this._suggester && validChar && queryDiffers) {
         this._suggester.suggest(newQuery);
         this._inputElVal = newQuery;
@@ -962,7 +967,7 @@
       this._formEl.addEventListener('submit', this._submitForm, false);
 
       if (this._suggester) {
-        this._suggester.setOnClick(this._submitWithValue);
+        this._suggester.setOnClick(this.submitWithValue);
         this._suggester.setOnHighlight(this._previewValue);
         this._suggester.setOnUnhighlight(this._clearPreview);
       }
@@ -986,7 +991,7 @@
       this._redirect(this._queryParser.parse(query).redirect);
     }
 
-    _submitWithValue(value) {
+    submitWithValue(value) {
       this._inputEl.value = value;
       this._submitForm();
     }
@@ -1036,7 +1041,7 @@
     delimiter: CONFIG.clockDelimiter,
   });
 
-  new Form({
+  const tildeForm = new Form({
     colors: CONFIG.colors,
     help: getHelp(),
     instantRedirect: CONFIG.instantRedirect,
@@ -1044,4 +1049,23 @@
     queryParser: getQueryParser(),
     suggester: CONFIG.suggestions ? getSuggester() : false,
   });
+</script>
+
+<script>
+  const queryString = window.location.search.replace(/\?/, '');
+  const queryPairs = queryString.split(/&/).map(pair => pair.split(/=/));
+  const query = {};
+  queryPairs.forEach(pair => {
+    if (pair.length === 1) {
+      query[pair[0]] = true
+    } else {
+      query[pair[0]] = decodeURIComponent(pair[1])
+    }
+  });
+
+  // run action
+  const action = query[CONFIG.actionQueryParameter];
+  if (action) {
+    tildeForm.submitWithValue(action);
+  }
 </script>
