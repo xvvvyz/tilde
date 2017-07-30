@@ -890,6 +890,8 @@
 
     hide() {
       $.bodyClassRemove('form')
+      this._inputEl.value = '';
+      this._inputElVal = '';
     }
 
     show() {
@@ -898,6 +900,7 @@
     }
 
     _bindMethods() {
+      this.hide = this.hide.bind(this);
       this.show = this.show.bind(this);
       this._clearPreview = this._clearPreview.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
@@ -905,12 +908,6 @@
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
-    }
-
-    _clearInput() {
-      this._inputEl.value = '';
-      this._inputElVal = '';
-      $.bodyClassRemove('form');
     }
 
     _clearPreview() {
@@ -922,14 +919,22 @@
     _handleKeydown(e) {
       if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
 
+      const handleQuestion = () => {
+        if (!this._inputElVal) {
+          this.hide();
+          if ($.bodyClassHas('form')) this._help.toggle(true);
+          else this._help.toggle();
+        }
+      };
+
       switch ($.key(e)) {
         case 'alt':
         case 'ctrl':
         case 'enter':
         case 'shift':
         case 'super': return;
-        case 'escape': this._clearInput(); return;
-        case '?': if (!$.bodyClassHas('form')) this._help.toggle(); return;
+        case 'escape': this.hide(); return;
+        case '?': handleQuestion(); return;
       }
 
       this.show();
@@ -940,9 +945,9 @@
       const { isKey } = this._queryParser.parse(newQuery);
       this._inputElVal = newQuery;
       this._setBackgroundFromQuery(newQuery);
+      if (this._suggester) this._suggester.suggest(newQuery);
       if (!newQuery) this.hide();
       else if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
-      else if (this._suggester) this._suggester.suggest(newQuery);
     }
 
     _loadQueryParam() {
@@ -982,7 +987,7 @@
       if (e) e.preventDefault();
       const query = this._inputEl.value;
       if (this._suggester) this._suggester.success(query);
-      this._clearInput();
+      this.hide();
       this._redirect(this._queryParser.parse(query).redirect);
     }
 
