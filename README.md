@@ -12,7 +12,7 @@ To go to a site, enter the corresponding key. To view the available sites and th
 * Entering `t` would redirect you to [twitter.com](https://twitter.com).
 * Entering `cats` would search [Google for cats](https://encrypted.google.com/search?q=cats).
 
-**NOTE:** You can click the clock to focus the search input (this is helpful on mobile).
+On mobile, you can click the clock to focus the search input.
 
 ### Searching
 
