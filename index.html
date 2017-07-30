@@ -143,6 +143,7 @@
     margin-top: -.06em;
     font-size: 6rem;
     letter-spacing: .05em;
+    cursor: pointer;
   }
 
   #search-form {
@@ -402,15 +403,21 @@
   };
 
   class Clock {
-    constructor({ delimiter }) {
+    constructor(options) {
       this._el = $.el('#clock');
-      this._delimiter = delimiter;
+      this._delimiter = options.delimiter;
+      this._form = options.form;
       this._setTime = this._setTime.bind(this);
+      this._registerEvents();
       this._start();
     }
 
     _pad(num) {
       return ('0' + num.toString()).slice(-2);
+    }
+
+    _registerEvents() {
+      this._el.addEventListener('click', this._form.show);
     }
 
     _setTime() {
@@ -881,7 +888,17 @@
       this._loadQueryParam();
     }
 
+    hide() {
+      $.bodyClassRemove('form')
+    }
+
+    show() {
+      $.bodyClassAdd('form');
+      this._inputEl.focus();
+    }
+
     _bindMethods() {
+      this.show = this.show.bind(this);
       this._clearPreview = this._clearPreview.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
       this._handleInput = this._handleInput.bind(this);
@@ -915,8 +932,7 @@
         case '?': if (!$.bodyClassHas('form')) this._help.toggle(); return;
       }
 
-      $.bodyClassAdd('form');
-      this._inputEl.focus();
+      this.show();
     }
 
     _handleInput() {
@@ -924,7 +940,7 @@
       const { isKey } = this._queryParser.parse(newQuery);
       this._inputElVal = newQuery;
       this._setBackgroundFromQuery(newQuery);
-      if (!newQuery) $.bodyClassRemove('form');
+      if (!newQuery) this.hide();
       else if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
       else if (this._suggester) this._suggester.suggest(newQuery);
     }
@@ -1016,16 +1032,19 @@
     });
   };
 
+  const getForm = () => {
+    return new Form({
+      colors: CONFIG.colors,
+      help: getHelp(),
+      instantRedirect: CONFIG.instantRedirect,
+      newTab: CONFIG.newTab,
+      queryParser: getQueryParser(),
+      suggester: CONFIG.suggestions ? getSuggester() : false,
+    });
+  };
+
   new Clock({
     delimiter: CONFIG.clockDelimiter,
-  });
-
-  new Form({
-    colors: CONFIG.colors,
-    help: getHelp(),
-    instantRedirect: CONFIG.instantRedirect,
-    newTab: CONFIG.newTab,
-    queryParser: getQueryParser(),
-    suggester: CONFIG.suggestions ? getSuggester() : false,
+    form: getForm(),
   });
 </script>
