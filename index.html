@@ -397,7 +397,6 @@
         case 78: return ctrl ? 'c-n' : 'n';
         case 80: return ctrl ? 'c-p' : 'n';
         case 91: return 'super';
-        case 191: return shift ? '?' : '/';
       }
     },
   };
@@ -919,14 +918,6 @@
     _handleKeydown(e) {
       if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
 
-      const handleQuestion = () => {
-        if (!this._inputElVal) {
-          this.hide();
-          if ($.bodyClassHas('form')) this._help.toggle(true);
-          else this._help.toggle();
-        }
-      };
-
       switch ($.key(e)) {
         case 'alt':
         case 'ctrl':
@@ -934,7 +925,6 @@
         case 'shift':
         case 'super': return;
         case 'escape': this.hide(); return;
-        case '?': handleQuestion(); return;
       }
 
       this.show();
@@ -942,12 +932,14 @@
 
     _handleInput() {
       const newQuery = this._inputEl.value;
+      const isHelp = newQuery === '?';
       const { isKey } = this._queryParser.parse(newQuery);
       this._inputElVal = newQuery;
       this._setBackgroundFromQuery(newQuery);
+      if (!newQuery || isHelp ) this.hide();
+      if (isHelp) this._help.toggle();
+      if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
       if (this._suggester) this._suggester.suggest(newQuery);
-      if (!newQuery) this.hide();
-      else if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
     }
 
     _loadQueryParam() {
