@@ -12,6 +12,8 @@ To go to a site, enter the corresponding key. To view the available sites and th
 * Entering `t` would redirect you to [twitter.com](https://twitter.com).
 * Entering `cats` would search [Google for cats](https://encrypted.google.com/search?q=cats).
 
+**NOTE:** You can click the clock to focus the search input (this is helpful on mobile).
+
 ### Searching
 
 You can search any of the sites by typing a colon after the site's key, followed by your search query. For example:
