@@ -884,8 +884,7 @@
     _bindMethods() {
       this._clearPreview = this._clearPreview.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
-      this._handleKeypress = this._handleKeypress.bind(this);
-      this._handleKeyup = this._handleKeyup.bind(this);
+      this._handleInput = this._handleInput.bind(this);
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
@@ -920,34 +919,14 @@
       this._inputEl.focus();
     }
 
-    _handleKeypress(e) {
-      const newChar = String.fromCharCode(e.which);
-      const newQuery = this._inputEl.value + newChar;
-      const validChar = newChar.length && $.key(e) !== 'enter';
-      const queryDiffers = this._inputElVal !== newQuery;
-      const { isKey, color } = this._queryParser.parse(newQuery);
-      this._setBackground(color);
-
-      if (this._instantRedirect && isKey) {
-        e.preventDefault();
-        this._submitWithValue(newQuery);
-      } else if (this._suggester && validChar && queryDiffers) {
-        this._suggester.suggest(newQuery);
-        this._inputElVal = newQuery;
-      }
-    }
-
-    _handleKeyup(e) {
+    _handleInput() {
       const newQuery = this._inputEl.value;
-      const queryDiffers = this._inputElVal !== newQuery;
+      const { isKey } = this._queryParser.parse(newQuery);
+      this._inputElVal = newQuery;
       this._setBackgroundFromQuery(newQuery);
-
-      if (!newQuery) {
-        $.bodyClassRemove('form');
-      } else if (this._suggester && $.isRemove(e) && queryDiffers) {
-        this._suggester.suggest(newQuery);
-        this._inputElVal = newQuery;
-      }
+      if (!newQuery) $.bodyClassRemove('form');
+      else if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
+      else if (this._suggester) this._suggester.suggest(newQuery);
     }
 
     _loadQueryParam() {
@@ -967,8 +946,7 @@
 
     _registerEvents() {
       document.addEventListener('keydown', this._handleKeydown);
-      this._inputEl.addEventListener('keypress', this._handleKeypress);
-      this._inputEl.addEventListener('keyup', this._handleKeyup);
+      this._inputEl.addEventListener('input', this._handleInput);
       this._formEl.addEventListener('submit', this._submitForm, false);
 
       if (this._suggester) {
@@ -978,14 +956,10 @@
       }
     }
 
-    _setBackground(color) {
-      this._formEl.style.backgroundColor = color;
-    }
-
     _setBackgroundFromQuery(query) {
-      if (this._colors) {
-        this._setBackground(this._queryParser.parse(query).color);
-      }
+      if (!this._colors) return;
+      const { color } = this._queryParser.parse(query);
+      this._formEl.style.backgroundColor = color;
     }
 
     _submitForm(e) {
