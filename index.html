@@ -910,9 +910,8 @@
     }
 
     _clearPreview() {
-      this._inputEl.value = this._inputElVal;
+      this._previewValue(this._inputElVal);
       this._inputEl.focus();
-      this._setBackgroundFromQuery(this._inputElVal);
     }
 
     _handleKeydown(e) {
