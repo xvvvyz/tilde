@@ -1,8 +1,9 @@
 <!doctype html>
 
-<script>
-  const CONFIG = {
+<script src="config.js"></script>
 
+<script>
+  const CONFIG = window.CONFIG || {
     // the category, name, key, url, search path and color for your commands
     // if none of the specified keys are matched, the '*' key is used
     commands: [
