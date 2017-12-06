@@ -935,7 +935,7 @@
       const { isKey } = this._queryParser.parse(newQuery);
       this._inputElVal = newQuery;
       this._setBackgroundFromQuery(newQuery);
-      if (!newQuery || isHelp ) this.hide();
+      if (!newQuery || isHelp) this.hide();
       if (isHelp) this._help.toggle();
       if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
       if (this._suggester) this._suggester.suggest(newQuery);
