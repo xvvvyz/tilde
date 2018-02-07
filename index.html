@@ -718,7 +718,7 @@
 
     _focusNext(e) {
       const exists = this._suggestionEls.some((el, i) => {
-        if (el.classList.contains('highlight')) {
+        if (el.classList.contains('highlight') && this._suggestionEls[i + 1]) {
           this._highlight(this._suggestionEls[i + 1]);
           return true;
         }
