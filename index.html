@@ -693,6 +693,8 @@
 
     _bindMethods() {
       this._handleKeydown = this._handleKeydown.bind(this);
+      this._highlight = this._highlight.bind(this);
+      this._unHighlight = this._unHighlight.bind(this);
     }
 
     _clearClickEvents() {
@@ -717,18 +719,18 @@
     _focusNext(e) {
       const exists = this._suggestionEls.some((el, i) => {
         if (el.classList.contains('highlight')) {
-          this._highlight(this._suggestionEls[i + 1], e);
+          this._highlight(this._suggestionEls[i + 1]);
           return true;
         }
       });
 
-      if (!exists) this._highlight(this._suggestionEls[0], e);
+      if (!exists) this._highlight(this._suggestionEls[0]);
     }
 
     _focusPrevious(e) {
       const exists = this._suggestionEls.some((el, i) => {
         if (el.classList.contains('highlight') && i) {
-          this._highlight(this._suggestionEls[i - 1], e);
+          this._highlight(this._suggestionEls[i - 1]);
           return true;
         }
       });
@@ -746,14 +748,14 @@
       if ($.isUp(e)) this._focusPrevious(e);
     }
 
-    _highlight(el, e) {
+    _highlight(el) {
       this._unHighlight();
-
-      if (el) {
-        this._onHighlight(el.getAttribute('data-suggestion'));
-        el.classList.add('highlight');
-        e.preventDefault();
+      if (el.target) {
+        el.preventDefault();
+        el = el.target;
       }
+      this._onHighlight(el.getAttribute('data-suggestion'));
+      el.classList.add('highlight');
     }
 
     _registerEvents() {
@@ -761,12 +763,15 @@
     }
 
     _registerSuggestionEvents() {
-      this._suggestionEls.forEach(el => {
-        const value = el.getAttribute('data-suggestion');
-        el.addEventListener('mouseover', this._highlight.bind(this, el));
-        el.addEventListener('mouseout', this._unHighlight.bind(this));
-        el.addEventListener('click', this._onClick.bind(null, value));
-      });
+      const handler = () => {
+        document.removeEventListener('mousemove', handler);
+        this._suggestionEls.forEach(el => {
+          el.addEventListener('mouseover', this._highlight);
+          el.addEventListener('mouseout', this._unHighlight);
+          el.addEventListener('click', this._onClick);
+        });
+      }
+      document.addEventListener('mousemove', handler);
     }
 
     _unHighlight(e) {
@@ -983,6 +988,10 @@
     }
 
     _submitWithValue(value) {
+      if (value.target) {
+        value.preventDefault;
+        value = value.target.getAttribute('data-suggestion');
+      }
       this._inputEl.value = value;
       this._submitForm();
     }
