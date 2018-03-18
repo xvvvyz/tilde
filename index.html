@@ -65,7 +65,11 @@
     newTab: true,
 
     // dynamic background colors when command domains are matched
-    colors: true,
+    colors: false,
+
+    // specify a theme file
+    // remove or set to false to use the hardcoded theme
+    theme: 'file:///home/cade/.cache/wal/colors.css',
 
     // the delimiter between the key and your search query
     // e.g. to search GitHub for potatoes you'd type "g:potatoes"
@@ -94,6 +98,11 @@
 <style type="text/css">
   @import url('https://fonts.googleapis.com/css?family=Lato:400,900');
 
+  :root {
+    --color0: #111;
+    --color15: #fff;
+  }
+
   body {
     position: absolute;
     top: 0;
@@ -102,9 +111,10 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    transition: background .2s;
+    transition: background-color .2s;
+    background-color: var(--color0);
     font-family: Lato, sans-serif;
-    color: #222;
+    color: var(--color15);
   }
 
   input,
@@ -117,8 +127,8 @@
     margin: 0;
     border: 0;
     outline: 0;
-    background: transparent;
-    color: #fff;
+    background-color: transparent;
+    color: var(--color15);
     font-family: Lato, sans-serif;
     text-align: center;
     -webkit-appearance: none;
@@ -148,7 +158,7 @@
 
   #search-form {
     padding: 1em;
-    background: #111;
+    background-color: var(--color0);
     transition: background-color .5s;
     box-sizing: border-box;
     z-index: 2;
@@ -186,8 +196,8 @@
   }
 
   .search-suggestion.highlight {
-    background-color: #fff;
-    color: #222;
+    background-color: var(--color15);
+    color: var(--color0);
   }
 
   .search-suggestion b {
@@ -202,7 +212,7 @@
     right: 0;
     left: 0;
     height: 3px;
-    background-color: #fff;
+    background-color: var(--color15);
     opacity: .8;
   }
 
@@ -213,7 +223,7 @@
   #help {
     display: block;
     padding: 8vw;
-    background: #fff;
+    background-color: var(--color0);
     font-size: 1.3rem;
     z-index: 1;
   }
@@ -252,8 +262,8 @@
     width: 2.5em;
     margin-right: 1em;
     border-radius: 50%;
-    background-color: #222;
-    color: #fff;
+    background-color: var(--color15);
+    color: var(--color0);
     font-size: .8em;
     text-align: center;
   }
@@ -272,7 +282,7 @@
     height: 2px;
     transition: .2s;
     transform: translateX(-2em);
-    background-color: #222;
+    background: var(--color15);
     opacity: 0;
   }
 
@@ -1043,4 +1053,12 @@
     delimiter: CONFIG.clockDelimiter,
     form: getForm(),
   });
+
+  if (CONFIG.theme) {
+    const link = document.createElement('link');
+    link.href = CONFIG.theme;
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    $.el('head').appendChild(link);
+  }
 </script>
