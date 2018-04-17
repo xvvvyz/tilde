@@ -82,6 +82,9 @@
     // the delimiter between the hours and minutes in the clock
     clockDelimiter: '&nbsp;',
 
+    // change clock to twelve hour format
+    twelveHour: false,
+
     // note: you can pass in your search query via the q query param
     // e.g. going to file:///path/to/tilde/index.html?q=hamsters is equivalent
     // to typing "hamsters" and pressing enter
@@ -152,8 +155,14 @@
     display: block;
     margin-top: -.06em;
     font-size: 6rem;
+    text-align: center;
     letter-spacing: .05em;
     cursor: pointer;
+  }
+  
+  #am-pm {
+    font-size: 2rem;
+    margin-left: 0.3rem;
   }
 
   #search-form {
@@ -416,6 +425,7 @@
       this._el = $.el('#clock');
       this._delimiter = options.delimiter;
       this._form = options.form;
+      this._twelveHour = options.twelveHour;
       this._setTime = this._setTime.bind(this);
       this._registerEvents();
       this._start();
@@ -431,9 +441,15 @@
 
     _setTime() {
       const date = new Date();
-      const hours = this._pad(date.getHours());
+      let hours = this._pad(date.getHours());
+      let amPm = '';
+      if (this._twelveHour) {
+        hours = (date.getHours() > 12) ? date.getHours() - 12 : (date.getHours() === 0) ? 12 : date.getHours();
+        amPm = (date.getHours() > 12) ? 'PM' : 'AM';
+      }
       const minutes = this._pad(date.getMinutes());
-      this._el.innerHTML = hours + this._delimiter + minutes;
+      this._el.innerHTML = hours + this._delimiter + minutes + '<span id="am-pm">' + amPm + '</span>';
+      this._el.setAttribute('datetime', date.toTimeString());
     }
 
     _start() {
@@ -1050,6 +1066,7 @@
   };
 
   new Clock({
+    twelveHour: CONFIG.twelveHour,
     delimiter: CONFIG.clockDelimiter,
     form: getForm(),
   });
