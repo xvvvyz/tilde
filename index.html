@@ -128,7 +128,7 @@
     border: 0;
     outline: 0;
     background-color: transparent;
-    color: var(--color15);
+    color: inherit;
     font-family: Lato, sans-serif;
     text-align: center;
     -webkit-appearance: none;
@@ -158,8 +158,9 @@
 
   #search-form {
     padding: 1em;
-    background-color: var(--color0);
+    background-color: var(--color15);
     transition: background-color .5s;
+    color: var(--color0);
     box-sizing: border-box;
     z-index: 2;
   }
@@ -196,8 +197,8 @@
   }
 
   .search-suggestion.highlight {
-    background-color: var(--color15);
-    color: var(--color0);
+    background-color: var(--color0);
+    color: var(--color15);
   }
 
   .search-suggestion b {
@@ -212,7 +213,7 @@
     right: 0;
     left: 0;
     height: 3px;
-    background-color: var(--color15);
+    background-color: var(--color0);
     opacity: .8;
   }
 
