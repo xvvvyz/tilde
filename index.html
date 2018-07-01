@@ -666,20 +666,16 @@
     suggest(input) {
       input = input.trim();
       if (input === '') this._clearSuggestions();
-      let suggestions = [];
 
-      for (const influencer of this._getInfluencerPromises(input)) {
-        influencer.then(res => {
-          suggestions = this._flattenAndUnique([...suggestions, ...res]);
-          this._clearSuggestions();
-
-          if (suggestions.length) {
-            this._appendSuggestions(suggestions, input);
-            this._registerSuggestionEvents();
-            $.bodyClassAdd('suggestions');
-          }
-        });
-      }
+      Promise.all(this._getInfluencerPromises(input)).then(res => {
+        const suggestions = this._flattenAndUnique(res);
+        this._clearSuggestions();
+        if (suggestions.length) {
+          this._appendSuggestions(suggestions, input);
+          this._registerSuggestionEvents();
+          $.bodyClassAdd('suggestions');
+        }
+      });
     }
 
     _appendSuggestions(suggestions, input) {
