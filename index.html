@@ -164,8 +164,7 @@
   }
   
   #am-pm {
-    font-size: 2rem;
-    margin-left: 0.3rem;
+    font-size: .5em;
   }
 
   #search-form {
@@ -446,12 +445,20 @@
       const date = new Date();
       let hours = this._pad(date.getHours());
       let amPm = '';
+
       if (this._twelveHour) {
-        hours = (date.getHours() > 12) ? date.getHours() - 12 : (date.getHours() === 0) ? 12 : date.getHours();
-        amPm = (date.getHours() > 12) ? 'PM' : 'AM';
+        hours = date.getHours() > 12
+          ? date.getHours() - 12
+          : date.getHours() === 0
+            ? 12
+            : date.getHours();
+
+        amPm = `&nbsp;<span id="am-pm">` +
+          `${date.getHours() > 12 ? 'PM' : 'AM'}</span>`;
       }
+
       const minutes = this._pad(date.getMinutes());
-      this._el.innerHTML = hours + this._delimiter + minutes + '<span id="am-pm">' + amPm + '</span>';
+      this._el.innerHTML = `${hours}${this._delimiter}${minutes}${amPm}`;
       this._el.setAttribute('datetime', date.toTimeString());
     }
 
