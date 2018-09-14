@@ -9,7 +9,7 @@ Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is t
 To go to a site, enter the corresponding key. To view the available sites and their keys, press `?`. If your input doesn't match any of the commands, a generic Google search will be triggered. For example:
 
 * Entering `r` would redirect you to [www.reddit.com](https://www.reddit.com).
-* Entering `t` would redirect you to [twitter.com](https://twitter.com).
+* Entering `t` would redirect you to [twitch.tv](https://www.twitch.tv).
 * Entering `cats` would search [Google for cats](https://encrypted.google.com/search?q=cats).
 
 On mobile, you can click the clock to focus the search input.
