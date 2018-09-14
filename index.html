@@ -162,7 +162,7 @@
     letter-spacing: .05em;
     cursor: pointer;
   }
-  
+
   #am-pm {
     font-size: .5em;
   }
@@ -176,7 +176,7 @@
     z-index: 2;
   }
 
-  #search-form>div {
+  #search-form > div {
     width: 100%;
   }
 
@@ -498,7 +498,7 @@
           `<li class="category">
             <h2 class="category-name">${category}</h2>
             <ul>${this._buildListCommands(category)}</ul>
-          </li>`
+          </li>`,
         );
       });
 
@@ -544,10 +544,11 @@
     }
 
     addItem() {}
+
     getSuggestions() {}
 
     _addSearchPrefix(items, query) {
-      const searchPrefix = this._getSearchPrefix(query)
+      const searchPrefix = this._getSearchPrefix(query);
       return items.map(s => searchPrefix ? searchPrefix + s : s);
     }
 
@@ -591,7 +592,7 @@
         window[callback] = res => {
           const suggestions = res.map(i => i.phrase)
             .filter(s => !$.ieq(s, query))
-            .slice(0, this._limit)
+            .slice(0, this._limit);
 
           resolve(this._addSearchPrefix(suggestions, rawQuery));
         };
@@ -717,7 +718,7 @@
             >
               ${suggestionHtml}
             </button>
-          </li>`
+          </li>`,
         );
 
         return i + 1 >= this._limit;
@@ -957,8 +958,11 @@
         case 'ctrl':
         case 'enter':
         case 'shift':
-        case 'super': return;
-        case 'escape': this.hide(); return;
+        case 'super':
+          return;
+        case 'escape':
+          this.hide();
+          return;
       }
 
       this.show();
