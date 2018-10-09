@@ -83,14 +83,10 @@
     pathDelimiter: '/',
 
     // the delimiter between the hours and minutes in the clock
-    clockDelimiter: '&nbsp;',
+    clockDelimiter: ' ',
 
     // change clock to twelve hour format
     twelveHour: false,
-
-    // note: you can pass in your search query via the q query param
-    // e.g. going to file:///path/to/tilde/index.html?q=hamsters is equivalent
-    // to typing "hamsters" and pressing enter
   };
 </script>
 
@@ -220,12 +216,12 @@
   .search-suggestion b::after {
     content: ' ';
     position: absolute;
-    top: 51%;
     right: 0;
+    bottom: -.4em;
     left: 0;
     height: 3px;
     background-color: var(--color0);
-    opacity: .8;
+    opacity: .3;
   }
 
   .search-suggestion.highlight b::after {
@@ -374,7 +370,7 @@
 
 <form class="overlay center" id="search-form" autocomplete="off" spellcheck="false">
   <div>
-    <input id="search-input" type="text">
+    <input id="search-input" type="text" title="search">
     <ul id="search-suggestions"></ul>
   </div>
 </form>
@@ -420,6 +416,8 @@
         case 91: return 'super';
       }
     },
+
+    pad: v => ('0' + v.toString()).slice(-2),
   };
 
   class Clock {
@@ -429,21 +427,13 @@
       this._form = options.form;
       this._twelveHour = options.twelveHour;
       this._setTime = this._setTime.bind(this);
-      this._registerEvents();
-      this._start();
-    }
-
-    _pad(num) {
-      return ('0' + num.toString()).slice(-2);
-    }
-
-    _registerEvents() {
       this._el.addEventListener('click', this._form.show);
+      this._start();
     }
 
     _setTime() {
       const date = new Date();
-      let hours = this._pad(date.getHours());
+      let hours = $.pad(date.getHours());
       let amPm = '';
 
       if (this._twelveHour) {
@@ -457,7 +447,7 @@
           `${date.getHours() > 12 ? 'PM' : 'AM'}</span>`;
       }
 
-      const minutes = this._pad(date.getMinutes());
+      const minutes = $.pad(date.getMinutes());
       this._el.innerHTML = `${hours}${this._delimiter}${minutes}${amPm}`;
       this._el.setAttribute('datetime', date.toTimeString());
     }
@@ -474,18 +464,14 @@
       this._commands = options.commands;
       this._newTab = options.newTab;
       this._toggled = false;
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._buildAndAppendLists();
-      this._bindMethods();
       this._registerEvents();
     }
 
     toggle(show) {
       this._toggled = (typeof show !== 'undefined') ? show : !this._toggled;
       this._toggled ? $.bodyClassAdd('help') : $.bodyClassRemove('help');
-    }
-
-    _bindMethods() {
-      this._handleKeydown = this._handleKeydown.bind(this);
     }
 
     _buildAndAppendLists() {
@@ -506,18 +492,20 @@
     }
 
     _buildListCommands(category) {
-      return this._commands.map(([cmdCategory, name, key, url]) => {
-        if (cmdCategory === category) {
-          return (
-            `<li class="command">
-              <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
-                <span class="command-key">${key}</span>
-                <span class="command-name">${name}</span>
-              </a>
-            </li>`
-          );
-        }
-      }).join('');
+      return this._commands
+        .map(([cmdCategory, name, key, url]) => {
+          if (cmdCategory === category) {
+            return (
+              `<li class="command">
+                <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
+                  <span class="command-key">${key}</span>
+                  <span class="command-name">${name}</span>
+                </a>
+              </li>`
+            );
+          }
+        })
+        .join('');
     }
 
     _getCategories() {
@@ -544,7 +532,6 @@
     }
 
     addItem() {}
-
     getSuggestions() {}
 
     _addSearchPrefix(items, query) {
@@ -619,14 +606,19 @@
       });
 
       if (!exists) history.push([query, 1]);
-      this._setHistory(this._sort(history));
+
+      const sorted = history
+        .sort((current, next) => current[1] - next[1])
+        .reverse();
+
+      this._setHistory(sorted);
     }
 
     getSuggestions(query) {
       return new Promise(resolve => {
         const suggestions = this._getHistory()
           .map(([item]) => item)
-          .filter(item => this._itemContainsQuery(query, item))
+          .filter(item => query && !$.ieq(item, query) && $.iin(item, query))
           .slice(0, this._limit);
 
         resolve(suggestions);
@@ -642,10 +634,6 @@
       return this._history;
     }
 
-    _itemContainsQuery(query, item) {
-      return query && !$.ieq(item, query) && $.iin(item, query);
-    }
-
     _save(history) {
       localStorage.setItem(this._storeName, JSON.stringify(history));
     }
@@ -653,10 +641,6 @@
     _setHistory(history) {
       this._history = history;
       this._save(history);
-    }
-
-    _sort(history) {
-      return history.sort((current, next) => current[1] - next[1]).reverse();
     }
   }
 
@@ -666,7 +650,7 @@
       this._influencers = options.influencers;
       this._limit = options.limit;
       this._suggestionEls = [];
-      this._bindMethods();
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._registerEvents();
     }
 
@@ -692,8 +676,9 @@
       if (input === '') this._clearSuggestions();
 
       Promise.all(this._getInfluencerPromises(input)).then(res => {
-        const suggestions = this._flattenAndUnique(res);
+        const suggestions = Suggester._flattenAndUnique(res);
         this._clearSuggestions();
+
         if (suggestions.length) {
           this._appendSuggestions(suggestions, input);
           this._registerSuggestionEvents();
@@ -702,8 +687,13 @@
       });
     }
 
+    // [[1, 2], [1, 2, 3, 4]] -> [1, 2, 3, 4]
+    static _flattenAndUnique(array) {
+      return [...new Set([].concat.apply([], array))];
+    }
+
     _appendSuggestions(suggestions, input) {
-      suggestions.some((suggestion, i) => {
+      for (const [i, suggestion] of suggestions.entries()) {
         const match = new RegExp($.escapeRegex(input), 'ig');
         const suggestionHtml = suggestion.replace(match, `<b>${input}</b>`);
 
@@ -721,14 +711,10 @@
           </li>`,
         );
 
-        return i + 1 >= this._limit;
-      });
+        if (i + 1 >= this._limit) break;
+      }
 
       this._suggestionEls = $.els('.js-search-suggestion');
-    }
-
-    _bindMethods() {
-      this._handleKeydown = this._handleKeydown.bind(this);
     }
 
     _clearClickEvents() {
@@ -743,11 +729,6 @@
       this._clearClickEvents();
       this._suggestionEls = [];
       this._el.innerHTML = '';
-    }
-
-    // [[1, 2], [1, 2, 3, 4]] -> [1, 2, 3, 4]
-    _flattenAndUnique(array) {
-      return [...new Set([].concat.apply([], array))];
     }
 
     _focusNext(e) {
@@ -797,12 +778,18 @@
     }
 
     _registerSuggestionEvents() {
-      this._suggestionEls.forEach(el => {
-        const value = el.getAttribute('data-suggestion');
-        el.addEventListener('mouseover', this._highlight.bind(this, el));
-        el.addEventListener('mouseout', this._unHighlight.bind(this));
-        el.addEventListener('click', this._onClick.bind(null, value));
-      });
+      const noHighlightUntilMouseMove = () => {
+        window.removeEventListener('mousemove', noHighlightUntilMouseMove);
+
+        this._suggestionEls.forEach(el => {
+          const value = el.getAttribute('data-suggestion');
+          el.addEventListener('mouseover', this._highlight.bind(this, el));
+          el.addEventListener('mouseout', this._unHighlight.bind(this));
+          el.addEventListener('click', this._onClick.bind(null, value));
+        });
+      };
+
+      window.addEventListener('mousemove', noHighlightUntilMouseMove);
     }
 
     _unHighlight(e) {
@@ -845,12 +832,12 @@
 
             if (res.isSearch && searchPath) {
               res.split = this._searchDelimiter;
-              res.query = this._shiftAndTrim(splitSearch, res.split);
-              res.redirect = this._prepSearch(url, searchPath, res.query);
+              res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+              res.redirect = QueryParser._prepSearch(url, searchPath, res.query);
             } else if (res.isPath) {
               res.split = this._pathDelimiter;
-              res.path = this._shiftAndTrim(splitPath, res.split);
-              res.redirect = this._prepPath(url, res.path);
+              res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+              res.redirect = QueryParser._prepPath(url, res.path);
             } else {
               res.redirect = url;
             }
@@ -859,48 +846,41 @@
           }
 
           if (key === '*') {
-            res.redirect = this._prepSearch(url, searchPath, query);
+            res.redirect = QueryParser._prepSearch(url, searchPath, query);
           }
         });
       }
 
-      res.color = this._getColorFromUrl(res.redirect);
+      res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
       return res;
     }
 
-    _getColorFromUrl(url) {
-      const domain = this._getHostname(url);
-      const color = this._commands
-        .filter(c => this._getHostname(c[3]) === domain)
-        .map(c => c[5])[0];
+    static _getColorFromUrl(commands, url) {
+      const domain = new URL(url).hostname;
 
-      return color || null;
+      return commands
+        .filter(c => new URL(c[3]).hostname === domain)
+        .map(c => c[5])[0] || null;
     }
 
-    _getHostname(url) {
-      const parser = document.createElement('a');
-      parser.href = url;
-      return parser.hostname.replace(/^www./, '');
+    static _prepPath(url, path) {
+      return QueryParser._stripUrlPath(url) + '/' + path;
     }
 
-    _prepPath(url, path) {
-      return this._stripUrlPath(url) + '/' + path;
-    }
-
-    _prepSearch(url, searchPath, query) {
+    static _prepSearch(url, searchPath, query) {
       if (!searchPath) return url;
-      const baseUrl = this._stripUrlPath(url);
+      const baseUrl = QueryParser._stripUrlPath(url);
       const urlQuery = encodeURIComponent(query);
       searchPath = searchPath.replace('{}', urlQuery);
       return baseUrl + searchPath;
     }
 
-    _shiftAndTrim(arr, delimiter) {
+    static _shiftAndTrim(arr, delimiter) {
       arr.shift();
       return arr.join(delimiter).trim();
     }
 
-    _stripUrlPath(url) {
+    static _stripUrlPath(url) {
       const parser = document.createElement('a');
       parser.href = url;
       return `${parser.protocol}//${parser.hostname}`;
@@ -918,7 +898,12 @@
       this._instantRedirect = options.instantRedirect;
       this._newTab = options.newTab;
       this._inputElVal = '';
-      this._bindMethods();
+      this._clearPreview = this._clearPreview.bind(this);
+      this.show = this.show.bind(this);
+      this._handleInput = this._handleInput.bind(this);
+      this._handleKeydown = this._handleKeydown.bind(this);
+      this._previewValue = this._previewValue.bind(this);
+      this._submitForm = this._submitForm.bind(this);
       this._registerEvents();
       this._loadQueryParam();
     }
@@ -932,17 +917,6 @@
     show() {
       $.bodyClassAdd('form');
       this._inputEl.focus();
-    }
-
-    _bindMethods() {
-      this.hide = this.hide.bind(this);
-      this.show = this.show.bind(this);
-      this._clearPreview = this._clearPreview.bind(this);
-      this._handleKeydown = this._handleKeydown.bind(this);
-      this._handleInput = this._handleInput.bind(this);
-      this._previewValue = this._previewValue.bind(this);
-      this._submitForm = this._submitForm.bind(this);
-      this._submitWithValue = this._submitWithValue.bind(this);
     }
 
     _clearPreview() {
