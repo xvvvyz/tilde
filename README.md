@@ -1,8 +1,12 @@
 # Tilde
 
-Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to have a homepage for your browser that is functional and sexy.
+> Minimal browser startpage.
 
 ![Screenshot](SCREENSHOT.png?raw=true "Screenshot")
+
+## What
+
+Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to have a homepage for your browser that is functional and sexy.
 
 ## Usage
 
