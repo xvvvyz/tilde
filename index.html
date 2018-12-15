@@ -14,7 +14,7 @@
       ['Lurk', 'Reddit', 'r', 'https://www.reddit.com', '/search?q={}', '#5f99cf'],
       ['Lurk', 'Unsplash', 'u', 'https://unsplash.com/new', '/search/{}', '#000'],
       ['Listen', 'Hypem', 'h', 'https://hypem.com/popular', '/search/{}', '#83c441'],
-      ['Listen', 'Line Radio', 'l', 'https://linerad.io', '/#{}', '#39CCCC'],
+      ['Listen', 'Line Radio', 'l', 'https://linerad.io', '/#{}', '#a29bfe'],
       ['Listen', 'SoundCloud', 's', 'https://soundcloud.com/discover', '/search?q={}', '#ff8800'],
       ['Watch', 'Netflix', 'n', 'https://www.netflix.com/browse', '/search?q={}', '#e50914'],
       ['Watch', 'Twitch', 't', 'https://www.twitch.tv/directory/following', null, '#6441a5'],
@@ -23,7 +23,7 @@
       ['Learn', 'Coursera', 'c', 'https://www.coursera.org', '/courses?query={}', '#407ED7'],
       ['Learn', 'Egghead', 'e', 'https://egghead.io', '/search?q={}', '#171C23'],
       ['Download', '7digital', '7', 'https://us.7digital.com', '/search?q={}', '#07606e'],
-      ['Download', 'RARBG', 'R', 'https://rarbg.to', '/torrents.php?search={}', '#00d1b2'],
+      ['Download', 'RARBG', 'R', 'https://rarbg.to/torrents.php', '/torrents.php?search={}', '#00d1b2'],
       ['Download', 'YTS', 'Y', 'https://yts.am/browse-movies/all/1080p/all/7/latest', '/browse-movies/{}', '#2f2f2f'],
     ],
 
@@ -59,7 +59,7 @@
     newTab: true,
 
     // dynamic background colors when command domains are matched
-    colors: false,
+    colors: true,
 
     // specify a theme file
     // remove or set to false to use the hardcoded theme
@@ -92,8 +92,8 @@
   @import url('https://fonts.googleapis.com/css?family=Lato:400,900');
 
   :root {
-    --color0: #21252F;
-    --color15: #C4C9D2;
+    --color0: #fff;
+    --color15: #33333f;
   }
 
   body {
