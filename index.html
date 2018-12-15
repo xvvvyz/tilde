@@ -889,12 +889,13 @@
       this._instantRedirect = options.instantRedirect;
       this._newTab = options.newTab;
       this._inputElVal = '';
-      this._clearPreview = this._clearPreview.bind(this);
       this.show = this.show.bind(this);
+      this._clearPreview = this._clearPreview.bind(this);
       this._handleInput = this._handleInput.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
+      this._submitWithValue = this._submitWithValue.bind(this);
       this._registerEvents();
       this._loadQueryParam();
     }
