@@ -796,6 +796,7 @@
   class Suggester {
     constructor(options) {
       this._el = $.el('#search-suggestions');
+      this._enabled = options.enabled;
       this._influencers = options.influencers;
       this._limit = options.limit;
       this._suggestionEls = [];
@@ -821,6 +822,7 @@
     }
 
     suggest(input) {
+      if (!this._enabled) return;
       input = input.trim();
       if (input === '') this._clearSuggestions();
 
@@ -1067,6 +1069,8 @@
       $.bodyClassRemove('form');
       this._inputEl.value = '';
       this._inputElVal = '';
+      this._suggester.suggest('');
+      this._setBackgroundFromQuery('');
     }
 
     show() {
@@ -1084,11 +1088,11 @@
       const isHelp = newQuery === '?';
       const { isKey } = this._parseQuery(newQuery);
       this._inputElVal = newQuery;
+      this._suggester.suggest(newQuery);
       this._setBackgroundFromQuery(newQuery);
       if (!newQuery || isHelp) this.hide();
       if (isHelp) this._toggleHelp();
       if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
-      if (this._suggester) this._suggester.suggest(newQuery);
     }
 
     _handleKeydown(e) {
@@ -1176,6 +1180,7 @@
   });
 
   const suggester = new Suggester({
+    enabled: CONFIG.suggestions,
     influencers,
     limit: CONFIG.suggestionsLimit,
   });
@@ -1190,7 +1195,7 @@
     instantRedirect: CONFIG.instantRedirect,
     newTab: CONFIG.newTab,
     parseQuery: queryParser.parse,
-    suggester: CONFIG.suggestions ? suggester : null,
+    suggester,
     toggleHelp: help.toggle,
   });
 
