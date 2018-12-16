@@ -2,7 +2,7 @@
 
 > Minimal browser startpage.
 
-![Screenshot](SCREENSHOT.png?raw=true "Screenshot")
+![Screenshot](SCREENSHOT.png?raw=true 'Screenshot')
 
 ## What
 
