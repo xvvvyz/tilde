@@ -1051,7 +1051,7 @@
       this._toggleHelp = options.toggleHelp;
       this._clearPreview = this._clearPreview.bind(this);
       this._handleInput = this._handleInput.bind(this);
-      this._handleKeypress = this._handleKeypress.bind(this);
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
@@ -1089,7 +1089,7 @@
       if (this._suggester) this._suggester.suggest(newQuery);
     }
 
-    _handleKeypress(e) {
+    _handleKeydown(e) {
       if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
 
       switch ($.key(e)) {
@@ -1123,7 +1123,7 @@
     }
 
     _registerEvents() {
-      document.addEventListener('keypress', this._handleKeypress);
+      document.addEventListener('keydown', this._handleKeydown);
       this._inputEl.addEventListener('input', this._handleInput);
       this._formEl.addEventListener('submit', this._submitForm, false);
 
