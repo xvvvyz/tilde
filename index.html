@@ -2,8 +2,11 @@
 
 <script>
   const CONFIG = {
-    // the category, name, key, url, search path and color for your commands
-    // if none of the specified keys are matched, the '*' key is used
+    /**
+     * The category, name, key, url, search path and color for your commands.
+     * If none of the specified keys are matched, the '*' key is used.
+     * Commands without a category don't show up in the help menu.
+     */
     commands: [
       {
         name: 'Google',
@@ -157,23 +160,29 @@
       },
     ],
 
-    // give suggestions as you type
+    /**
+     * Get suggestions as you type.
+     */
     suggestions: true,
-
-    // max amount of suggestions that will ever be displayed
     suggestionsLimit: 4,
 
-    // the order and limit for each suggestion influencer
-    // "Default" suggestions come from CONFIG.defaultSuggestions
-    // "DuckDuckGo" suggestions come from the duck duck go search api
-    // "History" suggestions come from your previously entered queries
+    /**
+     * The order and limit for each suggestion influencer. An "influencer" is
+     * just a suggestion source. The following influencers are available:
+     *
+     * - "Default" suggestions come from CONFIG.defaultSuggestions
+     * - "DuckDuckGo" suggestions come from the duck duck go search api
+     * - "History" suggestions come from your previously entered queries
+     */
     influencers: [
       { name: 'Default', limit: 4 },
       { name: 'History', limit: 1 },
       { name: 'DuckDuckGo', limit: 4 },
     ],
 
-    // default search suggestions for the specified queries
+    /**
+     * Default search suggestions for the specified queries.
+     */
     defaultSuggestions: {
       g: ['g/issues', 'g/pulls', 'gist.github.com'],
       l: ['l/#electronic+chill', 'l/#focus+instrumental', 'l/#piano+sleep'],
@@ -181,42 +190,90 @@
       s: ['s/you/likes', 's/discover/the-upload'],
     },
 
-    // instantly redirect when a key is matched
-    // put a space before any other queries to prevent unwanted redirects
+    /**
+     * Instantly redirect when a key is matched. Put a space before any other
+     * queries to prevent unwanted redirects.
+     */
     instantRedirect: false,
 
-    // open queries in a new tab
+    /**
+     * Open triggered queries in a new tab.
+     */
     newTab: true,
 
-    // dynamic background colors when command domains are matched
+    /**
+     * Dynamic overlay background colors when command domains are matched.
+     */
     colors: true,
 
-    // the delimiter between the key and your search query
-    // e.g. to search GitHub for potatoes you'd type "g:potatoes"
+    /**
+     * The delimiter between a command key and your search query. For example,
+     * to search GitHub for potatoes, you'd type "g:potatoes".
+     */
     searchDelimiter: ':',
 
-    // the delimiter between the key and a path
-    // e.g. type "r/r/unixporn" to go to "reddit.com/r/unixporn"
+    /**
+     * The delimiter between a command key and a path. For example, you'd type
+     * "r/r/unixporn" to go to "https://reddit.com/r/unixporn".
+     */
     pathDelimiter: '/',
 
-    // the delimiter between the hours and minutes in the clock
+    /**
+     * The delimiter between the hours and minutes on the clock.
+     */
     clockDelimiter: ' ',
 
-    // change clock to twelve hour format
-    clockTwelveHour: false,
+    /**
+     * Show a twenty-four-hour clock instead of a twelve-hour clock with AM/PM.
+     */
+    twentyFourHourClock: true,
   };
 </script>
 
 <style type="text/css">
-  @import url('https://fonts.googleapis.com/css?family=Lato:400,900');
-
   :root {
-    --bg: #fff;
-    --fg: #1e272e;
+    /* colors */
+    --background: #fff;
+    --foreground: #1e272e;
+
+    /* fonts */
+    --font-family: Lato, sans-serif;
+    --base-font-size: 18px;
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
   }
 
+  /* to download a different font locally:
+     https://google-webfonts-helper.herokuapp.com/fonts */
+
+  @font-face {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lato Regular'), local('Lato-Regular'),
+    url('./fonts/lato-v14-latin-regular.woff2') format('woff2'),
+    url('./fonts/lato-v14-latin-regular.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 900;
+    src: local('Lato Black'), local('Lato-Black'),
+    url('./fonts/lato-v14-latin-900.woff2') format('woff2'),
+    url('./fonts/lato-v14-latin-900.woff') format('woff');
+  }
+</style>
+
+<style type="text/css">
   * {
     box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-family);
+    font-size: var(--base-font-size);
+    font-weight: var(--font-weight-normal);
   }
 
   body {
@@ -228,25 +285,28 @@
     margin: 0;
     padding: 0;
     transition: background 0.2s;
-    background: var(--bg);
-    font-family: Lato, sans-serif;
-    color: var(--fg);
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  input,
+  button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font-family: var(--font-family);
+    font-size: 1rem;
   }
 
   input,
   button,
   input:focus,
   button:focus {
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
     border: 0;
     outline: 0;
-    background: transparent;
-    color: inherit;
-    font-family: Lato, sans-serif;
-    text-align: center;
     -webkit-appearance: none;
     -moz-appearance: none;
   }
@@ -270,7 +330,6 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
   }
 
   .overlay {
@@ -278,7 +337,6 @@
     top: 0;
     left: 0;
     overflow: auto;
-    box-sizing: border-box;
     width: 100%;
     height: 100%;
     visibility: hidden;
@@ -287,7 +345,8 @@
   .clock {
     display: block;
     margin-top: -0.06rem;
-    font-size: 6rem;
+    font-size: 4rem;
+    font-weight: var(--font-weight-normal);
     text-align: center;
     letter-spacing: 0.05rem;
     cursor: pointer;
@@ -298,10 +357,8 @@
   }
 
   .search-form {
-    padding: 1rem;
-    background: var(--fg);
-    color: var(--bg);
-    box-sizing: border-box;
+    background: var(--foreground);
+    color: var(--background);
     z-index: 2;
   }
 
@@ -309,20 +366,22 @@
     width: 100%;
   }
 
-  .search-input,
-  .search-input:focus {
+  .search-input {
     width: 100%;
+    padding: 0 1rem;
     margin-bottom: 20px;
     font-size: 1.5rem;
-    font-weight: 900;
-    letter-spacing: 0.05rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.1rem;
     text-transform: uppercase;
   }
 
   .search-suggestions {
     display: none;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    overflow: hidden;
   }
 
   body.suggestions .search-suggestions {
@@ -330,30 +389,30 @@
   }
 
   .search-suggestion {
-    padding: 0.7rem 1rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
     white-space: nowrap;
-    font-size: 1.1em;
     cursor: pointer;
   }
 
   .search-suggestion.highlight {
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--background);
+    color: var(--foreground);
   }
 
   .search-suggestion b {
     position: relative;
-    font-weight: 400;
+    font-weight: var(--font-weight-normal);
   }
 
   .search-suggestion b::after {
     content: ' ';
     position: absolute;
     right: 0;
-    bottom: -0.4rem;
+    bottom: -0.3rem;
     left: 0;
-    height: 3px;
-    background: var(--bg);
+    height: 2px;
+    background: var(--background);
     opacity: 0.4;
   }
 
@@ -364,8 +423,7 @@
   .help {
     display: block;
     padding: 8vw;
-    background: var(--bg);
-    font-size: 1.2rem;
+    background: var(--background);
     z-index: 1;
   }
 
@@ -375,8 +433,8 @@
 
   .category-name {
     margin-bottom: 1.5rem;
-    font-size: 0.6em;
-    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    letter-spacing: 0.15rem;
     text-transform: uppercase;
   }
 
@@ -395,14 +453,14 @@
   .command-key {
     display: block;
     float: left;
-    width: 2.5em;
-    height: 2.5em;
+    width: 2rem;
+    height: 2rem;
     margin-right: 1rem;
     border-radius: 50%;
-    background: var(--fg);
-    color: var(--bg);
-    font-size: 0.8em;
-    line-height: 2.5em;
+    background: var(--foreground);
+    color: var(--background);
+    font-size: 0.75rem;
+    line-height: 2rem;
     text-align: center;
   }
 
@@ -419,8 +477,8 @@
     left: 0;
     height: 2px;
     transition: 0.2s;
-    transform: translateX(-2em);
-    background: var(--fg);
+    transform: translateX(-2rem);
+    background: var(--foreground);
     opacity: 0;
   }
 
@@ -440,19 +498,26 @@
   }
 
   @media (min-width: 500px) {
+    .clock {
+      font-size: 6rem;
+    }
+
+    .search-input {
+      text-align: center;
+    }
+
+    .search-suggestions {
+      align-items: center;
+    }
+
     .categories {
       display: grid;
-      grid-template-columns: 250px 185px;
+      grid-template-columns: 250px 175px;
       justify-content: space-around;
     }
 
     .category:nth-last-child(2) {
       margin-bottom: 0;
-    }
-
-    .search-input,
-    .search-input:focus {
-      font-size: 3rem;
     }
   }
 
@@ -462,18 +527,26 @@
       padding: 0;
     }
 
+    .search-input {
+      font-size: 2.5rem;
+    }
+
+    .search-suggestions {
+      flex-direction: row;
+    }
+
     .category {
       margin: 2rem 0;
     }
 
     .categories {
-      grid-template-columns: repeat(2, 300px) 185px;
+      grid-template-columns: repeat(2, 300px) 175px;
     }
   }
 
-  @media (min-width: 1600px) {
+  @media (min-width: 1500px) {
     .categories {
-      grid-template-columns: repeat(5, 230px) 185px;
+      grid-template-columns: repeat(5, 220px) 175px;
     }
   }
 </style>
@@ -481,7 +554,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-
 <title>~</title>
 
 <div class="center"><time class="clock" id="clock"></time></div>
@@ -565,7 +637,7 @@
     constructor(options) {
       this._el = $.el('#clock');
       this._delimiter = options.delimiter;
-      this._clockTwelveHour = options.clockTwelveHour;
+      this._twentyFourHourClock = options.twentyFourHourClock;
       this._setTime = this._setTime.bind(this);
       this._el.addEventListener('click', options.showForm);
       this._start();
@@ -576,7 +648,7 @@
       let hours = $.pad(date.getHours());
       let amPm = '';
 
-      if (this._clockTwelveHour) {
+      if (!this._twentyFourHourClock) {
         hours = date.getHours();
         if (hours > 12) hours -= 12;
         else if (hours === 0) hours = 12;
@@ -974,25 +1046,28 @@
         const splitPath = trimmed.split(this._pathDelimiter);
 
         this._commands.some(({ category, key, name, search, url }) => {
-          res.isKey = query === key;
-          res.isSearch = !res.isKey && splitSearch[0] === key;
-          res.isPath = !res.isKey && splitPath[0] === key;
-
-          if (res.isKey || res.isSearch || res.isPath) {
+          if (query === key) {
             res.key = key;
+            res.isKey = true;
+            res.redirect = url;
+            return true;
+          }
 
-            if (res.isSearch && search) {
-              res.split = this._searchDelimiter;
-              res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
-              res.redirect = QueryParser._prepSearch(url, search, res.query);
-            } else if (res.isPath) {
-              res.split = this._pathDelimiter;
-              res.path = QueryParser._shiftAndTrim(splitPath, res.split);
-              res.redirect = QueryParser._prepPath(url, res.path);
-            } else {
-              res.redirect = url;
-            }
+          if (splitSearch[0] === key && search) {
+            res.key = key;
+            res.isSearch = true;
+            res.split = this._searchDelimiter;
+            res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+            res.redirect = QueryParser._prepSearch(url, search, res.query);
+            return true;
+          }
 
+          if (splitPath[0] === key) {
+            res.key = key;
+            res.isPath = true;
+            res.split = this._pathDelimiter;
+            res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+            res.redirect = QueryParser._prepPath(url, res.path);
             return true;
           }
 
@@ -1011,7 +1086,7 @@
 
       return (
         commands
-          .filter(c => new URL(c.url).hostname === domain)
+          .filter(c => new URL(c.url).hostname.includes(domain))
           .map(c => c.color)[0] || null
       );
     }
@@ -1202,6 +1277,6 @@
   new Clock({
     delimiter: CONFIG.clockDelimiter,
     showForm: form.show,
-    clockTwelveHour: CONFIG.clockTwelveHour,
+    twentyFourHourClock: CONFIG.twentyFourHourClock,
   });
 </script>
