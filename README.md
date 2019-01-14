@@ -63,4 +63,4 @@ read through the `CONFIG`!
 
 ## License
 
-Feel free to use this and modify it however you like.
+Feel free to [use this and modify it however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
