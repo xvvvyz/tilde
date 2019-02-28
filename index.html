@@ -399,8 +399,8 @@
   }
 
   .search-suggestion.highlight {
-    background: var(--background);
-    color: var(--foreground);
+    background: var(--foreground);
+    color: var(--background);
   }
 
   .search-suggestion b {
@@ -1229,7 +1229,9 @@
 
     _setBackgroundFromQuery(query) {
       if (!this._colors) return;
-      this._formEl.style.background = this._parseQuery(query).color;
+      const color = this._parseQuery(query).color;
+      if (!color) return;
+      this._formEl.style.background = color;
     }
 
     _submitForm(e) {
