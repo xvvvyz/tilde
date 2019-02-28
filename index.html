@@ -233,8 +233,8 @@
 <style type="text/css">
   :root {
     /* colors */
-    --background: #fff;
-    --foreground: #1e272e;
+    --background: #1e272e;
+    --foreground: #fff;
 
     /* fonts */
     --font-family: Lato, sans-serif;
@@ -250,6 +250,7 @@
     font-family: Lato;
     font-style: normal;
     font-weight: 400;
+    font-display: swap;
     src: local('Lato Regular'), local('Lato-Regular'),
     url('./fonts/lato-v14-latin-regular.woff2') format('woff2'),
     url('./fonts/lato-v14-latin-regular.woff') format('woff');
@@ -259,6 +260,7 @@
     font-family: Lato;
     font-style: normal;
     font-weight: 900;
+    font-display: swap;
     src: local('Lato Black'), local('Lato-Black'),
     url('./fonts/lato-v14-latin-900.woff2') format('woff2'),
     url('./fonts/lato-v14-latin-900.woff') format('woff');
@@ -359,7 +361,7 @@
 
   .search-form {
     background: var(--foreground);
-    color: var(--background);
+    color: var(--foreground);
     z-index: 2;
   }
 
@@ -413,7 +415,7 @@
     bottom: -0.3rem;
     left: 0;
     height: 2px;
-    background: var(--background);
+    background: var(--foreground);
     opacity: 0.4;
   }
 
