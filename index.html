@@ -1043,17 +1043,14 @@
       this._pathDelimiter = options.pathDelimiter;
       this._protocolRegex = /^[a-zA-Z]+:\/\//i;
       this._urlRegex = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
+      this._cachedQuery = '';
+      this._cachedRes = null;
       this.parse = this.parse.bind(this);
-      this._lastQuery = "";
-      this._lastParse;
     }
 
     parse(query) {
-      if (this._lastQuery === query) {
-            return this._lastParse;
-        }
-      this._lastQuery = query;
-      
+      if (this._cachedQuery === query) return this._cachedRes;
+      this._cachedQuery = query;
       const res = { query: query, split: null };
 
       if (this._urlRegex.test(query)) {
@@ -1097,7 +1094,7 @@
       }
 
       res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
-      this._lastParse = res;
+      this._cachedRes = res;
       return res;
     }
 
