@@ -1044,7 +1044,7 @@
       this._protocolRegex = /^[a-zA-Z]+:\/\//i;
       this._urlRegex = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
       this._cachedQuery = '';
-      this._cachedRes = null;
+      this._cachedRes = {};
       this.parse = this.parse.bind(this);
     }
 
