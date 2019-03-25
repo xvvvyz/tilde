@@ -1049,6 +1049,7 @@
     }
 
     parse(query) {
+      if (!query) return {};
       if (this._lastQuery === query) {
             return this._lastParse;
         }
