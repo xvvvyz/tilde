@@ -13,7 +13,7 @@
         key: '*',
         url: 'https://encrypted.google.com',
         search: '/search?q={}',
-        color: '#1e272e',
+        color: '#000',
       },
       {
         category: 'Work',
@@ -29,7 +29,7 @@
         key: 'g',
         url: 'https://github.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #2b2b2b, #3b3b3b)',
+        color: 'linear-gradient(135deg, #6e5494, #7e64a4)',
       },
       {
         category: 'Work',
@@ -233,8 +233,9 @@
 <style type="text/css">
   :root {
     /* colors */
-    --background: #1e272e;
-    --foreground: #fff;
+    --background: #fff;
+    --foreground: #232931;
+    --searchForeground: #fff;
 
     /* fonts */
     --font-family: Lato, sans-serif;
@@ -360,8 +361,8 @@
   }
 
   .search-form {
-    background: var(--foreground);
-    color: var(--foreground);
+    background: var(--background);
+    color: var(--searchForeground);
     z-index: 2;
   }
 
@@ -399,7 +400,7 @@
   }
 
   .search-suggestion.highlight {
-    background: var(--foreground);
+    background: var(--searchForeground);
     color: var(--background);
   }
 
@@ -415,7 +416,7 @@
     bottom: -0.3rem;
     left: 0;
     height: 2px;
-    background: var(--foreground);
+    background: var(--searchForeground);
     opacity: 0.4;
   }
 
