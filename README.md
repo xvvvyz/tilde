@@ -14,8 +14,6 @@ generic Google search will be triggered. For example:
 - Entering `cats` would search
   [Google for cats](https://encrypted.google.com/search?q=cats).
 
-On mobile, you can click the clock to focus the search input.
-
 ### Searching
 
 You can search any of the sites by typing a colon after the site's key, followed
