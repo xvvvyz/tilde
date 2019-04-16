@@ -227,6 +227,14 @@
      * Show a twenty-four-hour clock instead of a twelve-hour clock with AM/PM.
      */
     twentyFourHourClock: true,
+
+    /**
+     * Action to take when the clock is clicked. Options include:
+     *
+     * - "Menu" to show the help menu
+     * - "Search" to show the search input
+     */
+    clockAction: 'Menu',
   };
 </script>
 
@@ -235,6 +243,7 @@
     /* colors */
     --background: #fff;
     --foreground: #232931;
+    --searchBackground: #000;
     --searchForeground: #fff;
 
     /* fonts */
@@ -361,7 +370,7 @@
   }
 
   .search-form {
-    background: var(--background);
+    background: var(--searchBackground);
     color: var(--searchForeground);
     z-index: 2;
   }
@@ -641,9 +650,9 @@
     constructor(options) {
       this._el = $.el('#clock');
       this._delimiter = options.delimiter;
-      this._twentyFourHourClock = options.twentyFourHourClock;
+      this._twentyFourHour = options.twentyFourHour;
       this._setTime = this._setTime.bind(this);
-      this._el.addEventListener('click', options.showForm);
+      this._el.addEventListener('click', options.onClick);
       this._start();
     }
 
@@ -652,7 +661,7 @@
       let hours = $.pad(date.getHours());
       let amPm = '';
 
-      if (!this._twentyFourHourClock) {
+      if (!this._twentyFourHour) {
         hours = date.getHours();
         if (hours > 12) hours -= 12;
         else if (hours === 0) hours = 12;
@@ -1296,7 +1305,7 @@
 
   new Clock({
     delimiter: CONFIG.clockDelimiter,
-    showForm: form.show,
-    twentyFourHourClock: CONFIG.twentyFourHourClock,
+    onClick: CONFIG.clockAction === 'Search' ? form.show : help.toggle,
+    twentyFourHour: CONFIG.twentyFourHourClock,
   });
 </script>
