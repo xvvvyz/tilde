@@ -45,11 +45,11 @@ URL. For example:
 - Entering `https://smile.amazon.com` would redirect you to
   [smile.amazon.com](https://smile.amazon.com/).
 
-### Query Paramater
+### Query Parameter
 
 Additionally, you can pass any query via the `q` query param. For example:
 
-- Going to `file:///path/to/tilde/index.html?q=cats` would search
+- Navigating to `file:///path/to/tilde/index.html?q=cats` would search
   [Google for cats](https://encrypted.google.com/search?q=cats).
 
 This allows you to invoke Tilde with your native browser search bar.
