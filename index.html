@@ -607,6 +607,7 @@
 
     key: e => {
       const ctrl = e.ctrlKey;
+      const meta = e.metaKey;
       const shift = e.shiftKey;
 
       switch (e.which) {
@@ -637,8 +638,11 @@
         case 91:
         case 93:
         case 224:
-          return 'super';
+          return 'meta';
       }
+
+      if (ctrl) return 'ctrl-*';
+      if (meta) return 'meta-*';
     },
 
     pad: v => ('0' + v.toString()).slice(-2),
@@ -1203,9 +1207,11 @@
       switch ($.key(e)) {
         case 'alt':
         case 'ctrl':
+        case 'ctrl-*':
         case 'enter':
+        case 'meta':
+        case 'meta-*':
         case 'shift':
-        case 'super':
           return;
         case 'escape':
           this.hide();
