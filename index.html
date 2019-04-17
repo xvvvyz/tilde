@@ -595,9 +595,9 @@
     flattenAndUnique: arr => [...new Set([].concat.apply([], arr))],
     ieq: (a, b) => a.toLowerCase() === b.toLowerCase(),
     iin: (a, b) => a.toLowerCase().indexOf(b.toLowerCase()) !== -1,
-    isDown: e => ['c-n', 'down', 'tab'].includes($.key(e)),
+    isDown: e => ['ctrl-n', 'down', 'tab'].includes($.key(e)),
     isRemove: e => ['backspace', 'delete'].includes($.key(e)),
-    isUp: e => ['c-p', 'up', 's-tab'].includes($.key(e)),
+    isUp: e => ['ctrl-p', 'up', 's-tab'].includes($.key(e)),
 
     jsonp: url => {
       let script = document.createElement('script');
@@ -632,9 +632,13 @@
         case 46:
           return 'delete';
         case 78:
-          return ctrl ? 'c-n' : 'n';
+          return ctrl ? 'ctrl-n' : 'n';
         case 80:
-          return ctrl ? 'c-p' : 'p';
+          return ctrl ? 'ctrl-p' : 'p';
+        case 86:
+          if (ctrl) return 'ctrl-v';
+          if (meta) return 'ctrl-v';
+          break;
         case 91:
         case 93:
         case 224:
