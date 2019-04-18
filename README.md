@@ -20,7 +20,7 @@ You can search a site by typing a colon after the site's key, followed
 by your search query. For example:
 
 - Entering `g:tilde` would search
-  [GitHub for tilde](https://github.com/search?q=tilde).
+  [GitHub for "tilde"](https://github.com/search?q=tilde).
 - Entering `s:san holo` would search
   [SoundCloud for "san holo"](https://soundcloud.com/search?q=san%20holo).
 
