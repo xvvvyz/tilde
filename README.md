@@ -52,4 +52,6 @@ read through the `CONFIG`!
 
 ## License
 
-Feel free to [use this and modify it however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
+[The Lato typeface](https://www.latofonts.com/lato-free-fonts/) has
+[its own license](https://github.com/cadejscroggins/tilde/blob/master/fonts/LICENSE).
+You can use and modify everything else [however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
