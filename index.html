@@ -204,7 +204,7 @@
     /**
      * Dynamic overlay background colors when command domains are matched.
      */
-    colors: true,
+    colors: false,
 
     /**
      * The delimiter between a command key and your search query. For example,
@@ -241,10 +241,10 @@
 <style type="text/css">
   :root {
     /* colors */
-    --background: #fff;
-    --foreground: #232931;
-    --searchBackground: #000;
-    --searchForeground: #fff;
+    --background: #fffef8;
+    --foreground: #3e4959;
+    --searchBackground: #fffef8;
+    --searchForeground: #3e4959;
 
     /* fonts */
     --font-family: Lato, sans-serif;
@@ -403,6 +403,7 @@
 
   .search-suggestion {
     padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
     text-align: left;
     white-space: nowrap;
     cursor: pointer;
@@ -422,9 +423,9 @@
     content: ' ';
     position: absolute;
     right: 0;
-    bottom: -0.3rem;
+    bottom: 0.1rem;
     left: 0;
-    height: 2px;
+    height: 4px;
     background: var(--searchForeground);
     opacity: 0.4;
   }
@@ -486,9 +487,9 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 2px;
+    bottom: 0.5rem;
     left: 0;
-    height: 2px;
+    height: 4px;
     transition: 0.2s;
     transform: translateX(-2rem);
     background: var(--foreground);
@@ -502,7 +503,7 @@
   .command a:hover .command-name::after,
   .command a:focus .command-name::after {
     transform: translateX(0);
-    opacity: 1;
+    opacity: 0.4;
   }
 
   body.help .help,
