@@ -73,19 +73,19 @@
       },
       {
         category: 'Listen',
-        name: 'Line Radio',
-        key: 'l',
-        url: 'https://linerad.io',
-        search: '/#{}',
-        color: 'linear-gradient(135deg, #a29bfe, #bb9bfe)',
-      },
-      {
-        category: 'Listen',
         name: 'SoundCloud',
-        key: 's',
+        key: 'S',
         url: 'https://soundcloud.com/discover',
         search: '/search?q={}',
         color: 'linear-gradient(135deg, #ff8800, #ffc800)',
+      },
+      {
+        category: 'Listen',
+        name: 'Spotify',
+        key: 's',
+        url: 'https://open.spotify.com',
+        search: '/search/{}',
+        color: 'linear-gradient(135deg, #1DB954, #1Da974)',
       },
       {
         category: 'Watch',
@@ -146,7 +146,7 @@
         category: 'Download',
         name: 'YTS',
         key: 'Y',
-        url: 'https://yts.am/browse-movies/all/1080p/all/7/latest',
+        url: 'https://yts.am/browse-movies/0/1080p/all/8/latest',
         search: '/browse-movies/{}',
         color: 'linear-gradient(135deg, #2f2f2f, #373737)',
       },
@@ -202,9 +202,9 @@
     newTab: true,
 
     /**
-     * Dynamic overlay background colors when command domains are matched.
+     * Use command colors when domains are matched and on the help page.
      */
-    colors: false,
+    colors: true,
 
     /**
      * The delimiter between a command key and your search query. For example,
@@ -243,8 +243,8 @@
     /* colors */
     --background: #fffef8;
     --foreground: #3e4959;
-    --searchBackground: #fffef8;
-    --searchForeground: #3e4959;
+    --searchBackground: #3e4959;
+    --searchForeground: #fffef8;
 
     /* fonts */
     --font-family: Lato, sans-serif;
@@ -473,7 +473,7 @@
     border-radius: 50%;
     background: var(--foreground);
     color: var(--background);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     line-height: 2rem;
     text-align: center;
   }
@@ -487,9 +487,9 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0.5rem;
+    bottom: 0.4rem;
     left: 0;
-    height: 4px;
+    height: 0.4rem;
     transition: 0.2s;
     transform: translateX(-2rem);
     background: var(--foreground);
@@ -696,6 +696,7 @@
   class Help {
     constructor(options) {
       this._el = $.el('#help');
+      this._colors = options.colors;
       this._commands = options.commands;
       this._newTab = options.newTab;
       this._toggled = false;
@@ -729,13 +730,18 @@
 
     _buildListCommands(currentCategory) {
       return this._commands
-        .map(({ category, name, key, url }) => {
+        .map(({ category, color, name, key, url }, i) => {
           if (category === currentCategory) {
             return `
               <li class="command">
                 <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
-                  <span class="command-key">${key}</span>
-                  <span class="command-name">${name}</span>
+                  ${
+                    this._colors
+                      ? `<style>.command-key-${i},.command-name-${i}::after{background:${color};}</style>`
+                      : ''
+                  }
+                  <span class="command-key command-key-${i}">${key}</span>
+                  <span class="command-name command-name-${i}">${name}</span>
                 </a>
               </li>
             `;
@@ -1301,6 +1307,7 @@
   });
 
   const help = new Help({
+    colors: CONFIG.colors,
     commands: CONFIG.commands,
     newTab: CONFIG.newTab,
   });
