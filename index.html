@@ -16,36 +16,71 @@
         color: '#000',
       },
       {
-        category: 'Work',
+        category: 'Google',
+        name: 'Mail',
+        key: 'm',
+        url: 'https://mail.google.com/mail/u/0/#inbox',
+        search: '/mail/u/0/?q={}#search/{}',
+        color: 'linear-gradient(135deg, #4285f4, #4249f4)',
+      },
+      {
+        category: 'Google',
         name: 'Drive',
         key: 'd',
-        url: 'https://drive.google.com',
+        url: 'https://drive.google.com/drive/u/0/my-drive',
         search: '/drive/search?q={}',
-        color: 'linear-gradient(135deg, #4285f4, #4259f4)',
+        color: 'linear-gradient(135deg, #34a853, #345253)',
       },
       {
-        category: 'Work',
-        name: 'GitHub',
-        key: 'g',
-        url: 'https://github.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #8ccae1, #6dabd6)',
-      },
-      {
-        category: 'Work',
+        category: 'Google',
         name: 'Keep',
         key: 'k',
-        url: 'https://keep.google.com',
+        url: 'https://keep.google.com/u/0/',
         search: '/#search/text={}',
         color: 'linear-gradient(135deg, #fca550, #fcd050)',
       },
       {
-        category: 'Lurk',
-        name: 'Hunt',
-        key: 'p',
-        url: 'https://www.producthunt.com',
+        category: 'Work',
+        name: 'Slack',
+        key: 'ss',
+        url: 'https://app.slack.com/client/T7K3RFA1M/all-dms',
+        color: 'linear-gradient(135deg, #6ecadc, #6e7adc)',
+      },
+      {
+        category: 'Work',
+        name: 'AND.CO',
+        key: '.',
+        url: 'https://app.and.co/timers',
+        color: 'linear-gradient(135deg, #17d3aa, #1773aa)',
+      },
+      {
+        category: 'Work',
+        name: 'Asana',
+        key: 'sa',
+        url: 'https://app.asana.com/0/inbox/490539250066176',
+        color: 'linear-gradient(135deg, #3be8b0, #1aafd0)',
+      },
+      {
+        category: 'Code',
+        name: 'AWS',
+        key: 'a',
+        url: 'https://console.aws.amazon.com',
+        color: 'linear-gradient(135deg, #ff9900, #ff6400)',
+      },
+      {
+        category: 'Code',
+        name: 'GitHub',
+        key: 'g',
+        url: 'https://github.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #da552f, #da802f)',
+        color: 'linear-gradient(135deg, #8ccae1, #6d8bd6)',
+      },
+      {
+        category: 'Code',
+        name: 'Local',
+        key: '0',
+        url: 'http://localhost:3000',
+        search: ':{}',
       },
       {
         category: 'Lurk',
@@ -53,13 +88,21 @@
         key: 'r',
         url: 'https://www.reddit.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #5f99cf, #5f7dcf)',
+        color: 'linear-gradient(135deg, #5f99cf, #5f3dcf)',
+      },
+      {
+        category: 'Lurk',
+        name: 'ProductHunt',
+        key: 'p',
+        url: 'https://www.producthunt.com',
+        search: '/search?q={}',
+        color: 'linear-gradient(135deg, #da552f, #da802f)',
       },
       {
         category: 'Lurk',
         name: 'Unsplash',
         key: 'u',
-        url: 'https://unsplash.com/new',
+        url: 'https://unsplash.com/images',
         search: '/search/{}',
         color: '#000',
       },
@@ -69,12 +112,12 @@
         key: 'h',
         url: 'https://hypem.com/popular',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #83c441, #62c441)',
+        color: 'linear-gradient(135deg, #83c441, #628441)',
       },
       {
         category: 'Listen',
         name: 'SoundCloud',
-        key: 'S',
+        key: 'o',
         url: 'https://soundcloud.com/discover',
         search: '/search?q={}',
         color: 'linear-gradient(135deg, #ff8800, #ffc800)',
@@ -85,7 +128,7 @@
         key: 's',
         url: 'https://open.spotify.com',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #1DB954, #1Da974)',
+        color: 'linear-gradient(135deg, #1DB954, #1D7974)',
       },
       {
         category: 'Watch',
@@ -93,14 +136,7 @@
         key: 'n',
         url: 'https://www.netflix.com/browse',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #e50914, #e53509)',
-      },
-      {
-        category: 'Watch',
-        name: 'Twitch',
-        key: 't',
-        url: 'https://www.twitch.tv/directory/following',
-        color: 'linear-gradient(135deg, #6441a5, #7d41a5)',
+        color: 'linear-gradient(135deg, #e50914, #b50009)',
       },
       {
         category: 'Watch',
@@ -108,23 +144,14 @@
         key: 'y',
         url: 'https://youtube.com/feed/subscriptions',
         search: '/results?search_query={}',
-        color: 'linear-gradient(135deg, #cd201f, #cd4c1f)',
+        color: 'linear-gradient(135deg, #cd201f, #8d1c1f)',
       },
       {
-        category: 'Learn',
-        name: 'Academy',
-        key: 'a',
-        url: 'https://www.khanacademy.org',
-        search: '/search?page_search_query={}',
-        color: 'linear-gradient(135deg, #9cb443, #80b443)',
-      },
-      {
-        category: 'Learn',
-        name: 'Coursera',
-        key: 'c',
-        url: 'https://www.coursera.org',
-        search: '/courses?query={}',
-        color: 'linear-gradient(135deg, #407ED7, #4058d7)',
+        category: 'Watch',
+        name: 'Twitch',
+        key: 't',
+        url: 'https://www.twitch.tv/directory/following',
+        color: 'linear-gradient(135deg, #6441a5, #7d11a5)',
       },
       {
         category: 'Learn',
@@ -135,12 +162,36 @@
         color: 'linear-gradient(135deg, #171C23, #171923)',
       },
       {
+        category: 'Learn',
+        name: 'Coursera',
+        key: 'c',
+        url: 'https://www.coursera.org',
+        search: '/courses?query={}',
+        color: 'linear-gradient(135deg, #407ED7, #4038d7)',
+      },
+      {
+        category: 'Learn',
+        name: 'Khan',
+        key: 'K',
+        url: 'https://www.khanacademy.org',
+        search: '/search?page_search_query={}',
+        color: 'linear-gradient(135deg, #9cb443, #808443)',
+      },
+      {
         category: 'Download',
-        name: 'Bay',
-        key: 'b',
+        name: 'TPB',
+        key: 'B',
         url: 'https://thepiratebay.org',
         search: '/search/{}',
         color: 'linear-gradient(135deg, #d2b9a6, #d2c4a6)',
+      },
+      {
+        category: 'Download',
+        name: 'RARBG',
+        key: 'R',
+        url: 'https://rarbg.to/torrents.php',
+        search: '/torrents.php?search=test',
+        color: 'linear-gradient(135deg, #3870bb, #386ebb)',
       },
       {
         category: 'Download',
@@ -149,14 +200,6 @@
         url: 'https://yts.mx/browse-movies/0/all/all/7/seeds/0/en',
         search: '/browse-movies/{}',
         color: 'linear-gradient(135deg, #2f2f2f, #373737)',
-      },
-      {
-        category: 'Download',
-        name: '7digital',
-        key: '7',
-        url: 'https://us.7digital.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #07606e, #07466e)',
       },
     ],
 
@@ -170,23 +213,35 @@
      * The order and limit for each suggestion influencer. An "influencer" is
      * just a suggestion source. The following influencers are available:
      *
-     * - "Default" suggestions come from CONFIG.defaultSuggestions
-     * - "DuckDuckGo" suggestions come from the duck duck go search api
-     * - "History" suggestions come from your previously entered queries
+     * - "Default" suggestions come from CONFIG.defaultSuggestions (sync)
+     * - "History" suggestions come from your previously entered queries (sync)
+     * - "DuckDuckGo" suggestions come from the duck duck go search api (async)
      */
     influencers: [
       { name: 'Default', limit: 4 },
-      { name: 'History', limit: 1 },
       { name: 'DuckDuckGo', limit: 4 },
     ],
+
+    /**
+     * If true, suggestions aren't updated until all async influencers resolve.
+     * If false, synchronous suggestions display immediately, and async
+     * suggestions are appended. This is useful on high-latency networks.
+     */
+    asyncInfluencersAreBlocking: false,
 
     /**
      * Default search suggestions for the specified queries.
      */
     defaultSuggestions: {
-      g: ['g/issues', 'g/pulls', 'gist.github.com'],
-      r: ['r/r/unixporn', 'r/r/startpages'],
-      S: ['S/you/likes', 'S/discover/the-upload'],
+      '.': ['./inout/in/invoices/create'],
+      0: ['0:8000', '0:8080'],
+      d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
+      g: ['g/ossu'],
+      k: ['k/u/1/', 'k/u/2/'],
+      m: ['m/mail/u/1/#inbox', 'm/mail/u/2/#inbox'],
+      o: ['o/you/likes', 'o/discover/the-upload'],
+      r: ['r/r/startpages', 'r/r/listentothis'],
+      ss: ['ss/client/T018S4TL7CP/all-dms'],
     },
 
     /**
@@ -337,10 +392,12 @@
 
   .center {
     display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
+  }
+
+  .center > * {
+    margin: auto;
   }
 
   .overlay {
@@ -355,10 +412,8 @@
 
   .clock {
     display: block;
-    margin-top: -0.06rem;
     font-size: 4rem;
     font-weight: var(--font-weight-normal);
-    text-align: center;
     letter-spacing: 0.05rem;
     cursor: pointer;
   }
@@ -422,11 +477,12 @@
     content: ' ';
     position: absolute;
     right: 0;
-    bottom: 0.1rem;
+    bottom: 3px;
+    border-radius: 0.1em;
     left: 0;
-    height: 4px;
+    height: 2px;
     background: var(--searchForeground);
-    opacity: 0.4;
+    opacity: 0.8;
   }
 
   .search-suggestion.highlight b::after {
@@ -434,8 +490,7 @@
   }
 
   .help {
-    display: block;
-    padding: 8vw;
+    padding: 3rem;
     background: var(--background);
     z-index: 1;
   }
@@ -454,6 +509,7 @@
   .command a {
     display: flex;
     position: relative;
+    width: 100%;
     margin: 1rem 0;
     line-height: 2rem;
     text-decoration: none;
@@ -535,11 +591,6 @@
   }
 
   @media (min-width: 1000px) {
-    .help {
-      display: flex;
-      padding: 0;
-    }
-
     .search-input {
       font-size: 2.5rem;
     }
@@ -553,13 +604,13 @@
     }
 
     .categories {
-      grid-template-columns: repeat(2, 300px) 175px;
+      grid-template-columns: repeat(2, 300px) 170px;
     }
   }
 
-  @media (min-width: 1500px) {
+  @media (min-width: 1200px) {
     .categories {
-      grid-template-columns: repeat(5, 220px) 175px;
+      grid-template-columns: repeat(3, 220px) 170px;
     }
   }
 </style>
@@ -587,25 +638,25 @@
 
 <script>
   const $ = {
-    bodyClassAdd: c => $.el('body').classList.add(c),
-    bodyClassRemove: c => $.el('body').classList.remove(c),
-    el: s => document.querySelector(s),
-    els: s => [].slice.call(document.querySelectorAll(s) || []),
-    escapeRegex: s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
-    flattenAndUnique: arr => [...new Set([].concat.apply([], arr))],
+    bodyClassAdd: (c) => $.el('body').classList.add(c),
+    bodyClassRemove: (c) => $.el('body').classList.remove(c),
+    el: (s) => document.querySelector(s),
+    els: (s) => [].slice.call(document.querySelectorAll(s) || []),
+    escapeRegex: (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
+    flattenAndUnique: (arr) => [...new Set([].concat.apply([], arr))],
     ieq: (a, b) => a.toLowerCase() === b.toLowerCase(),
     iin: (a, b) => a.toLowerCase().indexOf(b.toLowerCase()) !== -1,
-    isDown: e => ['ctrl-n', 'down', 'tab'].includes($.key(e)),
-    isRemove: e => ['backspace', 'delete'].includes($.key(e)),
-    isUp: e => ['ctrl-p', 'up', 's-tab'].includes($.key(e)),
+    isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.key(e)),
+    isRemove: (e) => ['backspace', 'delete'].includes($.key(e)),
+    isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.key(e)),
 
-    jsonp: url => {
+    jsonp: (url) => {
       let script = document.createElement('script');
       script.src = url;
       $.el('head').appendChild(script);
     },
 
-    key: e => {
+    key: (e) => {
       const ctrl = e.ctrlKey;
       const meta = e.metaKey;
       const shift = e.shiftKey;
@@ -649,7 +700,7 @@
       if (meta) return 'meta-*';
     },
 
-    pad: v => ('0' + v.toString()).slice(-2),
+    pad: (v) => ('0' + v.toString()).slice(-2),
   };
 </script>
 
@@ -699,8 +750,8 @@
       this._commands = options.commands;
       this._newTab = options.newTab;
       this._toggled = false;
-      this._handleKeydown = this._handleKeydown.bind(this);
       this.toggle = this.toggle.bind(this);
+      this._handleKeydown = this._handleKeydown.bind(this);
       this._buildAndAppendLists();
       this._registerEvents();
     }
@@ -714,7 +765,7 @@
       const lists = document.createElement('ul');
       lists.classList.add('categories');
 
-      this._getCategories().forEach(category => {
+      this._getCategories().forEach((category) => {
         lists.insertAdjacentHTML(
           'beforeend',
           `<li class="category">
@@ -728,31 +779,33 @@
     }
 
     _buildListCommands(currentCategory) {
-      return this._commands
-        .map(({ category, color, name, key, url }, i) => {
-          if (category === currentCategory) {
-            return `
-              <li class="command">
-                <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
-                  ${
-                    this._colors
-                      ? `<style>.command-key-${i},.command-name-${i}::after{background:${color};}</style>`
-                      : ''
-                  }
-                  <span class="command-key command-key-${i}">${key}</span>
-                  <span class="command-name command-name-${i}">${name}</span>
-                </a>
-              </li>
-            `;
-          }
-        })
-        .join('');
+      return this._commands.reduce(
+        (acc, { category, color, name, key, url }, i) => {
+          if (category !== currentCategory) return acc;
+
+          return `
+            ${acc}
+            <li class="command">
+              <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
+                ${
+                  this._colors
+                    ? `<style>.command-key-${i},.command-name-${i}::after{background:${color};}</style>`
+                    : ''
+                }
+                <span class="command-key command-key-${i}">${key}</span>
+                <span class="command-name command-name-${i}">${name}</span>
+              </a>
+            </li>
+          `;
+        },
+        ''
+      );
     }
 
     _getCategories() {
       const categories = this._commands
-        .map(v => v.category)
-        .filter(category => category);
+        .map((v) => v.category)
+        .filter((category) => category);
 
       return [...new Set(categories)];
     }
@@ -779,7 +832,7 @@
 
     _addSearchPrefix(items, query) {
       const searchPrefix = this._getSearchPrefix(query);
-      return items.map(s => (searchPrefix ? searchPrefix + s : s));
+      return items.map((s) => (searchPrefix ? searchPrefix + s : s));
     }
 
     _getSearchPrefix(query) {
@@ -797,10 +850,9 @@
     }
 
     getSuggestions(query) {
-      return new Promise(resolve => {
-        const suggestions = this._defaultSuggestions[query];
-        resolve(suggestions ? suggestions.slice(0, this._limit) : []);
-      });
+      return new Promise((resolve) =>
+        resolve((this._defaultSuggestions[query] || []).slice(0, this._limit))
+      );
     }
   }
 </script>
@@ -809,26 +861,26 @@
   class DuckDuckGoInfluencer extends Influencer {
     constructor({ queryParser }) {
       super(...arguments);
+      this.isAsync = true;
     }
 
     getSuggestions(rawQuery) {
       const { query } = this._parseQuery(rawQuery);
       if (!query) return Promise.resolve([]);
 
-      return new Promise(resolve => {
-        const endpoint = 'https://duckduckgo.com/ac/';
+      return new Promise((resolve) => {
         const callback = 'autocompleteCallback';
 
-        window[callback] = res => {
+        window[callback] = (res) => {
           const suggestions = res
-            .map(i => i.phrase)
-            .filter(s => !$.ieq(s, query))
+            .map((i) => i.phrase)
+            .filter((s) => !$.ieq(s, query))
             .slice(0, this._limit);
 
           resolve(this._addSearchPrefix(suggestions, rawQuery));
         };
 
-        $.jsonp(`${endpoint}?callback=${callback}&q=${query}`);
+        $.jsonp(`https://duckduckgo.com/ac/?callback=${callback}&q=${query}`);
       });
     }
   }
@@ -839,6 +891,10 @@
     constructor() {
       super(...arguments);
       this._storeName = 'history';
+    }
+
+    static clearHistory() {
+      localStorage.clear();
     }
 
     addItem(query) {
@@ -861,14 +917,16 @@
     }
 
     getSuggestions(query) {
-      return new Promise(resolve => {
-        const suggestions = this._getHistory()
-          .map(([item]) => item)
-          .filter(item => query && !$.ieq(item, query) && $.iin(item, query))
-          .slice(0, this._limit);
-
-        resolve(suggestions);
-      });
+      return new Promise((resolve) =>
+        resolve(
+          this._getHistory()
+            .map(([item]) => item)
+            .filter(
+              (item) => query && !$.ieq(item, query) && $.iin(item, query)
+            )
+            .slice(0, this._limit)
+        )
+      );
     }
 
     _fetch() {
@@ -894,12 +952,17 @@
 <script>
   class Suggester {
     constructor(options) {
+      this.isAsync = false;
       this._el = $.el('#search-suggestions');
+      this._asyncInfluencersAreBlocking = options.asyncInfluencersAreBlocking;
       this._enabled = options.enabled;
       this._influencers = options.influencers;
       this._limit = options.limit;
+      this._currentInput = '';
+      this._currentSuggestions = [];
       this._suggestionEls = [];
       this._handleKeydown = this._handleKeydown.bind(this);
+      this._setSuggestions = this._setSuggestions.bind(this);
       this._registerEvents();
     }
 
@@ -916,61 +979,69 @@
     }
 
     success(query) {
+      this._influencers.forEach((i) => i.addItem(query));
       this._clearSuggestions();
-      this._influencers.forEach(i => i.addItem(query));
     }
 
     suggest(input) {
       if (!this._enabled) return;
-      input = input.trim();
-      if (input === '') this._clearSuggestions();
+      this._currentInput = input.trim();
 
-      Promise.all(this._getInfluencerPromises(input)).then(res => {
-        const suggestions = $.flattenAndUnique(res);
+      if (!this._currentInput) {
         this._clearSuggestions();
+        return;
+      }
 
-        if (suggestions.length) {
-          this._appendSuggestions(suggestions, input);
-          this._registerSuggestionHighlightEvents();
-          this._registerSuggestionClickEvents();
-          $.bodyClassAdd('suggestions');
-        }
-      });
-    }
+      this._currentSuggestions = [];
 
-    _appendSuggestions(suggestions, input) {
-      suggestions.some((suggestion, i) => {
-        const match = new RegExp($.escapeRegex(input), 'ig');
-        const suggestionHtml = suggestion.replace(match, `<b>${input}</b>`);
-
-        this._el.insertAdjacentHTML(
-          'beforeend',
-          `<li>
-            <button
-              type="button"
-              class="js-search-suggestion search-suggestion"
-              data-suggestion="${suggestion}"
-              tabindex="-1"
-            >
-              ${suggestionHtml}
-            </button>
-          </li>`
+      if (this._asyncInfluencersAreBlocking) {
+        Promise.all(this._getInfluencers({ input })).then(this._setSuggestions);
+      } else {
+        Promise.all(this._getInfluencers({ input, syncOnly: true })).then(
+          this._setSuggestions
         );
 
-        if (i + 1 >= this._limit) return true;
-      });
+        Promise.all(this._getInfluencers({ input, asyncOnly: true })).then(
+          this._setSuggestions
+        );
+      }
+    }
 
-      this._suggestionEls = $.els('.js-search-suggestion');
+    _buildSuggestionsHtml() {
+      return this._currentSuggestions
+        .slice(0, this._limit)
+        .reduce((acc, suggestion) => {
+          const match = new RegExp($.escapeRegex(this._currentInput), 'ig');
+
+          const suggestionHtml = suggestion.replace(
+            match,
+            `<b>${this._currentInput}</b>`
+          );
+
+          return `
+            ${acc}
+            <li>
+              <button
+                type="button"
+                class="js-search-suggestion search-suggestion"
+                data-suggestion="${suggestion}"
+                tabindex="-1"
+              >
+                ${suggestionHtml}
+              </button>
+            </li>
+          `;
+        }, '');
     }
 
     _clearSuggestionClickEvents() {
-      this._suggestionEls.forEach(el => {
+      this._suggestionEls.forEach((el) => {
         el.removeEventListener('click', this._onClick);
       });
     }
 
     _clearSuggestionHighlightEvents() {
-      this._suggestionEls.forEach(el => {
+      this._suggestionEls.forEach((el) => {
         el.removeEventListener('mouseover', this._highlight);
         el.removeEventListener('mouseout', this._unHighlight);
       });
@@ -1006,10 +1077,15 @@
       if (!exists) this._unHighlight(e);
     }
 
-    _getInfluencerPromises(input) {
-      return this._influencers.map(influencer =>
-        influencer.getSuggestions(input)
-      );
+    _getInfluencers({ asyncOnly, input, syncOnly }) {
+      return this._influencers
+        .filter(
+          (influencer) =>
+            (!asyncOnly && !syncOnly) ||
+            (asyncOnly && influencer.isAsync) ||
+            (syncOnly && !influencer.isAsync)
+        )
+        .map((influencer) => influencer.getSuggestions(input));
     }
 
     _handleKeydown(e) {
@@ -1030,7 +1106,7 @@
     }
 
     _registerSuggestionClickEvents() {
-      this._suggestionEls.forEach(el => {
+      this._suggestionEls.forEach((el) => {
         const value = el.getAttribute('data-suggestion');
         el.addEventListener('click', this._onClick.bind(null, value));
       });
@@ -1040,13 +1116,27 @@
       const noHighlightUntilMouseMove = () => {
         window.removeEventListener('mousemove', noHighlightUntilMouseMove);
 
-        this._suggestionEls.forEach(el => {
+        this._suggestionEls.forEach((el) => {
           el.addEventListener('mouseover', this._highlight.bind(this, el));
           el.addEventListener('mouseout', this._unHighlight.bind(this));
         });
       };
 
       window.addEventListener('mousemove', noHighlightUntilMouseMove);
+    }
+
+    _setSuggestions(newSuggestions) {
+      this._currentSuggestions = $.flattenAndUnique([
+        this._currentSuggestions,
+        ...newSuggestions,
+      ]);
+
+      if (!this._currentSuggestions.length) return;
+      this._el.innerHTML = this._buildSuggestionsHtml();
+      this._suggestionEls = $.els('.js-search-suggestion');
+      this._registerSuggestionHighlightEvents();
+      this._registerSuggestionClickEvents();
+      $.bodyClassAdd('suggestions');
     }
 
     _unHighlight(e) {
@@ -1085,7 +1175,7 @@
         const splitSearch = trimmed.split(this._searchDelimiter);
         const splitPath = trimmed.split(this._pathDelimiter);
 
-        this._commands.some(({ category, key, name, search, url }) => {
+        this._commands.some(({ key, search, url }) => {
           if (query === key) {
             res.key = key;
             res.isKey = true;
@@ -1127,8 +1217,8 @@
 
       return (
         commands
-          .filter(c => new URL(c.url).hostname.includes(domain))
-          .map(c => c.color)[0] || null
+          .filter((c) => new URL(c.url).hostname.includes(domain))
+          .map((c) => c.color)[0] || null
       );
     }
 
@@ -1140,7 +1230,7 @@
       if (!searchPath) return url;
       const baseUrl = QueryParser._stripUrlPath(url);
       const urlQuery = encodeURIComponent(query);
-      searchPath = searchPath.replace('{}', urlQuery);
+      searchPath = searchPath.replace(/{}/g, urlQuery);
       return baseUrl + searchPath;
     }
 
@@ -1287,7 +1377,7 @@
     searchDelimiter: CONFIG.searchDelimiter,
   });
 
-  const influencers = CONFIG.influencers.map(influencerConfig => {
+  const influencers = CONFIG.influencers.map((influencerConfig) => {
     return new {
       Default: DefaultInfluencer,
       DuckDuckGo: DuckDuckGoInfluencer,
@@ -1300,6 +1390,7 @@
   });
 
   const suggester = new Suggester({
+    asyncInfluencersAreBlocking: CONFIG.asyncInfluencersAreBlocking,
     enabled: CONFIG.suggestions,
     influencers,
     limit: CONFIG.suggestionsLimit,
