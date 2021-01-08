@@ -13,59 +13,96 @@
         key: '*',
         url: 'https://duckduckgo.com',
         search: '?q={}',
-        color: '#333',
+        color: '#222328',
       },
       {
         category: 'Google',
         name: 'Mail',
         key: 'm',
-        url: 'https://mail.google.com/mail/u/0/#inbox',
+        url: 'https://mail.google.com/mail/u/0',
         search: '/mail/u/0/?q={}#search/{}',
-        color: 'linear-gradient(135deg, #4285f4, #4249f4)',
+        color: 'linear-gradient(135deg, #4249f4, #4289f4)',
       },
       {
         category: 'Google',
         name: 'Drive',
         key: 'd',
         url: 'https://drive.google.com/drive/u/0/my-drive',
-        search: '/drive/search?q={}',
-        color: 'linear-gradient(135deg, #34a853, #345253)',
+        search: '/drive/u/0/search?q={}',
+        color: 'linear-gradient(135deg, #34a853, #34a893)',
       },
       {
         category: 'Google',
         name: 'Keep',
         key: 'k',
-        url: 'https://keep.google.com/u/0/',
-        search: '/#search/text={}',
-        color: 'linear-gradient(135deg, #fca550, #fcd050)',
+        url: 'https://keep.google.com/u/0',
+        search: '/u/0/#search/text={}',
+        color: 'linear-gradient(135deg, #ec9540, #ecc040)',
+      },
+      {
+        category: 'Google',
+        name: 'Cal',
+        key: 'c',
+        url: 'https://calendar.google.com/calendar/u/0/r',
+        search: '/calendar/u/0/r/search?q={}',
+        color: 'linear-gradient(135deg, #E44134, #E48134)',
       },
       {
         category: 'Work',
         name: 'Slack',
-        key: 'ss',
-        url: 'https://app.slack.com/client/T7K3RFA1M/all-dms',
-        color: 'linear-gradient(135deg, #6ecadc, #6e7adc)',
+        key: 's',
+        url: 'https://app.slack.com/client/T09M5UWSV',
+        color: 'linear-gradient(135deg, #6e7adc, #6ebadc)',
       },
       {
         category: 'Work',
         name: 'AND.CO',
         key: '.',
         url: 'https://app.and.co/timers',
-        color: 'linear-gradient(135deg, #17d3aa, #1773aa)',
+        color: 'linear-gradient(135deg, #1773aa, #17b3aa)',
+      },
+      {
+        category: 'Work',
+        name: 'Notion',
+        key: 'n',
+        url: 'https://www.notion.so',
+        color: 'linear-gradient(135deg, #E16259, #E1a259)',
       },
       {
         category: 'Work',
         name: 'Asana',
-        key: 'sa',
+        key: 'a',
         url: 'https://app.asana.com/0/inbox/490539250066176',
-        color: 'linear-gradient(135deg, #3be8b0, #1aafd0)',
+        color: 'linear-gradient(135deg, #0a9fc0, #0adfc0)',
+      },
+      {
+        category: 'Design',
+        name: 'Figma',
+        key: 'f',
+        url: 'https://www.figma.com/files/recent',
+        color: 'linear-gradient(135deg, #9762F6, #97a2F6)',
+      },
+      {
+        category: 'Design',
+        name: 'Dribbble',
+        key: 'b',
+        url: 'https://dribbble.com/shots/recent',
+        search: '/search/{}',
+        color: 'linear-gradient(135deg, #f042ac, #f082ac)',
+      },
+      {
+        category: 'Design',
+        name: 'UXDB',
+        key: 'ux',
+        url: 'https://www.uxdatabase.io/product-database',
+        color: '#000',
       },
       {
         category: 'Code',
         name: 'AWS',
-        key: 'a',
+        key: 'A',
         url: 'https://console.aws.amazon.com',
-        color: 'linear-gradient(135deg, #ff9900, #ff6400)',
+        color: 'linear-gradient(135deg, #ff6400, #ffa400)',
       },
       {
         category: 'Code',
@@ -73,7 +110,15 @@
         key: 'g',
         url: 'https://github.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #8ccae1, #6d8bd6)',
+        color: 'linear-gradient(135deg, #478B47, #478B87)',
+      },
+      {
+        category: 'Code',
+        name: 'MDN',
+        key: 'M',
+        url: 'https://developer.mozilla.org/en-US',
+        search: '/en-US/search?q={}',
+        color: 'linear-gradient(135deg, #5987a6, #59c7a6)',
       },
       {
         category: 'Code',
@@ -88,15 +133,7 @@
         key: 'r',
         url: 'https://www.reddit.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #5f99cf, #5f3dcf)',
-      },
-      {
-        category: 'Lurk',
-        name: 'ProductHunt',
-        key: 'p',
-        url: 'https://www.producthunt.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #da552f, #da802f)',
+        color: 'linear-gradient(135deg, #5f3dcf, #5f7dcf)',
       },
       {
         category: 'Lurk',
@@ -107,99 +144,59 @@
         color: '#000',
       },
       {
+        category: 'Lurk',
+        name: 'Hunt',
+        key: 'p',
+        url: 'https://www.producthunt.com',
+        search: '/search?q={}',
+        color: 'linear-gradient(135deg, #da552f, #da952f)',
+      },
+      {
         category: 'Listen',
-        name: 'Hypem',
-        key: 'h',
-        url: 'https://hypem.com/popular',
+        name: 'Spotify',
+        key: 'sp',
+        url: 'https://open.spotify.com',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #83c441, #628441)',
+        color: 'linear-gradient(135deg, #1DB954, #1DB994)',
       },
       {
         category: 'Listen',
         name: 'SoundCloud',
-        key: 'o',
+        key: 'sc',
         url: 'https://soundcloud.com/discover',
         search: '/search?q={}',
         color: 'linear-gradient(135deg, #ff8800, #ffc800)',
       },
       {
         category: 'Listen',
-        name: 'Spotify',
-        key: 's',
-        url: 'https://open.spotify.com',
+        name: 'Hypem',
+        key: 'hy',
+        url: 'https://hypem.com/popular',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #1DB954, #1D7974)',
+        color: 'linear-gradient(135deg, #628441, #628481)',
       },
       {
         category: 'Watch',
         name: 'Netflix',
-        key: 'n',
+        key: 'ne',
         url: 'https://www.netflix.com/browse',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #e50914, #b50009)',
+        color: 'linear-gradient(135deg, #e50914, #fe3914)',
       },
       {
         category: 'Watch',
         name: 'YouTube',
-        key: 'y',
+        key: 'yo',
         url: 'https://youtube.com/feed/subscriptions',
         search: '/results?search_query={}',
-        color: 'linear-gradient(135deg, #cd201f, #8d1c1f)',
+        color: 'linear-gradient(135deg, #fd201f, #cd301f)',
       },
       {
         category: 'Watch',
         name: 'Twitch',
-        key: 't',
+        key: 'tw',
         url: 'https://www.twitch.tv/directory/following',
-        color: 'linear-gradient(135deg, #6441a5, #7d11a5)',
-      },
-      {
-        category: 'Learn',
-        name: 'Egghead',
-        key: 'e',
-        url: 'https://egghead.io',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #171C23, #171923)',
-      },
-      {
-        category: 'Learn',
-        name: 'Coursera',
-        key: 'c',
-        url: 'https://www.coursera.org',
-        search: '/courses?query={}',
-        color: 'linear-gradient(135deg, #407ED7, #4038d7)',
-      },
-      {
-        category: 'Learn',
-        name: 'Khan',
-        key: 'K',
-        url: 'https://www.khanacademy.org',
-        search: '/search?page_search_query={}',
-        color: 'linear-gradient(135deg, #9cb443, #808443)',
-      },
-      {
-        category: 'Download',
-        name: 'TPB',
-        key: 'B',
-        url: 'https://thepiratebay.org',
-        search: '/search/{}',
-        color: 'linear-gradient(135deg, #d2b9a6, #d2c4a6)',
-      },
-      {
-        category: 'Download',
-        name: 'RARBG',
-        key: 'R',
-        url: 'https://rarbg.to/torrents.php',
-        search: '/torrents.php?search=test',
-        color: 'linear-gradient(135deg, #3870bb, #386ebb)',
-      },
-      {
-        category: 'Download',
-        name: 'YTS',
-        key: 'Y',
-        url: 'https://yts.mx/browse-movies/0/all/all/7/seeds/0/en',
-        search: '/browse-movies/{}',
-        color: 'linear-gradient(135deg, #2f2f2f, #373737)',
+        color: 'linear-gradient(135deg, #6441a5, #6461c5)',
       },
     ],
 
@@ -235,13 +232,15 @@
     defaultSuggestions: {
       '.': ['./inout/in/invoices/create'],
       0: ['0:8000', '0:8080'],
+      b: ['b/shots/popular'],
+      c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
       g: ['g/ossu'],
-      k: ['k/u/1/', 'k/u/2/'],
-      m: ['m/mail/u/1/#inbox', 'm/mail/u/2/#inbox'],
-      o: ['o/you/likes', 'o/discover/the-upload'],
+      k: ['k/u/1', 'k/u/2'],
+      m: ['m/mail/u/1', 'm/mail/u/2'],
       r: ['r/r/startpages', 'r/r/listentothis'],
-      ss: ['ss/client/T018S4TL7CP/all-dms'],
+      s: ['s/client/T7K3RFA1M', 's/client/T018S4TL7CP'],
+      sc: ['sc/you/likes', 'sc/discover/the-upload'],
     },
 
     /**
@@ -296,8 +295,9 @@
   :root {
     /* colors */
     --background: #fffef8;
-    --foreground: #3e4959;
-    --searchBackground: #3e4959;
+    --foreground: #222328;
+    --foregroundSubtle: #525358;
+    --searchBackground: #222328;
     --searchForeground: #fffef8;
 
     /* fonts */
@@ -413,7 +413,6 @@
   .clock {
     display: block;
     font-size: 4rem;
-    font-weight: var(--font-weight-normal);
     letter-spacing: 0.05rem;
     cursor: pointer;
   }
@@ -457,7 +456,7 @@
 
   .search-suggestion {
     padding: 0.75rem 1rem;
-    border-radius: 0.25rem;
+    border-radius: 2px;
     text-align: left;
     white-space: nowrap;
     cursor: pointer;
@@ -475,14 +474,13 @@
 
   .search-suggestion b::after {
     content: ' ';
+    height: 0.4rem;
     position: absolute;
     right: 0;
-    bottom: 3px;
-    border-radius: 0.1em;
+    bottom: 0.05rem;
     left: 0;
-    height: 2px;
     background: var(--searchForeground);
-    opacity: 0.8;
+    opacity: 0.4;
   }
 
   .search-suggestion.highlight b::after {
@@ -496,31 +494,31 @@
   }
 
   .category {
-    margin-bottom: 3rem;
+    padding: 1.75rem 2.25rem;
+    vertical-align: text-top;
+    break-inside: avoid-column;
   }
 
   .category-name {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-size: 0.75rem;
-    letter-spacing: 0.15rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.125rem;
     text-transform: uppercase;
   }
 
   .command a {
     display: flex;
+    align-items: center;
     position: relative;
     width: 100%;
-    margin: 1rem 0;
-    line-height: 2rem;
+    padding: 0.5rem 0;
     text-decoration: none;
-  }
-
-  .command:last-of-type a {
-    margin-bottom: 0;
   }
 
   .command-key {
     display: block;
+    flex-shrink: 0;
     float: left;
     width: 2rem;
     height: 2rem;
@@ -535,6 +533,7 @@
 
   .command-name {
     position: relative;
+    color: var(--foregroundSubtle);
   }
 
   .command-name::after {
@@ -542,7 +541,7 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0.4rem;
+    bottom: 0.05rem;
     left: 0;
     height: 0.4rem;
     transition: 0.2s;
@@ -566,7 +565,7 @@
     visibility: visible;
   }
 
-  @media (min-width: 500px) {
+  @media (min-width: 600px) {
     .clock {
       font-size: 6rem;
     }
@@ -580,17 +579,11 @@
     }
 
     .categories {
-      display: grid;
-      grid-template-columns: 250px 175px;
-      justify-content: space-around;
-    }
-
-    .category:nth-last-child(2) {
-      margin-bottom: 0;
+      columns: 2;
     }
   }
 
-  @media (min-width: 1000px) {
+  @media (min-width: 850px) {
     .search-input {
       font-size: 2.5rem;
     }
@@ -599,18 +592,14 @@
       flex-direction: row;
     }
 
-    .category {
-      margin: 2rem 0;
-    }
-
     .categories {
-      grid-template-columns: repeat(2, 300px) 170px;
+      columns: 3;
     }
   }
 
-  @media (min-width: 1200px) {
+  @media (min-width: 1100px) {
     .categories {
-      grid-template-columns: repeat(3, 220px) 170px;
+      columns: 4;
     }
   }
 </style>
@@ -960,7 +949,7 @@
       this._limit = options.limit;
       this._currentInput = '';
       this._currentSuggestions = [];
-      this._suggestionEls = [];
+      (this._highlitedSuggestion = null), (this._suggestionEls = []);
       this._handleKeydown = this._handleKeydown.bind(this);
       this._setSuggestions = this._setSuggestions.bind(this);
       this._registerEvents();
@@ -1051,8 +1040,9 @@
       $.bodyClassRemove('suggestions');
       this._clearSuggestionHighlightEvents();
       this._clearSuggestionClickEvents();
-      this._suggestionEls = [];
       this._el.innerHTML = '';
+      this._highlitedSuggestion = null;
+      this._suggestionEls = [];
     }
 
     _focusNext(e) {
@@ -1096,9 +1086,10 @@
     _highlight(el, e) {
       this._unHighlight();
       if (!el) return;
-      this._onHighlight(el.getAttribute('data-suggestion'));
+      this._highlitedSuggestion = el.getAttribute('data-suggestion');
+      this._onHighlight(this._highlitedSuggestion);
       el.classList.add('highlight');
-      e.preventDefault();
+      if (e) e.preventDefault();
     }
 
     _registerEvents() {
@@ -1125,6 +1116,11 @@
       window.addEventListener('mousemove', noHighlightUntilMouseMove);
     }
 
+    _rehighlight() {
+      if (!this._highlitedSuggestion) return;
+      this._highlight($.el(`[data-suggestion="${this._highlitedSuggestion}"]`));
+    }
+
     _setSuggestions(newSuggestions) {
       this._currentSuggestions = $.flattenAndUnique([
         this._currentSuggestions,
@@ -1137,6 +1133,7 @@
       this._registerSuggestionHighlightEvents();
       this._registerSuggestionClickEvents();
       $.bodyClassAdd('suggestions');
+      this._rehighlight();
     }
 
     _unHighlight(e) {
