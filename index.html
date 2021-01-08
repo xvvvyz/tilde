@@ -1001,11 +1001,11 @@
         .slice(0, this._limit)
         .reduce((acc, suggestion) => {
           const match = new RegExp($.escapeRegex(this._currentInput), 'ig');
+          const matched = suggestion.match(match);
 
-          const suggestionHtml = suggestion.replace(
-            match,
-            `<b>${this._currentInput}</b>`
-          );
+          const suggestionHtml = matched
+            ? suggestion.replace(match, `<b>${matched[0]}</b>`)
+            : suggestion;
 
           return `
             ${acc}
