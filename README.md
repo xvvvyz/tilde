@@ -1,34 +1,35 @@
 # Tilde
 
-Inspired by [/r/startpages](https://www.reddit.com/r/startpages)—the idea is to
-have a homepage for your browser that is functional and sexy.
+Inspired by [/r/startpages](https://www.reddit.com/r/startpages)&mdash;the idea
+is to have a homepage for your browser that is functional and sexy.
 
 ## Basic Usage
 
 To go to a site, enter the corresponding key. To view the available sites and
-their keys, press `?`. If your input doesn't match any of the commands, a
-generic Google search will be triggered. For example:
+their keys, press `?`. If your input doesn&rsquo;t match any of the keys, a
+generic DuckDuckGo search will be triggered. For example:
 
-- Entering `r` would redirect you to [www.reddit.com](https://www.reddit.com).
-- Entering `t` would redirect you to [twitch.tv](https://www.twitch.tv).
-- Entering `cats` would search
-  [Google for "cats"](https://encrypted.google.com/search?q=cats).
+- Entering `t` would redirect you to [twitter.com](https://twitter.com/home).
+- Entering `u` would redirect you to
+  [unsplash.com](https://unsplash.com/images).
+- Entering `google` would
+  [search DuckDuckGo for google](https://duckduckgo.com/?q=google).
 
 ### Searching
 
-You can search a site by typing a colon after the site's key, followed
-by your search query. For example:
+You can search a site by typing a single quote after the site&rsquo;s key,
+followed by your query. For example:
 
-- Entering `g:tilde` would search
-  [GitHub for "tilde"](https://github.com/search?q=tilde).
-- Entering `s:san holo` would search
-  [SoundCloud for "san holo"](https://soundcloud.com/search?q=san%20holo).
+- Entering `g'tilde` would
+  [search GitHub for tilde](https://github.com/search?q=tilde).
+- Entering `y'vox` would
+  [search YouTube for vox](https://www.youtube.com/results?search_query=vox).
 
 ### Specific Paths
 
 You can go to a specific path on a site by typing a forward slash after the
-site's key, followed by the location on the site you'd like to be redirected to.
-For example:
+site&rsquo;s key, followed by the location on the site you&rsquo;d like to be
+redirected to. For example:
 
 - Entering `r/r/startpages` would redirect you to
   [www.reddit.com/r/startpages](https://www.reddit.com/r/startpages)
@@ -52,6 +53,7 @@ read through the `CONFIG`!
 
 ## License
 
-[The Lato typeface](https://www.latofonts.com/lato-free-fonts/) has
+[The Inter typeface](https://rsms.me/inter/) has
 [its own license](https://github.com/cadejscroggins/tilde/blob/master/fonts/LICENSE).
-You can use and modify everything else [however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
+You can use and modify everything else
+[however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="utf-8" />
 
 <script>
   const CONFIG = {
@@ -13,8 +14,13 @@
         key: '*',
         url: 'https://duckduckgo.com',
         search: '?q={}',
-        color: '#222328',
       },
+      // {
+      //   name: 'Google',
+      //   key: '*',
+      //   url: 'https://www.google.com',
+      //   search: '/search?q={}',
+      // },
       {
         category: 'Google',
         name: 'Mail',
@@ -56,13 +62,6 @@
       },
       {
         category: 'Work',
-        name: 'AND.CO',
-        key: '.',
-        url: 'https://app.and.co/timers',
-        color: 'linear-gradient(135deg, #1773aa, #17b3aa)',
-      },
-      {
-        category: 'Work',
         name: 'Notion',
         key: 'n',
         url: 'https://www.notion.so',
@@ -76,56 +75,72 @@
         color: 'linear-gradient(135deg, #0a9fc0, #0adfc0)',
       },
       {
-        category: 'Design',
-        name: 'Figma',
-        key: 'f',
-        url: 'https://www.figma.com/files/recent',
-        color: 'linear-gradient(135deg, #9762F6, #97a2F6)',
+        category: 'Work',
+        name: 'AND',
+        key: '.',
+        url: 'https://app.and.co/timers',
+        color: 'linear-gradient(135deg, #1773aa, #17b3aa)',
       },
       {
-        category: 'Design',
-        name: 'Dribbble',
-        key: 'b',
-        url: 'https://dribbble.com/shots/recent',
-        search: '/search/{}',
-        color: 'linear-gradient(135deg, #f042ac, #f082ac)',
-      },
-      {
-        category: 'Design',
-        name: 'UXDB',
-        key: 'ux',
-        url: 'https://www.uxdatabase.io/product-database',
-        color: '#000',
-      },
-      {
-        category: 'Code',
+        category: 'Create',
         name: 'AWS',
         key: 'A',
         url: 'https://console.aws.amazon.com',
         color: 'linear-gradient(135deg, #ff6400, #ffa400)',
       },
       {
-        category: 'Code',
+        category: 'Create',
         name: 'GitHub',
         key: 'g',
         url: 'https://github.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #478B47, #478B87)',
+        color: 'linear-gradient(135deg, #3886df, #38c6df)',
       },
       {
-        category: 'Code',
-        name: 'MDN',
-        key: 'M',
-        url: 'https://developer.mozilla.org/en-US',
-        search: '/en-US/search?q={}',
-        color: 'linear-gradient(135deg, #5987a6, #59c7a6)',
+        category: 'Create',
+        name: 'Figma',
+        key: 'f',
+        url: 'https://www.figma.com/files/recent',
+        color: 'linear-gradient(135deg, #9762F6, #97a2F6)',
       },
       {
-        category: 'Code',
+        category: 'Create',
         name: 'Local',
         key: '0',
         url: 'http://localhost:3000',
         search: ':{}',
+      },
+      {
+        category: 'Learn',
+        name: 'Khan',
+        key: '+',
+        url: 'https://www.khanacademy.org',
+        search: '/search?page_search_query={}',
+        color: 'linear-gradient(135deg, #1865f2, #18a5f2)',
+      },
+      {
+        category: 'Learn',
+        name: 'Wolfram',
+        key: '=',
+        url: 'https://www.wolframalpha.com',
+        search: '/input/?i={}',
+        color: 'linear-gradient(135deg, #DD0E00, #DD4E00)',
+      },
+      {
+        category: 'Learn',
+        name: 'Wikipedia',
+        key: '"',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+        search: '/wiki/{}',
+        color: 'linear-gradient(135deg, #6B6B6B, #7B7B7B)',
+      },
+      {
+        category: 'Learn',
+        name: 'MDN',
+        key: ';',
+        url: 'https://developer.mozilla.org/en-US',
+        search: '/en-US/search?q={}',
+        color: 'linear-gradient(135deg, #5987a6, #59c7a6)',
       },
       {
         category: 'Lurk',
@@ -137,6 +152,45 @@
       },
       {
         category: 'Lurk',
+        name: 'Instagram',
+        key: 'i',
+        url: 'https://www.instagram.com',
+        color: 'linear-gradient(135deg, #833ab4, #837ab4)',
+      },
+      {
+        category: 'Lurk',
+        name: 'LinkedIn',
+        key: 'l',
+        url: 'https://www.linkedin.com',
+        search: '/search/results/all/?keywords={}',
+        color: 'linear-gradient(135deg, #0A66C2, #0Aa6C2)',
+      },
+      {
+        category: 'Lurk',
+        name: 'Twitter',
+        key: 't',
+        url: 'https://twitter.com/home',
+        search: '/search?q={}',
+        color: 'linear-gradient(135deg, #0d91e2, #0dd1e2)',
+      },
+      {
+        category: 'Inspire',
+        name: 'OPL',
+        key: '1',
+        url: 'https://onepagelove.com/inspiration',
+        search: '/?s={}',
+        color: 'linear-gradient(135deg, #EB3656, #EB7656)',
+      },
+      {
+        category: 'Inspire',
+        name: 'Dribbble',
+        key: 'b',
+        url: 'https://dribbble.com/shots/popular',
+        search: '/search/{}',
+        color: 'linear-gradient(135deg, #f042ac, #f082ac)',
+      },
+      {
+        category: 'Inspire',
         name: 'Unsplash',
         key: 'u',
         url: 'https://unsplash.com/images',
@@ -144,7 +198,7 @@
         color: '#000',
       },
       {
-        category: 'Lurk',
+        category: 'Inspire',
         name: 'Hunt',
         key: 'p',
         url: 'https://www.producthunt.com',
@@ -154,7 +208,7 @@
       {
         category: 'Listen',
         name: 'Spotify',
-        key: 'sp',
+        key: 'S',
         url: 'https://open.spotify.com',
         search: '/search/{}',
         color: 'linear-gradient(135deg, #1DB954, #1DB994)',
@@ -169,32 +223,48 @@
       },
       {
         category: 'Listen',
+        name: 'Pandora',
+        key: 'P',
+        url: 'https://www.pandora.com',
+        search: 'https://www.pandora.com/search/{}/all',
+        color: 'linear-gradient(135deg, #005483, #009483)',
+      },
+      {
+        category: 'Listen',
         name: 'Hypem',
-        key: 'hy',
+        key: 'h',
         url: 'https://hypem.com/popular',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #628441, #628481)',
+        color: 'linear-gradient(135deg, #11172d, #11176d)',
       },
       {
         category: 'Watch',
-        name: 'Netflix',
-        key: 'ne',
-        url: 'https://www.netflix.com/browse',
+        name: 'Vimeo',
+        key: 'v',
+        url: 'https://vimeo.com/watch',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #e50914, #fe3914)',
+        color: 'linear-gradient(135deg, #08a08C, #08e08C)',
       },
       {
         category: 'Watch',
         name: 'YouTube',
-        key: 'yo',
+        key: 'y',
         url: 'https://youtube.com/feed/subscriptions',
         search: '/results?search_query={}',
         color: 'linear-gradient(135deg, #fd201f, #cd301f)',
       },
       {
         category: 'Watch',
+        name: 'Netflix',
+        key: 'N',
+        url: 'https://www.netflix.com/browse',
+        search: '/search?q={}',
+        color: 'linear-gradient(135deg, #e50914, #fe3914)',
+      },
+      {
+        category: 'Watch',
         name: 'Twitch',
-        key: 'tw',
+        key: 'T',
         url: 'https://www.twitch.tv/directory/following',
         color: 'linear-gradient(135deg, #6441a5, #6461c5)',
       },
@@ -207,8 +277,11 @@
     suggestionsLimit: 4,
 
     /**
-     * The order and limit for each suggestion influencer. An "influencer" is
-     * just a suggestion source. The following influencers are available:
+     * The order, limit and minimum characters for each suggestion influencer.
+     * An "influencer" is just a suggestion source. "limit" is the max number
+     * of suggestions an influencer will produce.
+     *
+     * The following influencers are available:
      *
      * - "Default" suggestions come from CONFIG.defaultSuggestions (sync)
      * - "History" suggestions come from your previously entered queries (sync)
@@ -232,15 +305,12 @@
     defaultSuggestions: {
       '.': ['./inout/in/invoices/create'],
       0: ['0:8000', '0:8080'],
-      b: ['b/shots/popular'],
       c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
-      g: ['g/ossu'],
+      g: ['g/cadejscroggins/tilde', 'g/ossu'],
       k: ['k/u/1', 'k/u/2'],
       m: ['m/mail/u/1', 'm/mail/u/2'],
-      r: ['r/r/startpages', 'r/r/listentothis'],
       s: ['s/client/T7K3RFA1M', 's/client/T018S4TL7CP'],
-      sc: ['sc/you/likes', 'sc/discover/the-upload'],
     },
 
     /**
@@ -261,9 +331,9 @@
 
     /**
      * The delimiter between a command key and your search query. For example,
-     * to search GitHub for potatoes, you'd type "g:potatoes".
+     * to search GitHub for tilde, you'd type "g'tilde".
      */
-    searchDelimiter: ':',
+    searchDelimiter: "'",
 
     /**
      * The delimiter between a command key and a path. For example, you'd type
@@ -295,39 +365,34 @@
   :root {
     /* colors */
     --background: #fffef8;
-    --foreground: #222328;
-    --foregroundSubtle: #525358;
+    --foreground: #424348;
     --searchBackground: #222328;
     --searchForeground: #fffef8;
 
     /* fonts */
-    --font-family: Lato, sans-serif;
+    --font-family: Inter, sans-serif;
     --base-font-size: 18px;
     --font-weight-normal: 400;
-    --font-weight-bold: 700;
+    --font-weight-bold: 900;
   }
 
   /* to download a different font locally:
      https://google-webfonts-helper.herokuapp.com/fonts */
 
   @font-face {
-    font-family: Lato;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
-    font-display: swap;
-    src: local('Lato Regular'), local('Lato-Regular'),
-      url('./fonts/lato-v14-latin-regular.woff2') format('woff2'),
-      url('./fonts/lato-v14-latin-regular.woff') format('woff');
+    src: url('./fonts/inter-v2-latin-regular.woff2') format('woff2'),
+      url('./fonts/inter-v2-latin-regular.woff') format('woff');
   }
 
   @font-face {
-    font-family: Lato;
+    font-family: 'Inter';
     font-style: normal;
     font-weight: 900;
-    font-display: swap;
-    src: local('Lato Black'), local('Lato-Black'),
-      url('./fonts/lato-v14-latin-900.woff2') format('woff2'),
-      url('./fonts/lato-v14-latin-900.woff') format('woff');
+    src: url('./fonts/inter-v2-latin-900.woff2') format('woff2'),
+      url('./fonts/inter-v2-latin-900.woff') format('woff');
   }
 </style>
 
@@ -413,7 +478,6 @@
   .clock {
     display: block;
     font-size: 4rem;
-    letter-spacing: 0.05rem;
     cursor: pointer;
   }
 
@@ -435,7 +499,7 @@
   .search-input {
     width: 100%;
     padding: 0 1rem;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
     font-size: 1.5rem;
     font-weight: var(--font-weight-bold);
     letter-spacing: 0.125rem;
@@ -477,7 +541,7 @@
     height: 0.4rem;
     position: absolute;
     right: 0;
-    bottom: 0.05rem;
+    bottom: 0.1rem;
     left: 0;
     background: var(--searchForeground);
     opacity: 0.4;
@@ -488,15 +552,19 @@
   }
 
   .help {
-    padding: 3rem;
     background: var(--background);
     z-index: 1;
+  }
+
+  .categories {
+    padding: 3rem;
   }
 
   .category {
     padding: 1.75rem 2.25rem;
     vertical-align: text-top;
     break-inside: avoid-column;
+    page-break-inside: avoid;
   }
 
   .category-name {
@@ -526,14 +594,13 @@
     border-radius: 50%;
     background: var(--foreground);
     color: var(--background);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     line-height: 2rem;
     text-align: center;
   }
 
   .command-name {
     position: relative;
-    color: var(--foregroundSubtle);
   }
 
   .command-name::after {
@@ -541,7 +608,7 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0.05rem;
+    bottom: 0.1rem;
     left: 0;
     height: 0.4rem;
     transition: 0.2s;
@@ -565,7 +632,7 @@
     visibility: visible;
   }
 
-  @media (min-width: 600px) {
+  @media (min-width: 650px) {
     .clock {
       font-size: 6rem;
     }
@@ -583,9 +650,9 @@
     }
   }
 
-  @media (min-width: 850px) {
+  @media (min-width: 900px) {
     .search-input {
-      font-size: 2.5rem;
+      font-size: 3rem;
     }
 
     .search-suggestions {
@@ -597,7 +664,7 @@
     }
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1200px) {
     .categories {
       columns: 4;
     }
@@ -1176,6 +1243,7 @@
           if (query === key) {
             res.key = key;
             res.isKey = true;
+            res.query = '';
             res.redirect = url;
             return true;
           }
@@ -1194,6 +1262,7 @@
             res.isPath = true;
             res.split = this._pathDelimiter;
             res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+            res.query = '';
             res.redirect = QueryParser._prepPath(url, res.path);
             return true;
           }
@@ -1211,10 +1280,11 @@
 
     static _getColorFromUrl(commands, url) {
       const domain = new URL(url).hostname;
+      const domainRegex = new RegExp(`${domain}$`);
 
       return (
         commands
-          .filter((c) => new URL(c.url).hostname.includes(domain))
+          .filter((c) => domainRegex.test(new URL(c.url).hostname))
           .map((c) => c.color)[0] || null
       );
     }
@@ -1347,9 +1417,7 @@
 
     _setBackgroundFromQuery(query) {
       if (!this._colors) return;
-      const color = this._parseQuery(query).color;
-      if (!color) return;
-      this._formEl.style.background = color;
+      this._formEl.style.background = this._parseQuery(query).color || '';
     }
 
     _submitForm(e) {
