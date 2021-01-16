@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>~</title>
 
 <script>
   const CONFIG = {
@@ -10,24 +13,18 @@
      */
     commands: [
       {
-        name: 'DuckDuckGo',
+        name: 'Google',
         key: '*',
-        url: 'https://duckduckgo.com',
-        search: '?q={}',
+        url: 'https://www.google.com',
+        search: '/search?q={}',
       },
-      // {
-      //   name: 'Google',
-      //   key: '*',
-      //   url: 'https://www.google.com',
-      //   search: '/search?q={}',
-      // },
       {
         category: 'Google',
         name: 'Mail',
         key: 'm',
         url: 'https://mail.google.com/mail/u/0',
         search: '/mail/u/0/?q={}#search/{}',
-        color: 'linear-gradient(135deg, #4249f4, #4289f4)',
+        color: 'linear-gradient(135deg, #323994, #327994)',
       },
       {
         category: 'Google',
@@ -35,7 +32,7 @@
         key: 'd',
         url: 'https://drive.google.com/drive/u/0/my-drive',
         search: '/drive/u/0/search?q={}',
-        color: 'linear-gradient(135deg, #34a853, #34a893)',
+        color: 'linear-gradient(135deg, #248833, #148873)',
       },
       {
         category: 'Google',
@@ -43,7 +40,7 @@
         key: 'k',
         url: 'https://keep.google.com/u/0',
         search: '/u/0/#search/text={}',
-        color: 'linear-gradient(135deg, #ec9540, #ecc040)',
+        color: 'linear-gradient(135deg, #dc7520, #dca020)',
       },
       {
         category: 'Google',
@@ -51,28 +48,28 @@
         key: 'c',
         url: 'https://calendar.google.com/calendar/u/0/r',
         search: '/calendar/u/0/r/search?q={}',
-        color: 'linear-gradient(135deg, #E44134, #E48134)',
+        color: 'linear-gradient(135deg, #c42114, #c46114)',
       },
       {
         category: 'Work',
         name: 'Slack',
         key: 's',
         url: 'https://app.slack.com/client/T09M5UWSV',
-        color: 'linear-gradient(135deg, #6e7adc, #6ebadc)',
+        color: 'linear-gradient(135deg, #4e5abc, #4e9abc)',
       },
       {
         category: 'Work',
         name: 'Notion',
         key: 'n',
         url: 'https://www.notion.so',
-        color: 'linear-gradient(135deg, #E16259, #E1a259)',
+        color: 'linear-gradient(135deg, #c14239, #c18239)',
       },
       {
         category: 'Work',
         name: 'Asana',
         key: 'a',
         url: 'https://app.asana.com/0/inbox/490539250066176',
-        color: 'linear-gradient(135deg, #0a9fc0, #0adfc0)',
+        color: 'linear-gradient(135deg, #0a6f90, #0aaf90)',
       },
       {
         category: 'Work',
@@ -86,7 +83,7 @@
         name: 'AWS',
         key: 'A',
         url: 'https://console.aws.amazon.com',
-        color: 'linear-gradient(135deg, #ff6400, #ffa400)',
+        color: 'linear-gradient(135deg, #cf3400, #cf7400)',
       },
       {
         category: 'Create',
@@ -94,14 +91,14 @@
         key: 'g',
         url: 'https://github.com',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #3886df, #38c6df)',
+        color: 'linear-gradient(135deg, #1866bf, #18a6bf)',
       },
       {
         category: 'Create',
         name: 'Figma',
         key: 'f',
         url: 'https://www.figma.com/files/recent',
-        color: 'linear-gradient(135deg, #9762F6, #97a2F6)',
+        color: 'linear-gradient(135deg, #8752e6, #8792e6)',
       },
       {
         category: 'Create',
@@ -109,6 +106,7 @@
         key: '0',
         url: 'http://localhost:3000',
         search: ':{}',
+        color: '#333',
       },
       {
         category: 'Learn',
@@ -171,7 +169,7 @@
         key: 't',
         url: 'https://twitter.com/home',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #0d91e2, #0dd1e2)',
+        color: 'linear-gradient(135deg, #0d71c2, #0db1c2)',
       },
       {
         category: 'Inspire',
@@ -187,7 +185,7 @@
         key: 'b',
         url: 'https://dribbble.com/shots/popular',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #f042ac, #f082ac)',
+        color: 'linear-gradient(135deg, #d0228c, #d0628c)',
       },
       {
         category: 'Inspire',
@@ -195,7 +193,7 @@
         key: 'u',
         url: 'https://unsplash.com/images',
         search: '/search/{}',
-        color: '#000',
+        color: '#333',
       },
       {
         category: 'Inspire',
@@ -211,7 +209,7 @@
         key: 'S',
         url: 'https://open.spotify.com',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #1DB954, #1DB994)',
+        color: 'linear-gradient(135deg, #0Da944, #0Da984)',
       },
       {
         category: 'Listen',
@@ -219,7 +217,7 @@
         key: 'sc',
         url: 'https://soundcloud.com/discover',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #ff8800, #ffc800)',
+        color: 'linear-gradient(135deg, #cf6e00, #cfae00)',
       },
       {
         category: 'Listen',
@@ -235,7 +233,7 @@
         key: 'h',
         url: 'https://hypem.com/popular',
         search: '/search/{}',
-        color: 'linear-gradient(135deg, #11172d, #11176d)',
+        color: 'linear-gradient(135deg, #31374d, #31378d)',
       },
       {
         category: 'Watch',
@@ -243,7 +241,7 @@
         key: 'v',
         url: 'https://vimeo.com/watch',
         search: '/search?q={}',
-        color: 'linear-gradient(135deg, #08a08C, #08e08C)',
+        color: 'linear-gradient(135deg, #08907C, #08d07C)',
       },
       {
         category: 'Watch',
@@ -251,7 +249,7 @@
         key: 'y',
         url: 'https://youtube.com/feed/subscriptions',
         search: '/results?search_query={}',
-        color: 'linear-gradient(135deg, #fd201f, #cd301f)',
+        color: 'linear-gradient(135deg, #ed100f, #bd200f)',
       },
       {
         category: 'Watch',
@@ -274,6 +272,10 @@
      * Get suggestions as you type.
      */
     suggestions: true,
+
+    /**
+     * Max number of suggestions that will ever be shown.
+     */
     suggestionsLimit: 4,
 
     /**
@@ -289,15 +291,9 @@
      */
     influencers: [
       { name: 'Default', limit: 4 },
+      { name: 'History', limit: 2 },
       { name: 'DuckDuckGo', limit: 4 },
     ],
-
-    /**
-     * If true, suggestions aren't updated until all async influencers resolve.
-     * If false, synchronous suggestions display immediately, and async
-     * suggestions are appended. This is useful on high-latency networks.
-     */
-    asyncInfluencersAreBlocking: false,
 
     /**
      * Default search suggestions for the specified queries.
@@ -363,40 +359,19 @@
 
 <style type="text/css">
   :root {
-    /* colors */
-    --background: #fffef8;
-    --foreground: #424348;
-    --searchBackground: #222328;
-    --searchForeground: #fffef8;
-
-    /* fonts */
-    --font-family: Inter, sans-serif;
-    --base-font-size: 18px;
+    --background: #000;
+    --foreground: #fff;
+    --searchBackground: #000;
+    --searchForeground: #fff;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol';
+    --base-font-size: 17px;
+    --font-weight-light: 200;
     --font-weight-normal: 400;
-    --font-weight-bold: 900;
+    --font-weight-bold: 700;
   }
 
-  /* to download a different font locally:
-     https://google-webfonts-helper.herokuapp.com/fonts */
-
-  @font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    src: url('./fonts/inter-v2-latin-regular.woff2') format('woff2'),
-      url('./fonts/inter-v2-latin-regular.woff') format('woff');
-  }
-
-  @font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 900;
-    src: url('./fonts/inter-v2-latin-900.woff2') format('woff2'),
-      url('./fonts/inter-v2-latin-900.woff') format('woff');
-  }
-</style>
-
-<style type="text/css">
   * {
     box-sizing: border-box;
   }
@@ -429,6 +404,7 @@
     background: transparent;
     color: inherit;
     font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
     font-size: 1rem;
   }
 
@@ -472,12 +448,12 @@
     overflow: auto;
     width: 100%;
     height: 100%;
-    visibility: hidden;
   }
 
   .clock {
     display: block;
-    font-size: 4rem;
+    font-size: 5rem;
+    font-weight: var(--font-weight-light);
     cursor: pointer;
   }
 
@@ -489,10 +465,15 @@
   .search-form {
     background: var(--searchBackground);
     color: var(--searchForeground);
+    visibility: hidden;
     z-index: 2;
   }
 
-  .search-form > div {
+  body.form .search-form {
+    visibility: visible;
+  }
+
+  .search-form-content {
     width: 100%;
   }
 
@@ -500,7 +481,7 @@
     width: 100%;
     padding: 0 1rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: var(--font-weight-bold);
     letter-spacing: 0.125rem;
     text-transform: uppercase;
@@ -521,6 +502,7 @@
   .search-suggestion {
     padding: 0.75rem 1rem;
     border-radius: 2px;
+    font-weight: var(--font-weight-bold);
     text-align: left;
     white-space: nowrap;
     cursor: pointer;
@@ -532,28 +514,17 @@
   }
 
   .search-suggestion b {
-    position: relative;
     font-weight: var(--font-weight-normal);
-  }
-
-  .search-suggestion b::after {
-    content: ' ';
-    height: 0.4rem;
-    position: absolute;
-    right: 0;
-    bottom: 0.1rem;
-    left: 0;
-    background: var(--searchForeground);
-    opacity: 0.4;
-  }
-
-  .search-suggestion.highlight b::after {
-    opacity: 0;
   }
 
   .help {
     background: var(--background);
+    visibility: hidden;
     z-index: 1;
+  }
+
+  body.help .help {
+    visibility: visible;
   }
 
   .categories {
@@ -577,7 +548,7 @@
 
   .command a {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     position: relative;
     width: 100%;
     padding: 0.5rem 0;
@@ -588,14 +559,14 @@
     display: block;
     flex-shrink: 0;
     float: left;
-    width: 2rem;
-    height: 2rem;
-    margin-right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 1.5rem;
     border-radius: 50%;
-    background: var(--foreground);
-    color: var(--background);
-    font-size: 0.75rem;
-    line-height: 2rem;
+    background: var(--searchBackground);
+    color: var(--searchForeground);
+    font-weight: var(--font-weight-bold);
+    line-height: 2.5rem;
     text-align: center;
   }
 
@@ -608,7 +579,7 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0.1rem;
+    bottom: -0.1rem;
     left: 0;
     height: 0.4rem;
     transition: 0.2s;
@@ -627,14 +598,9 @@
     opacity: 0.4;
   }
 
-  body.help .help,
-  body.form .search-form {
-    visibility: visible;
-  }
-
   @media (min-width: 650px) {
     .clock {
-      font-size: 6rem;
+      font-size: 8rem;
     }
 
     .search-input {
@@ -671,25 +637,18 @@
   }
 </style>
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex" />
-<title>~</title>
-
 <div class="center"><time class="clock" id="clock"></time></div>
-
 <form
   autocomplete="off"
   class="center overlay search-form"
   id="search-form"
   spellcheck="false"
 >
-  <div>
+  <div class="search-form-content">
     <input class="search-input" id="search-input" title="search" type="text" />
     <ul class="search-suggestions" id="search-suggestions"></ul>
   </div>
 </form>
-
 <aside class="center help overlay" id="help"></aside>
 
 <script>
@@ -700,17 +659,9 @@
     els: (s) => [].slice.call(document.querySelectorAll(s) || []),
     escapeRegex: (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
     flattenAndUnique: (arr) => [...new Set([].concat.apply([], arr))],
-    ieq: (a, b) => a.toLowerCase() === b.toLowerCase(),
-    iin: (a, b) => a.toLowerCase().indexOf(b.toLowerCase()) !== -1,
     isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.key(e)),
     isRemove: (e) => ['backspace', 'delete'].includes($.key(e)),
     isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.key(e)),
-
-    jsonp: (url) => {
-      let script = document.createElement('script');
-      script.src = url;
-      $.el('head').appendChild(script);
-    },
 
     key: (e) => {
       const ctrl = e.ctrlKey;
@@ -758,9 +709,7 @@
 
     pad: (v) => ('0' + v.toString()).slice(-2),
   };
-</script>
 
-<script>
   class Clock {
     constructor(options) {
       this._el = $.el('#clock');
@@ -796,9 +745,7 @@
       setInterval(this._setTime, 1000);
     }
   }
-</script>
 
-<script>
   class Help {
     constructor(options) {
       this._el = $.el('#help');
@@ -874,9 +821,7 @@
       document.addEventListener('keydown', this._handleKeydown);
     }
   }
-</script>
 
-<script>
   class Influencer {
     constructor(options) {
       this._limit = options.limit;
@@ -896,9 +841,7 @@
       return isSearch ? `${key}${split} ` : false;
     }
   }
-</script>
 
-<script>
   class DefaultInfluencer extends Influencer {
     constructor({ defaultSuggestions }) {
       super(...arguments);
@@ -911,9 +854,7 @@
       );
     }
   }
-</script>
 
-<script>
   class DuckDuckGoInfluencer extends Influencer {
     constructor({ queryParser }) {
       super(...arguments);
@@ -930,19 +871,19 @@
         window[callback] = (res) => {
           const suggestions = res
             .map((i) => i.phrase)
-            .filter((s) => !$.ieq(s, query))
+            .filter((s) => s.toLowerCase() !== query.toLowerCase())
             .slice(0, this._limit);
 
           resolve(this._addSearchPrefix(suggestions, rawQuery));
         };
 
-        $.jsonp(`https://duckduckgo.com/ac/?callback=${callback}&q=${query}`);
+        const script = document.createElement('script');
+        script.src = `https://duckduckgo.com/ac/?callback=${callback}&q=${query}`;
+        $.el('head').appendChild(script);
       });
     }
   }
-</script>
 
-<script>
   class HistoryInfluencer extends Influencer {
     constructor() {
       super(...arguments);
@@ -958,7 +899,7 @@
       let exists;
 
       const history = this._getHistory().map(([item, count]) => {
-        const match = $.ieq(item, query);
+        const match = item.toLowerCase() === query.toLowerCase();
         if (match) exists = true;
         return [item, match ? count + 1 : count];
       });
@@ -978,7 +919,10 @@
           this._getHistory()
             .map(([item]) => item)
             .filter(
-              (item) => query && !$.ieq(item, query) && $.iin(item, query)
+              (item) =>
+                query &&
+                item.toLowerCase() !== query.toLowerCase() &&
+                item.toLowerCase().indexOf(query.toLowerCase()) !== -1
             )
             .slice(0, this._limit)
         )
@@ -1003,20 +947,17 @@
       this._save(history);
     }
   }
-</script>
 
-<script>
   class Suggester {
     constructor(options) {
       this.isAsync = false;
       this._el = $.el('#search-suggestions');
-      this._asyncInfluencersAreBlocking = options.asyncInfluencersAreBlocking;
       this._enabled = options.enabled;
       this._influencers = options.influencers;
       this._limit = options.limit;
       this._currentInput = '';
-      this._currentSuggestions = [];
-      (this._highlitedSuggestion = null), (this._suggestionEls = []);
+      this._highlitedSuggestion = null;
+      this._suggestionEls = [];
       this._handleKeydown = this._handleKeydown.bind(this);
       this._setSuggestions = this._setSuggestions.bind(this);
       this._registerEvents();
@@ -1048,33 +989,19 @@
         return;
       }
 
-      this._currentSuggestions = [];
-
-      if (this._asyncInfluencersAreBlocking) {
-        Promise.all(this._getInfluencers({ input })).then(this._setSuggestions);
-      } else {
-        Promise.all(this._getInfluencers({ input, syncOnly: true })).then(
-          this._setSuggestions
-        );
-
-        Promise.all(this._getInfluencers({ input, asyncOnly: true })).then(
-          this._setSuggestions
-        );
-      }
+      Promise.all(this._getInfluencers({ input })).then(this._setSuggestions);
     }
 
-    _buildSuggestionsHtml() {
-      return this._currentSuggestions
-        .slice(0, this._limit)
-        .reduce((acc, suggestion) => {
-          const match = new RegExp($.escapeRegex(this._currentInput), 'ig');
-          const matched = suggestion.match(match);
+    _buildSuggestionsHtml(suggestions) {
+      return suggestions.slice(0, this._limit).reduce((acc, suggestion) => {
+        const match = new RegExp($.escapeRegex(this._currentInput), 'i');
+        const matched = suggestion.match(match);
 
-          const suggestionHtml = matched
-            ? suggestion.replace(match, `<b>${matched[0]}</b>`)
-            : suggestion;
+        const suggestionHtml = matched
+          ? suggestion.replace(match, `<b>${matched[0]}</b>`)
+          : suggestion;
 
-          return `
+        return `
             ${acc}
             <li>
               <button
@@ -1087,7 +1014,7 @@
               </button>
             </li>
           `;
-        }, '');
+      }, '');
     }
 
     _clearSuggestionClickEvents() {
@@ -1134,15 +1061,10 @@
       if (!exists) this._unHighlight(e);
     }
 
-    _getInfluencers({ asyncOnly, input, syncOnly }) {
-      return this._influencers
-        .filter(
-          (influencer) =>
-            (!asyncOnly && !syncOnly) ||
-            (asyncOnly && influencer.isAsync) ||
-            (syncOnly && !influencer.isAsync)
-        )
-        .map((influencer) => influencer.getSuggestions(input));
+    _getInfluencers({ input }) {
+      return this._influencers.map((influencer) =>
+        influencer.getSuggestions(input)
+      );
     }
 
     _handleKeydown(e) {
@@ -1189,13 +1111,8 @@
     }
 
     _setSuggestions(newSuggestions) {
-      this._currentSuggestions = $.flattenAndUnique([
-        this._currentSuggestions,
-        ...newSuggestions,
-      ]);
-
-      if (!this._currentSuggestions.length) return;
-      this._el.innerHTML = this._buildSuggestionsHtml();
+      const suggestions = $.flattenAndUnique(newSuggestions);
+      this._el.innerHTML = this._buildSuggestionsHtml(suggestions);
       this._suggestionEls = $.els('.js-search-suggestion');
       this._registerSuggestionHighlightEvents();
       this._registerSuggestionClickEvents();
@@ -1211,9 +1128,7 @@
       if (e) e.preventDefault();
     }
   }
-</script>
 
-<script>
   class QueryParser {
     constructor(options) {
       this._commands = options.commands;
@@ -1312,9 +1227,7 @@
       return `${parser.protocol}//${parser.hostname}`;
     }
   }
-</script>
 
-<script>
   class Form {
     constructor(options) {
       this._colors = options.colors;
@@ -1433,9 +1346,7 @@
       this._submitForm();
     }
   }
-</script>
 
-<script>
   const queryParser = new QueryParser({
     commands: CONFIG.commands,
     pathDelimiter: CONFIG.pathDelimiter,

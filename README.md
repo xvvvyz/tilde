@@ -53,7 +53,5 @@ read through the `CONFIG`!
 
 ## License
 
-[The Inter typeface](https://rsms.me/inter/) has
-[its own license](https://github.com/cadejscroggins/tilde/blob/master/fonts/LICENSE).
-You can use and modify everything else
+You can use and modify Tilde
 [however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
