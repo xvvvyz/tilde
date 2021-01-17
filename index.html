@@ -6,301 +6,39 @@
 
 <script>
   const CONFIG = {
-    /**
-     * The category, name, key, url, search path and color for your commands.
-     * If none of the specified keys are matched, the '*' key is used.
-     * Commands without a category don't show up in the help menu.
-     */
-    commands: [
-      {
-        name: 'Google',
-        key: '*',
-        url: 'https://www.google.com',
-        search: '/search?q={}',
-      },
-      {
-        category: 'Google',
-        name: 'Mail',
-        key: 'm',
-        url: 'https://mail.google.com/mail/u/0',
-        search: '/mail/u/0/?q={}#search/{}',
-        color: 'linear-gradient(135deg, #323994, #327994)',
-      },
-      {
-        category: 'Google',
-        name: 'Drive',
-        key: 'd',
-        url: 'https://drive.google.com/drive/u/0/my-drive',
-        search: '/drive/u/0/search?q={}',
-        color: 'linear-gradient(135deg, #248833, #148873)',
-      },
-      {
-        category: 'Google',
-        name: 'Keep',
-        key: 'k',
-        url: 'https://keep.google.com/u/0',
-        search: '/u/0/#search/text={}',
-        color: 'linear-gradient(135deg, #dc7520, #dca020)',
-      },
-      {
-        category: 'Google',
-        name: 'Cal',
-        key: 'c',
-        url: 'https://calendar.google.com/calendar/u/0/r',
-        search: '/calendar/u/0/r/search?q={}',
-        color: 'linear-gradient(135deg, #c42114, #c46114)',
-      },
-      {
-        category: 'Work',
-        name: 'Slack',
-        key: 's',
-        url: 'https://app.slack.com/client/T09M5UWSV',
-        color: 'linear-gradient(135deg, #4e5abc, #4e9abc)',
-      },
-      {
-        category: 'Work',
-        name: 'Notion',
-        key: 'n',
-        url: 'https://www.notion.so',
-        color: 'linear-gradient(135deg, #c14239, #c18239)',
-      },
-      {
-        category: 'Work',
-        name: 'Asana',
-        key: 'a',
-        url: 'https://app.asana.com/0/inbox/490539250066176',
-        color: 'linear-gradient(135deg, #0a6f90, #0aaf90)',
-      },
-      {
-        category: 'Work',
-        name: 'AND',
-        key: '.',
-        url: 'https://app.and.co/timers',
-        color: 'linear-gradient(135deg, #1773aa, #17b3aa)',
-      },
-      {
-        category: 'Create',
-        name: 'AWS',
-        key: 'A',
-        url: 'https://console.aws.amazon.com',
-        color: 'linear-gradient(135deg, #cf3400, #cf7400)',
-      },
-      {
-        category: 'Create',
-        name: 'GitHub',
-        key: 'g',
-        url: 'https://github.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #1866bf, #18a6bf)',
-      },
-      {
-        category: 'Create',
-        name: 'Figma',
-        key: 'f',
-        url: 'https://www.figma.com/files/recent',
-        color: 'linear-gradient(135deg, #8752e6, #8792e6)',
-      },
-      {
-        category: 'Create',
-        name: 'Local',
-        key: '0',
-        url: 'http://localhost:3000',
-        search: ':{}',
-        color: '#333',
-      },
-      {
-        category: 'Learn',
-        name: 'Khan',
-        key: '+',
-        url: 'https://www.khanacademy.org',
-        search: '/search?page_search_query={}',
-        color: 'linear-gradient(135deg, #1865f2, #18a5f2)',
-      },
-      {
-        category: 'Learn',
-        name: 'Wolfram',
-        key: '=',
-        url: 'https://www.wolframalpha.com',
-        search: '/input/?i={}',
-        color: 'linear-gradient(135deg, #DD0E00, #DD4E00)',
-      },
-      {
-        category: 'Learn',
-        name: 'Wikipedia',
-        key: '"',
-        url: 'https://en.wikipedia.org/wiki/Main_Page',
-        search: '/wiki/{}',
-        color: 'linear-gradient(135deg, #6B6B6B, #7B7B7B)',
-      },
-      {
-        category: 'Learn',
-        name: 'MDN',
-        key: ';',
-        url: 'https://developer.mozilla.org/en-US',
-        search: '/en-US/search?q={}',
-        color: 'linear-gradient(135deg, #5987a6, #59c7a6)',
-      },
-      {
-        category: 'Lurk',
-        name: 'Reddit',
-        key: 'r',
-        url: 'https://www.reddit.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #5f3dcf, #5f7dcf)',
-      },
-      {
-        category: 'Lurk',
-        name: 'Instagram',
-        key: 'i',
-        url: 'https://www.instagram.com',
-        color: 'linear-gradient(135deg, #833ab4, #837ab4)',
-      },
-      {
-        category: 'Lurk',
-        name: 'LinkedIn',
-        key: 'l',
-        url: 'https://www.linkedin.com',
-        search: '/search/results/all/?keywords={}',
-        color: 'linear-gradient(135deg, #0A66C2, #0Aa6C2)',
-      },
-      {
-        category: 'Lurk',
-        name: 'Twitter',
-        key: 't',
-        url: 'https://twitter.com/home',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #0d71c2, #0db1c2)',
-      },
-      {
-        category: 'Inspire',
-        name: 'OPL',
-        key: '1',
-        url: 'https://onepagelove.com/inspiration',
-        search: '/?s={}',
-        color: 'linear-gradient(135deg, #EB3656, #EB7656)',
-      },
-      {
-        category: 'Inspire',
-        name: 'Dribbble',
-        key: 'b',
-        url: 'https://dribbble.com/shots/popular',
-        search: '/search/{}',
-        color: 'linear-gradient(135deg, #d0228c, #d0628c)',
-      },
-      {
-        category: 'Inspire',
-        name: 'Unsplash',
-        key: 'u',
-        url: 'https://unsplash.com/images',
-        search: '/search/{}',
-        color: '#333',
-      },
-      {
-        category: 'Inspire',
-        name: 'Hunt',
-        key: 'p',
-        url: 'https://www.producthunt.com',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #da552f, #da952f)',
-      },
-      {
-        category: 'Listen',
-        name: 'Spotify',
-        key: 'S',
-        url: 'https://open.spotify.com',
-        search: '/search/{}',
-        color: 'linear-gradient(135deg, #0Da944, #0Da984)',
-      },
-      {
-        category: 'Listen',
-        name: 'SoundCloud',
-        key: 'sc',
-        url: 'https://soundcloud.com/discover',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #cf6e00, #cfae00)',
-      },
-      {
-        category: 'Listen',
-        name: 'Pandora',
-        key: 'P',
-        url: 'https://www.pandora.com',
-        search: 'https://www.pandora.com/search/{}/all',
-        color: 'linear-gradient(135deg, #005483, #009483)',
-      },
-      {
-        category: 'Listen',
-        name: 'Hypem',
-        key: 'h',
-        url: 'https://hypem.com/popular',
-        search: '/search/{}',
-        color: 'linear-gradient(135deg, #31374d, #31378d)',
-      },
-      {
-        category: 'Watch',
-        name: 'Vimeo',
-        key: 'v',
-        url: 'https://vimeo.com/watch',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #08907C, #08d07C)',
-      },
-      {
-        category: 'Watch',
-        name: 'YouTube',
-        key: 'y',
-        url: 'https://youtube.com/feed/subscriptions',
-        search: '/results?search_query={}',
-        color: 'linear-gradient(135deg, #ed100f, #bd200f)',
-      },
-      {
-        category: 'Watch',
-        name: 'Netflix',
-        key: 'N',
-        url: 'https://www.netflix.com/browse',
-        search: '/search?q={}',
-        color: 'linear-gradient(135deg, #e50914, #fe3914)',
-      },
-      {
-        category: 'Watch',
-        name: 'Twitch',
-        key: 'T',
-        url: 'https://www.twitch.tv/directory/following',
-        color: 'linear-gradient(135deg, #6441a5, #6461c5)',
-      },
-    ],
+    // Action to take when the clock is clicked. Options include:
+    // - "Menu" to show the help menu
+    // - "Search" to show the search input (useful on mobile)
+    clockOnClickAction: 'Menu',
 
-    /**
-     * Get suggestions as you type.
-     */
-    suggestions: true,
+    // The delimiter between the hours and minutes on the clock.
+    clockDelimiter: ' ',
 
-    /**
-     * Max number of suggestions that will ever be shown.
-     */
-    suggestionsLimit: 4,
+    // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
+    clockShowAmPm: true,
 
-    /**
-     * The order, limit and minimum characters for each suggestion influencer.
-     * An "influencer" is just a suggestion source. "limit" is the max number
-     * of suggestions an influencer will produce.
-     *
-     * The following influencers are available:
-     *
-     * - "Default" suggestions come from CONFIG.defaultSuggestions (sync)
-     * - "History" suggestions come from your previously entered queries (sync)
-     * - "DuckDuckGo" suggestions come from the duck duck go search api (async)
-     */
-    influencers: [
-      { name: 'Default', limit: 4 },
-      { name: 'History', limit: 2 },
-      { name: 'DuckDuckGo', limit: 4 },
-    ],
+    // Show a twenty-four-hour clock instead of a twelve-hour clock.
+    clockTwentyFourHour: true,
 
-    /**
-     * Default search suggestions for the specified queries.
-     */
-    defaultSuggestions: {
+    // Instantly redirect when a key is matched. Put a space before any other
+    // queries to prevent unwanted redirects.
+    queryInstantRedirect: false,
+
+    // Open triggered queries in a new tab.
+    queryNewTab: true,
+
+    // The delimiter between a command key and a path. For example, you'd type
+    // "r/r/unixporn" to go to "https://reddit.com/r/unixporn".
+    queryPathDelimiter: '/',
+
+    // The delimiter between a command key and your search query. For example,
+    // to search GitHub for tilde, you'd type "g'tilde".
+    querySearchDelimiter: "'",
+
+    // Default search suggestions for the specified queries.
+    suggestionDefaults: {
       '.': ['./inout/in/invoices/create'],
-      0: ['0:8000', '0:8080'],
+      0: ["0'8000", "0'8080"],
       c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
       g: ['g/cadejscroggins/tilde', 'g/ossu'],
@@ -309,67 +47,340 @@
       s: ['s/client/T7K3RFA1M', 's/client/T018S4TL7CP'],
     },
 
-    /**
-     * Instantly redirect when a key is matched. Put a space before any other
-     * queries to prevent unwanted redirects.
-     */
-    instantRedirect: false,
+    // The order, limit and minimum characters for each suggestion influencer.
+    // An "influencer" is just a suggestion source. "limit" is the max number of
+    // suggestions an influencer will produce. "minChars" determines how many
+    // characters need to be typed before the influencer kicks in.
+    //
+    // The following influencers are available:
+    // - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
+    // - "History" suggestions come from your previously entered queries (sync)
+    // - "DuckDuckGo" suggestions come from the duck duck go search api (async)
+    //
+    // To disable suggestions, remove all influencers.
+    suggestionInfluencers: [
+      { name: 'Default', limit: 4, minChars: 1 },
+      { name: 'DuckDuckGo', limit: 4, minChars: 2 },
+    ],
 
-    /**
-     * Open triggered queries in a new tab.
-     */
-    newTab: true,
+    // Max number of suggestions that will ever be shown.
+    suggestionLimit: 4,
 
-    /**
-     * Use command colors when domains are matched and on the help page.
-     */
-    colors: true,
+    // The category, name, key, url, search path and color for your commands.
+    // If none of the specified keys are matched, the '*' key is used.
+    // Commands without a category don't show up in the help menu.
+    commands: [
+      {
+        name: 'Google',
+        key: '*',
+        url: 'www.google.com',
+        search: '/search?q={}',
+      },
+      {
+        category: 'Google',
+        name: 'Mail',
+        key: 'm',
+        url: 'mail.google.com/mail/u/0',
+        search: '/mail/u/0/?q={}#search/{}',
+        hues: ['217', '197'],
+      },
+      {
+        category: 'Google',
+        name: 'Drive',
+        key: 'd',
+        url: 'drive.google.com/drive/u/0/my-drive',
+        search: '/drive/u/0/search?q={}',
+        hues: ['136', '156'],
+      },
+      {
+        category: 'Google',
+        name: 'Keep',
+        key: 'k',
+        url: 'keep.google.com/u/0',
+        search: '/u/0/#search/text={}',
+        hues: ['45', '40'],
+      },
+      {
+        category: 'Google',
+        name: 'Cal',
+        key: 'c',
+        url: 'calendar.google.com/calendar/u/0/r',
+        search: '/calendar/u/0/r/search?q={}',
+        hues: ['5', '355'],
+      },
+      {
+        category: 'Work',
+        name: 'Slack',
+        key: 's',
+        url: 'app.slack.com/client/T09M5UWSV',
+        hues: ['190', '210'],
+      },
+      {
+        category: 'Work',
+        name: 'Notion',
+        key: 'n',
+        url: 'www.notion.so',
+        hues: ['4', '24'],
+      },
+      {
+        category: 'Work',
+        name: 'Asana',
+        key: 'a',
+        url: 'app.asana.com/0/inbox/490539250066176',
+        hues: ['357', '337'],
+      },
+      {
+        category: 'Work',
+        name: 'AND',
+        key: '.',
+        url: 'app.and.co/timers',
+        hues: ['167', '187'],
+      },
+      {
+        category: 'Create',
+        name: 'AWS',
+        key: 'A',
+        url: 'console.aws.amazon.com',
+        hues: ['36', '26'],
+      },
+      {
+        category: 'Create',
+        name: 'GitHub',
+        key: 'g',
+        url: 'github.com',
+        search: '/search?q={}',
+        hues: ['214', '234'],
+      },
+      {
+        category: 'Create',
+        name: 'Figma',
+        key: 'f',
+        url: 'www.figma.com/files/recent',
+        hues: ['266', '286'],
+      },
+      {
+        category: 'Create',
+        name: 'Local',
+        key: '0',
+        url: 'http://localhost:3000',
+        search: ':{}',
+      },
+      {
+        category: 'Learn',
+        name: 'Khan',
+        key: '-',
+        url: 'www.khanacademy.org',
+        search: '/search?page_search_query={}',
+        hues: ['166', '146'],
+      },
+      {
+        category: 'Learn',
+        name: 'Wolfram',
+        key: '=',
+        url: 'www.wolframalpha.com',
+        search: '/input/?i={}',
+        hues: ['5', '345'],
+      },
+      {
+        category: 'Learn',
+        name: 'Wikipedia',
+        key: 'w',
+        url: 'en.wikipedia.org/wiki/Main_Page',
+        search: '/wiki/{}',
+      },
+      {
+        category: 'Learn',
+        name: 'MDN',
+        key: ';',
+        url: 'developer.mozilla.org/en-US',
+        search: '/en-US/search?q={}',
+        hues: ['198', '218'],
+      },
+      {
+        category: 'Lurk',
+        name: 'Reddit',
+        key: 'r',
+        url: 'www.reddit.com',
+        search: '/search?q={}',
+        hues: ['254', '234'],
+      },
+      {
+        category: 'Lurk',
+        name: 'Instagram',
+        key: 'i',
+        url: 'www.instagram.com',
+        hues: ['230', '280'],
+      },
+      {
+        category: 'Lurk',
+        name: 'LinkedIn',
+        key: 'l',
+        url: 'www.linkedin.com',
+        search: '/search/results/all/?keywords={}',
+        hues: ['201', '221'],
+      },
+      {
+        category: 'Lurk',
+        name: 'Twitter',
+        key: 't',
+        url: 'twitter.com/home',
+        search: '/search?q={}',
+        hues: ['203', '183'],
+      },
+      {
+        category: 'Inspire',
+        name: 'OPL',
+        key: '1',
+        url: 'onepagelove.com/inspiration',
+        search: '/?s={}',
+        hues: ['349', '329'],
+      },
+      {
+        category: 'Inspire',
+        name: 'Dribbble',
+        key: 'b',
+        url: 'dribbble.com/shots/popular',
+        search: '/search/{}',
+        hues: ['337', '317'],
+      },
+      {
+        category: 'Inspire',
+        name: 'Unsplash',
+        key: 'u',
+        url: 'unsplash.com/images',
+        search: '/search/{}',
+      },
+      {
+        category: 'Inspire',
+        name: 'Hunt',
+        key: 'p',
+        url: 'www.producthunt.com',
+        search: '/search?q={}',
+        hues: ['13', '33'],
+      },
+      {
+        category: 'Listen',
+        name: 'Spotify',
+        key: 'S',
+        url: 'open.spotify.com',
+        search: '/search/{}',
+        hues: ['141'],
+      },
+      {
+        category: 'Listen',
+        name: 'SoundCloud',
+        key: 'o',
+        url: 'soundcloud.com/discover',
+        search: '/search?q={}',
+        hues: ['32', '22'],
+      },
+      {
+        category: 'Listen',
+        name: 'Pandora',
+        key: 'P',
+        url: 'www.pandora.com',
+        search: '/search/{}/all',
+        hues: ['202', '222'],
+      },
+      {
+        category: 'Listen',
+        name: 'Hypem',
+        key: 'h',
+        url: 'hypem.com/popular',
+        search: '/search/{}',
+        hues: ['90'],
+      },
+      {
+        category: 'Watch',
+        name: 'Vimeo',
+        key: 'v',
+        url: 'vimeo.com/watch',
+        search: '/search?q={}',
+        hues: ['213', '193'],
+      },
+      {
+        category: 'Watch',
+        name: 'YouTube',
+        key: 'y',
+        url: 'youtube.com/feed/subscriptions',
+        search: '/results?search_query={}',
+        hues: ['5', '355'],
+      },
+      {
+        category: 'Watch',
+        name: 'Netflix',
+        key: 'x',
+        url: 'www.netflix.com/browse',
+        search: '/search?q={}',
+        hues: ['357', '357'],
+      },
+      {
+        category: 'Watch',
+        name: 'Twitch',
+        key: 'T',
+        url: 'www.twitch.tv/directory/following',
+        hues: ['264', '244'],
+      },
+    ].map((command) => {
+      const hsla = (hue, saturation = 'var(--commandColorSaturation)') =>
+        `hsla(${hue}, ${saturation}, var(--commandColorLightness), var(--commandColorAlpha))`;
 
-    /**
-     * The delimiter between a command key and your search query. For example,
-     * to search GitHub for tilde, you'd type "g'tilde".
-     */
-    searchDelimiter: "'",
+      command.url = `https://${command.url}`;
+      command.color = command.category ? hsla(0, '0%') : null;
 
-    /**
-     * The delimiter between a command key and a path. For example, you'd type
-     * "r/r/unixporn" to go to "https://reddit.com/r/unixporn".
-     */
-    pathDelimiter: '/',
+      if (!Array.isArray(command.hues) || command.hues.length === 0) {
+        return command;
+      }
 
-    /**
-     * The delimiter between the hours and minutes on the clock.
-     */
-    clockDelimiter: ' ',
+      if (command.hues.length === 1) {
+        command.color = hsla(command.hues[0]);
+      } else {
+        const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
+        command.color = `linear-gradient(var(--commandColorGradient) ${c})`;
+      }
 
-    /**
-     * Show a twenty-four-hour clock instead of a twelve-hour clock with AM/PM.
-     */
-    twentyFourHourClock: true,
-
-    /**
-     * Action to take when the clock is clicked. Options include:
-     *
-     * - "Menu" to show the help menu
-     * - "Search" to show the search input
-     */
-    clockAction: 'Menu',
+      return command;
+    }),
   };
 </script>
 
-<style type="text/css">
+<style>
   :root {
     --background: #000;
-    --foreground: #fff;
+    --foreground: #efefef;
+    --helpBackground: #000;
+    --helpForeground: #efefef;
+    --helpCommandKeyForeground: #000;
     --searchBackground: #000;
-    --searchForeground: #fff;
+    --searchForeground: #efefef;
+    --searchHighlightBackground: hsla(0, 0%, 100%, 0.1);
+    --commandColorGradient: 45deg;
+    --commandColorSaturation: 50%;
+    --commandColorLightness: 50%;
+    --commandColorAlpha: 0.9;
+
     --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
       Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
       'Segoe UI Symbol';
-    --base-font-size: 17px;
+
+    --base-font-size: 16px;
     --font-weight-light: 200;
     --font-weight-normal: 400;
     --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    --border-radius: 2px;
+    --transition-speed: 0.2s;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background: #efefef;
+      --foreground: #333;
+      --helpBackground: #efefef;
+      --helpForeground: #333;
+      --helpCommandKeyForeground: #efefef;
+    }
   }
 
   * {
@@ -390,7 +401,6 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    transition: background 0.2s;
     background: var(--background);
     color: var(--foreground);
   }
@@ -452,21 +462,19 @@
 
   .clock {
     display: block;
-    font-size: 5rem;
+    font-size: 4rem;
     font-weight: var(--font-weight-light);
     cursor: pointer;
   }
 
-  .am-pm {
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
+  body.form .clock {
+    visibility: hidden;
   }
 
   .search-form {
     background: var(--searchBackground);
     color: var(--searchForeground);
     visibility: hidden;
-    z-index: 2;
   }
 
   body.form .search-form {
@@ -480,10 +488,9 @@
   .search-input {
     width: 100%;
     padding: 0 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     font-size: 2rem;
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 0.125rem;
+    font-weight: var(--font-weight-black);
     text-transform: uppercase;
   }
 
@@ -501,7 +508,7 @@
 
   .search-suggestion {
     padding: 0.75rem 1rem;
-    border-radius: 2px;
+    border-radius: var(--border-radius);
     font-weight: var(--font-weight-bold);
     text-align: left;
     white-space: nowrap;
@@ -509,17 +516,17 @@
   }
 
   .search-suggestion.highlight {
-    background: var(--searchForeground);
-    color: var(--searchBackground);
+    background: var(--searchHighlightBackground);
   }
 
-  .search-suggestion b {
+  .search-suggestion-match {
     font-weight: var(--font-weight-normal);
   }
 
   .help {
-    background: var(--background);
+    background: var(--helpBackground);
     visibility: hidden;
+    color: var(--helpForeground);
     z-index: 1;
   }
 
@@ -527,22 +534,26 @@
     visibility: visible;
   }
 
+  body.form .help {
+    visibility: hidden;
+  }
+
   .categories {
     padding: 3rem;
   }
 
   .category {
-    padding: 1.75rem 2.25rem;
+    padding: 1.5rem 2.25rem;
     vertical-align: text-top;
     break-inside: avoid-column;
     page-break-inside: avoid;
   }
 
   .category-name {
-    margin-bottom: 1rem;
-    font-size: 0.75rem;
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 0.125rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    font-weight: var(--font-weight-black);
+    letter-spacing: 0.075em;
     text-transform: uppercase;
   }
 
@@ -551,7 +562,7 @@
     align-items: baseline;
     position: relative;
     width: 100%;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     text-decoration: none;
   }
 
@@ -559,14 +570,13 @@
     display: block;
     flex-shrink: 0;
     float: left;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
     margin-right: 1.5rem;
-    border-radius: 50%;
-    background: var(--searchBackground);
-    color: var(--searchForeground);
+    border-radius: var(--border-radius);
+    color: var(--helpCommandKeyForeground);
     font-weight: var(--font-weight-bold);
-    line-height: 2.5rem;
+    line-height: 2.25rem;
     text-align: center;
   }
 
@@ -579,23 +589,26 @@
     display: none;
     position: absolute;
     right: 0;
-    bottom: -0.1rem;
+    bottom: -0.175rem;
     left: 0;
     height: 0.4rem;
-    transition: 0.2s;
+    border-radius: 1px;
+    transition: transform var(--transition-speed),
+      opacity var(--transition-speed);
     transform: translateX(-2rem);
     background: var(--foreground);
     opacity: 0;
-  }
-
-  body.help .command-name::after {
-    display: block;
+    z-index: -1;
   }
 
   .command a:hover .command-name::after,
   .command a:focus .command-name::after {
     transform: translateX(0);
-    opacity: 0.4;
+    opacity: 1;
+  }
+
+  body.help .command-name::after {
+    display: block;
   }
 
   @media (min-width: 650px) {
@@ -659,11 +672,11 @@
     els: (s) => [].slice.call(document.querySelectorAll(s) || []),
     escapeRegex: (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
     flattenAndUnique: (arr) => [...new Set([].concat.apply([], arr))],
-    isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.key(e)),
-    isRemove: (e) => ['backspace', 'delete'].includes($.key(e)),
-    isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.key(e)),
-
-    key: (e) => {
+    isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.whichKey(e)),
+    isRemove: (e) => ['backspace', 'delete'].includes($.whichKey(e)),
+    isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.whichKey(e)),
+    pad: (v) => ('0' + v.toString()).slice(-2),
+    whichKey: (e) => {
       const ctrl = e.ctrlKey;
       const meta = e.metaKey;
       const shift = e.shiftKey;
@@ -706,13 +719,12 @@
       if (ctrl) return 'ctrl-*';
       if (meta) return 'meta-*';
     },
-
-    pad: (v) => ('0' + v.toString()).slice(-2),
   };
 
   class Clock {
     constructor(options) {
       this._el = $.el('#clock');
+      this._amPm = options.amPm;
       this._delimiter = options.delimiter;
       this._twentyFourHour = options.twentyFourHour;
       this._setTime = this._setTime.bind(this);
@@ -729,10 +741,7 @@
         hours = date.getHours();
         if (hours > 12) hours -= 12;
         else if (hours === 0) hours = 12;
-
-        amPm =
-          `&nbsp;<span class="am-pm">` +
-          `${date.getHours() > 12 ? 'PM' : 'AM'}</span>`;
+        if (this._amPm) amPm = date.getHours() >= 12 ? ' PM' : ' AM';
       }
 
       const minutes = $.pad(date.getMinutes());
@@ -749,7 +758,6 @@
   class Help {
     constructor(options) {
       this._el = $.el('#help');
-      this._colors = options.colors;
       this._commands = options.commands;
       this._newTab = options.newTab;
       this._toggled = false;
@@ -785,16 +793,18 @@
       return this._commands.reduce(
         (acc, { category, color, name, key, url }, i) => {
           if (category !== currentCategory) return acc;
+          const target = this._newTab ? '_blank' : '_self';
 
           return `
             ${acc}
+            <style>
+              .command-key-${i},
+              .command-name-${i}::after {
+                background: ${color};
+              }
+            </style>
             <li class="command">
-              <a href="${url}" target="${this._newTab ? '_blank' : '_self'}">
-                ${
-                  this._colors
-                    ? `<style>.command-key-${i},.command-name-${i}::after{background:${color};}</style>`
-                    : ''
-                }
+              <a href="${url}" target="${target}" rel="noopener noreferrer">
                 <span class="command-key command-key-${i}">${key}</span>
                 <span class="command-name command-name-${i}">${name}</span>
               </a>
@@ -814,7 +824,7 @@
     }
 
     _handleKeydown(e) {
-      if ($.key(e) === 'escape') this.toggle(false);
+      if ($.whichKey(e) === 'escape') this.toggle(false);
     }
 
     _registerEvents() {
@@ -825,32 +835,42 @@
   class Influencer {
     constructor(options) {
       this._limit = options.limit;
+      this._minChars = options.minChars;
       this._parseQuery = options.parseQuery;
     }
 
-    addItem() {}
-    getSuggestions() {}
+    addItem() {
+      return undefined;
+    }
+
+    getSuggestions() {
+      return Promise.resolve([]);
+    }
 
     _addSearchPrefix(items, query) {
-      const searchPrefix = this._getSearchPrefix(query);
+      const { isSearch, key, split } = this._parseQuery(query);
+      const searchPrefix = isSearch ? `${key}${split} ` : false;
       return items.map((s) => (searchPrefix ? searchPrefix + s : s));
     }
 
-    _getSearchPrefix(query) {
-      const { isSearch, key, split } = this._parseQuery(query);
-      return isSearch ? `${key}${split} ` : false;
+    _isTooShort(query) {
+      return query.length < this._minChars;
     }
   }
 
   class DefaultInfluencer extends Influencer {
-    constructor({ defaultSuggestions }) {
+    constructor({ suggestionDefaults }) {
       super(...arguments);
-      this._defaultSuggestions = defaultSuggestions;
+      this._suggestionDefaults = suggestionDefaults;
     }
 
-    getSuggestions(query) {
+    getSuggestions(rawQuery) {
+      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
+
       return new Promise((resolve) =>
-        resolve((this._defaultSuggestions[query] || []).slice(0, this._limit))
+        resolve(
+          (this._suggestionDefaults[rawQuery] || []).slice(0, this._limit)
+        )
       );
     }
   }
@@ -858,12 +878,11 @@
   class DuckDuckGoInfluencer extends Influencer {
     constructor({ queryParser }) {
       super(...arguments);
-      this.isAsync = true;
     }
 
     getSuggestions(rawQuery) {
+      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
       const { query } = this._parseQuery(rawQuery);
-      if (!query) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         const callback = 'autocompleteCallback';
@@ -913,16 +932,18 @@
       this._setHistory(sorted);
     }
 
-    getSuggestions(query) {
+    getSuggestions(rawQuery) {
+      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
+
       return new Promise((resolve) =>
         resolve(
           this._getHistory()
             .map(([item]) => item)
             .filter(
               (item) =>
-                query &&
-                item.toLowerCase() !== query.toLowerCase() &&
-                item.toLowerCase().indexOf(query.toLowerCase()) !== -1
+                rawQuery &&
+                item.toLowerCase() !== rawQuery.toLowerCase() &&
+                item.toLowerCase().indexOf(rawQuery.toLowerCase()) !== -1
             )
             .slice(0, this._limit)
         )
@@ -950,9 +971,7 @@
 
   class Suggester {
     constructor(options) {
-      this.isAsync = false;
       this._el = $.el('#search-suggestions');
-      this._enabled = options.enabled;
       this._influencers = options.influencers;
       this._limit = options.limit;
       this._currentInput = '';
@@ -981,7 +1000,6 @@
     }
 
     suggest(input) {
-      if (!this._enabled) return;
       this._currentInput = input.trim();
 
       if (!this._currentInput) {
@@ -989,7 +1007,7 @@
         return;
       }
 
-      Promise.all(this._getInfluencers({ input })).then(this._setSuggestions);
+      Promise.all(this._getInfluencers()).then(this._setSuggestions);
     }
 
     _buildSuggestionsHtml(suggestions) {
@@ -998,7 +1016,10 @@
         const matched = suggestion.match(match);
 
         const suggestionHtml = matched
-          ? suggestion.replace(match, `<b>${matched[0]}</b>`)
+          ? suggestion.replace(
+              match,
+              `<span class="search-suggestion-match">${matched[0]}</span>`
+            )
           : suggestion;
 
         return `
@@ -1061,9 +1082,9 @@
       if (!exists) this._unHighlight(e);
     }
 
-    _getInfluencers({ input }) {
+    _getInfluencers() {
       return this._influencers.map((influencer) =>
-        influencer.getSuggestions(input)
+        influencer.getSuggestions(this._currentInput)
       );
     }
 
@@ -1158,7 +1179,6 @@
           if (query === key) {
             res.key = key;
             res.isKey = true;
-            res.query = '';
             res.redirect = url;
             return true;
           }
@@ -1177,7 +1197,6 @@
             res.isPath = true;
             res.split = this._pathDelimiter;
             res.path = QueryParser._shiftAndTrim(splitPath, res.split);
-            res.query = '';
             res.redirect = QueryParser._prepPath(url, res.path);
             return true;
           }
@@ -1230,7 +1249,6 @@
 
   class Form {
     constructor(options) {
-      this._colors = options.colors;
       this._formEl = $.el('#search-form');
       this._inputEl = $.el('#search-input');
       this._inputElVal = '';
@@ -1256,7 +1274,7 @@
       this._inputEl.value = '';
       this._inputElVal = '';
       this._suggester.suggest('');
-      this._setBackgroundFromQuery('');
+      this._setColorsFromQuery('');
     }
 
     show() {
@@ -1275,7 +1293,7 @@
       const { isKey } = this._parseQuery(newQuery);
       this._inputElVal = newQuery;
       this._suggester.suggest(newQuery);
-      this._setBackgroundFromQuery(newQuery);
+      this._setColorsFromQuery(newQuery);
       if (!newQuery || isHelp) this.hide();
       if (isHelp) this._toggleHelp();
       if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
@@ -1284,7 +1302,7 @@
     _handleKeydown(e) {
       if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
 
-      switch ($.key(e)) {
+      switch ($.whichKey(e)) {
         case 'alt':
         case 'ctrl':
         case 'ctrl-*':
@@ -1308,7 +1326,7 @@
 
     _previewValue(value) {
       this._inputEl.value = value;
-      this._setBackgroundFromQuery(value);
+      this._setColorsFromQuery(value);
     }
 
     _redirect(redirect) {
@@ -1328,9 +1346,9 @@
       }
     }
 
-    _setBackgroundFromQuery(query) {
-      if (!this._colors) return;
-      this._formEl.style.background = this._parseQuery(query).color || '';
+    _setColorsFromQuery(query) {
+      const color = this._parseQuery(query).color;
+      this._formEl.style.background = color || '';
     }
 
     _submitForm(e) {
@@ -1349,47 +1367,45 @@
 
   const queryParser = new QueryParser({
     commands: CONFIG.commands,
-    pathDelimiter: CONFIG.pathDelimiter,
-    searchDelimiter: CONFIG.searchDelimiter,
+    pathDelimiter: CONFIG.queryPathDelimiter,
+    searchDelimiter: CONFIG.querySearchDelimiter,
   });
 
-  const influencers = CONFIG.influencers.map((influencerConfig) => {
+  const influencers = CONFIG.suggestionInfluencers.map((influencerConfig) => {
     return new {
       Default: DefaultInfluencer,
       DuckDuckGo: DuckDuckGoInfluencer,
       History: HistoryInfluencer,
     }[influencerConfig.name]({
-      defaultSuggestions: CONFIG.defaultSuggestions,
       limit: influencerConfig.limit,
+      minChars: influencerConfig.minChars,
       parseQuery: queryParser.parse,
+      suggestionDefaults: CONFIG.suggestionDefaults,
     });
   });
 
   const suggester = new Suggester({
-    asyncInfluencersAreBlocking: CONFIG.asyncInfluencersAreBlocking,
-    enabled: CONFIG.suggestions,
     influencers,
-    limit: CONFIG.suggestionsLimit,
+    limit: CONFIG.suggestionLimit,
   });
 
   const help = new Help({
-    colors: CONFIG.colors,
     commands: CONFIG.commands,
-    newTab: CONFIG.newTab,
+    newTab: CONFIG.queryNewTab,
   });
 
   const form = new Form({
-    colors: CONFIG.colors,
-    instantRedirect: CONFIG.instantRedirect,
-    newTab: CONFIG.newTab,
+    instantRedirect: CONFIG.queryInstantRedirect,
+    newTab: CONFIG.queryNewTab,
     parseQuery: queryParser.parse,
     suggester,
     toggleHelp: help.toggle,
   });
 
   new Clock({
+    amPm: CONFIG.clockShowAmPm,
     delimiter: CONFIG.clockDelimiter,
-    onClick: CONFIG.clockAction === 'Search' ? form.show : help.toggle,
-    twentyFourHour: CONFIG.twentyFourHourClock,
+    onClick: CONFIG.clockOnClickAction === 'Search' ? form.show : help.toggle,
+    twentyFourHour: CONFIG.clockTwentyFourHour,
   });
 </script>

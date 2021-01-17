@@ -49,7 +49,7 @@ URL. For example:
 ## Configuration
 
 The above is just the beginning. Open up the [index.html](index.html) file and
-read through the `CONFIG`!
+make it yours!
 
 ## License
 
