@@ -361,7 +361,6 @@
     --search-background: #000;
     --search-foreground: #efefef;
     --search-highlight-background: hsla(0, 0%, 100%, 0.1);
-
     --command-color-alpha: 0.9;
     --command-color-gradient: 45deg;
     --command-color-lightness: 50%;
@@ -374,7 +373,7 @@
       Lucida Console, monospace;
 
     --base-font-size: 16px;
-    --clock-font-size: 4rem;
+    --clock-font-size: 2rem;
     --search-input-font-size: 2rem;
 
     --font-weight-black: 900;
@@ -389,6 +388,12 @@
     --search-input-text-align: left;
     --search-suggestion-flex-direction: column;
     --search-suggestions-align-items: flex-start;
+  }
+
+  @media (min-width: 400px) {
+    :root {
+      --clock-font-size: 4rem;
+    }
   }
 
   @media (min-width: 650px) {
@@ -518,7 +523,7 @@
   }
 
   .categories {
-    padding: 3rem;
+    padding: 3rem 0;
     columns: var(--help-category-columns);
   }
 
