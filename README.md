@@ -7,13 +7,13 @@ is to have a homepage for your browser that is functional and sexy.
 
 To go to a site, enter the corresponding key. To view the available sites and
 their keys, press `?`. If your input doesn&rsquo;t match any of the keys, a
-generic DuckDuckGo search will be triggered. For example:
+generic Google search will be triggered. For example:
 
 - Entering `t` would redirect you to [twitter.com](https://twitter.com/home).
 - Entering `u` would redirect you to
   [unsplash.com](https://unsplash.com/images).
-- Entering `google` would
-  [search DuckDuckGo for google](https://duckduckgo.com/?q=google).
+- Entering `duckduckgo` would
+  [search Google for duckduckgo](https://www.google.com/search?q=duckduckgo).
 
 ### Searching
 

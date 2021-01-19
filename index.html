@@ -17,6 +17,9 @@
     // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
     clockShowAmPm: true,
 
+    // Show seconds on the clock. A monospaced font is recommended for this.
+    clockShowSeconds: true,
+
     // Show a twenty-four-hour clock instead of a twelve-hour clock.
     clockTwentyFourHour: true,
 
@@ -41,10 +44,13 @@
       0: ["0'8000", "0'8080"],
       c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
-      g: ['g/cadejscroggins/tilde', 'g/ossu'],
+      g: ['g/notifications', 'g/trending', 'g/ossu', 'g/cadejscroggins/tilde'],
+      h: ['h/popular', 'h/popular/lastweek', 'h/tags'],
       k: ['k/u/1', 'k/u/2'],
       m: ['m/mail/u/1', 'm/mail/u/2'],
+      r: ['r/hot', 'r/new', 'r/top', 'r/r/startpages'],
       s: ['s/client/T7K3RFA1M', 's/client/T018S4TL7CP'],
+      y: ['y/feed/subscriptions', 'y/feed/trending'],
     },
 
     // The order, limit and minimum characters for each suggestion influencer.
@@ -168,7 +174,7 @@
       {
         category: 'Learn',
         name: 'Khan',
-        key: '-',
+        key: '+',
         url: 'www.khanacademy.org',
         search: '/search?page_search_query={}',
         hues: ['166', '146'],
@@ -187,6 +193,7 @@
         key: 'w',
         url: 'en.wikipedia.org/wiki/Main_Page',
         search: '/wiki/{}',
+        hues: ['217', '237'],
       },
       {
         category: 'Learn',
@@ -286,7 +293,7 @@
         category: 'Listen',
         name: 'Hypem',
         key: 'h',
-        url: 'hypem.com/popular',
+        url: 'hypem.com/latest',
         search: '/search/{}',
         hues: ['90'],
       },
@@ -302,7 +309,7 @@
         category: 'Watch',
         name: 'YouTube',
         key: 'y',
-        url: 'youtube.com/feed/subscriptions',
+        url: 'youtube.com',
         search: '/results?search_query={}',
         hues: ['5', '355'],
       },
@@ -322,8 +329,8 @@
         hues: ['264', '244'],
       },
     ].map((command) => {
-      const hsla = (hue, saturation = 'var(--commandColorSaturation)') =>
-        `hsla(${hue}, ${saturation}, var(--commandColorLightness), var(--commandColorAlpha))`;
+      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
+        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
 
       command.url = `https://${command.url}`;
       command.color = command.category ? hsla(0, '0%') : null;
@@ -336,7 +343,7 @@
         command.color = hsla(command.hues[0]);
       } else {
         const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
-        command.color = `linear-gradient(var(--commandColorGradient) ${c})`;
+        command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
       }
 
       return command;
@@ -346,40 +353,64 @@
 
 <style>
   :root {
-    --background: #000;
-    --foreground: #efefef;
-    --helpBackground: #000;
-    --helpForeground: #efefef;
-    --helpCommandKeyForeground: #000;
-    --searchBackground: #000;
-    --searchForeground: #efefef;
-    --searchHighlightBackground: hsla(0, 0%, 100%, 0.1);
-    --commandColorGradient: 45deg;
-    --commandColorSaturation: 50%;
-    --commandColorLightness: 50%;
-    --commandColorAlpha: 0.9;
+    --base-background: #000;
+    --base-foreground: #efefef;
+    --help-background: #000;
+    --help-command-key-foreground: #000;
+    --help-foreground: #efefef;
+    --search-background: #000;
+    --search-foreground: #efefef;
+    --search-highlight-background: hsla(0, 0%, 100%, 0.1);
 
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-      'Segoe UI Symbol';
+    --command-color-alpha: 0.9;
+    --command-color-gradient: 45deg;
+    --command-color-lightness: 50%;
+    --command-color-saturation: 50%;
+
+    --font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
+      Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
+
+    --clock-font-family: Menlo, Consolas, Monaco, Liberation Mono,
+      Lucida Console, monospace;
 
     --base-font-size: 16px;
-    --font-weight-light: 200;
-    --font-weight-normal: 400;
-    --font-weight-bold: 700;
-    --font-weight-black: 900;
+    --clock-font-size: 4rem;
+    --search-input-font-size: 2rem;
 
-    --border-radius: 2px;
-    --transition-speed: 0.2s;
+    --font-weight-black: 900;
+    --font-weight-bold: 700;
+    --font-weight-normal: 400;
+
+    --base-border-radius: 2px;
+    --base-transition-speed: 0.2s;
+
+    --help-category-columns: 1;
+
+    --search-input-text-align: left;
+    --search-suggestion-flex-direction: column;
+    --search-suggestions-align-items: flex-start;
   }
 
-  @media (prefers-color-scheme: light) {
+  @media (min-width: 650px) {
     :root {
-      --background: #efefef;
-      --foreground: #333;
-      --helpBackground: #efefef;
-      --helpForeground: #333;
-      --helpCommandKeyForeground: #efefef;
+      --clock-font-size: 6rem;
+      --help-category-columns: 2;
+      --search-input-text-align: center;
+      --search-suggestions-align-items: center;
+    }
+  }
+
+  @media (min-width: 900px) {
+    :root {
+      --search-input-font-size: 3rem;
+      --help-category-columns: 3;
+      --search-suggestion-flex-direction: row;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    :root {
+      --help-category-columns: 4;
     }
   }
 
@@ -401,8 +432,8 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    background: var(--background);
-    color: var(--foreground);
+    background: var(--base-background);
+    color: var(--base-foreground);
   }
 
   input,
@@ -462,8 +493,8 @@
 
   .clock {
     display: block;
-    font-size: 4rem;
-    font-weight: var(--font-weight-light);
+    font-family: var(--clock-font-family);
+    font-size: var(--clock-font-size);
     cursor: pointer;
   }
 
@@ -471,62 +502,10 @@
     visibility: hidden;
   }
 
-  .search-form {
-    background: var(--searchBackground);
-    color: var(--searchForeground);
-    visibility: hidden;
-  }
-
-  body.form .search-form {
-    visibility: visible;
-  }
-
-  .search-form-content {
-    width: 100%;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0 1rem;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    font-weight: var(--font-weight-black);
-    text-transform: uppercase;
-  }
-
-  .search-suggestions {
-    display: none;
-    justify-content: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-    overflow: hidden;
-  }
-
-  body.suggestions .search-suggestions {
-    display: flex;
-  }
-
-  .search-suggestion {
-    padding: 0.75rem 1rem;
-    border-radius: var(--border-radius);
-    font-weight: var(--font-weight-bold);
-    text-align: left;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-
-  .search-suggestion.highlight {
-    background: var(--searchHighlightBackground);
-  }
-
-  .search-suggestion-match {
-    font-weight: var(--font-weight-normal);
-  }
-
   .help {
-    background: var(--helpBackground);
+    background: var(--help-background);
     visibility: hidden;
-    color: var(--helpForeground);
+    color: var(--help-foreground);
     z-index: 1;
   }
 
@@ -540,6 +519,7 @@
 
   .categories {
     padding: 3rem;
+    columns: var(--help-category-columns);
   }
 
   .category {
@@ -573,8 +553,8 @@
     width: 2.25rem;
     height: 2.25rem;
     margin-right: 1.5rem;
-    border-radius: var(--border-radius);
-    color: var(--helpCommandKeyForeground);
+    border-radius: var(--base-border-radius);
+    color: var(--help-command-key-foreground);
     font-weight: var(--font-weight-bold);
     line-height: 2.25rem;
     text-align: center;
@@ -593,10 +573,10 @@
     left: 0;
     height: 0.4rem;
     border-radius: 1px;
-    transition: transform var(--transition-speed),
-      opacity var(--transition-speed);
+    transition: transform var(--base-transition-speed),
+      opacity var(--base-transition-speed);
     transform: translateX(-2rem);
-    background: var(--foreground);
+    background: var(--base-foreground);
     opacity: 0;
     z-index: -1;
   }
@@ -611,42 +591,58 @@
     display: block;
   }
 
-  @media (min-width: 650px) {
-    .clock {
-      font-size: 8rem;
-    }
-
-    .search-input {
-      text-align: center;
-    }
-
-    .search-suggestions {
-      align-items: center;
-    }
-
-    .categories {
-      columns: 2;
-    }
+  .search-form {
+    background: var(--search-background);
+    color: var(--search-foreground);
+    visibility: hidden;
   }
 
-  @media (min-width: 900px) {
-    .search-input {
-      font-size: 3rem;
-    }
-
-    .search-suggestions {
-      flex-direction: row;
-    }
-
-    .categories {
-      columns: 3;
-    }
+  body.form .search-form {
+    visibility: visible;
   }
 
-  @media (min-width: 1200px) {
-    .categories {
-      columns: 4;
-    }
+  .search-form-content {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0 1rem;
+    font-size: var(--search-input-font-size);
+    font-weight: var(--font-weight-black);
+    text-align: var(--search-input-text-align);
+    text-transform: uppercase;
+  }
+
+  .search-suggestions {
+    display: none;
+    justify-content: center;
+    align-items: var(--search-suggestions-align-items);
+    flex-direction: var(--search-suggestion-flex-direction);
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+
+  body.suggestions .search-suggestions {
+    display: flex;
+    margin-top: 2rem;
+  }
+
+  .search-suggestion {
+    padding: 0.75rem 1rem;
+    border-radius: var(--base-border-radius);
+    font-weight: var(--font-weight-bold);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .search-suggestion.highlight {
+    background: var(--search-highlight-background);
+  }
+
+  .search-suggestion-match {
+    font-weight: var(--font-weight-normal);
   }
 </style>
 
@@ -726,6 +722,7 @@
       this._el = $.el('#clock');
       this._amPm = options.amPm;
       this._delimiter = options.delimiter;
+      this._showSeconds = options.showSeconds;
       this._twentyFourHour = options.twentyFourHour;
       this._setTime = this._setTime.bind(this);
       this._el.addEventListener('click', options.onClick);
@@ -744,8 +741,12 @@
         if (this._amPm) amPm = date.getHours() >= 12 ? ' PM' : ' AM';
       }
 
-      const minutes = $.pad(date.getMinutes());
-      this._el.innerHTML = `${hours}${this._delimiter}${minutes}${amPm}`;
+      const minutes = this._delimiter + $.pad(date.getMinutes());
+      const seconds = this._showSeconds
+        ? this._delimiter + $.pad(date.getSeconds())
+        : '';
+
+      this._el.innerHTML = hours + minutes + seconds + amPm;
       this._el.setAttribute('datetime', date.toTimeString());
     }
 
@@ -1001,6 +1002,7 @@
 
     suggest(input) {
       this._currentInput = input.trim();
+      this._highlitedSuggestion = null;
 
       if (!this._currentInput) {
         this._clearSuggestions();
@@ -1137,7 +1139,7 @@
       this._suggestionEls = $.els('.js-search-suggestion');
       this._registerSuggestionHighlightEvents();
       this._registerSuggestionClickEvents();
-      $.bodyClassAdd('suggestions');
+      if (this._suggestionEls.length) $.bodyClassAdd('suggestions');
       this._rehighlight();
     }
 
@@ -1406,6 +1408,7 @@
     amPm: CONFIG.clockShowAmPm,
     delimiter: CONFIG.clockDelimiter,
     onClick: CONFIG.clockOnClickAction === 'Search' ? form.show : help.toggle,
+    showSeconds: CONFIG.clockShowSeconds,
     twentyFourHour: CONFIG.clockTwentyFourHour,
   });
 </script>
