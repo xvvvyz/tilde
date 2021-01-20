@@ -23,6 +23,271 @@
     // Show a twenty-four-hour clock instead of a twelve-hour clock.
     clockTwentyFourHour: true,
 
+    // The "category", "name", "key", "url", "search" path and "color"/"hues"
+    // for your commands. If none of the specified keys are matched, the * key
+    // is used. Commands without a category don't show up in the help menu.
+
+    // You can specify either "hues" or "color" to change a command's background
+    // color. "hues" is an array of CSS HSL hues that will be converted into a
+    // linear gradient. There are CSS variables defined below, prefixed with
+    // "--command-color-", that determine the gradient angle, saturation,
+    // lightness and alpha for each generated color. "color", if defined, will
+    // be applied as-is to the command's "background" CSS property.
+    commands: [
+      {
+        key: '*',
+        name: 'Google',
+        search: '/search?q={}',
+        url: 'https://www.google.com',
+      },
+      {
+        category: 'Google',
+        hues: ['217', '197'],
+        key: 'm',
+        name: 'Mail',
+        search: '/mail/u/0/?q={}#search/{}',
+        url: 'https://mail.google.com/mail/u/0',
+      },
+      {
+        category: 'Google',
+        hues: ['136', '156'],
+        key: 'd',
+        name: 'Drive',
+        search: '/drive/u/0/search?q={}',
+        url: 'https://drive.google.com/drive/u/0/my-drive',
+      },
+      {
+        category: 'Google',
+        hues: ['45', '40'],
+        key: 'k',
+        name: 'Keep',
+        search: '/u/0/#search/text={}',
+        url: 'https://keep.google.com/u/0',
+      },
+      {
+        category: 'Google',
+        hues: ['5', '355'],
+        key: 'c',
+        name: 'Cal',
+        search: '/calendar/u/0/r/search?q={}',
+        url: 'https://calendar.google.com/calendar/u/0/r',
+      },
+      {
+        category: 'Work',
+        hues: ['190', '210'],
+        key: 's',
+        name: 'Slack',
+        url: 'https://app.slack.com/client/T09M5UWSV',
+      },
+      {
+        category: 'Work',
+        hues: ['4', '24'],
+        key: 'n',
+        name: 'Notion',
+        url: 'https://www.notion.so',
+      },
+      {
+        category: 'Work',
+        hues: ['357', '337'],
+        key: 'a',
+        name: 'Asana',
+        url: 'https://app.asana.com/0/inbox/490539250066176',
+      },
+      {
+        category: 'Work',
+        hues: ['167', '187'],
+        key: '.',
+        name: 'AND',
+        url: 'https://app.and.co/timers',
+      },
+      {
+        category: 'Create',
+        hues: ['36', '26'],
+        key: 'A',
+        name: 'AWS',
+        url: 'https://console.aws.amazon.com',
+      },
+      {
+        category: 'Create',
+        hues: ['214', '234'],
+        key: 'g',
+        name: 'GitHub',
+        search: '/search?q={}',
+        url: 'https://github.com',
+      },
+      {
+        category: 'Create',
+        hues: ['266', '286'],
+        key: 'f',
+        name: 'Figma',
+        url: 'https://www.figma.com/files/recent',
+      },
+      {
+        category: 'Create',
+        key: '0',
+        name: 'Local',
+        search: ':{}',
+        url: 'https://http://localhost:3000',
+      },
+      {
+        category: 'Learn',
+        hues: ['166', '146'],
+        key: '+',
+        name: 'Khan',
+        search: '/search?page_search_query={}',
+        url: 'https://www.khanacademy.org',
+      },
+      {
+        category: 'Learn',
+        hues: ['5', '345'],
+        key: '=',
+        name: 'Wolfram',
+        search: '/input/?i={}',
+        url: 'https://www.wolframalpha.com',
+      },
+      {
+        category: 'Learn',
+        hues: ['217', '237'],
+        key: 'w',
+        name: 'Wikipedia',
+        search: '/wiki/{}',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+      },
+      {
+        category: 'Learn',
+        hues: ['198', '218'],
+        key: ';',
+        name: 'MDN',
+        search: '/en-US/search?q={}',
+        url: 'https://developer.mozilla.org/en-US',
+      },
+      {
+        category: 'Lurk',
+        hues: ['254', '234'],
+        key: 'r',
+        name: 'Reddit',
+        search: '/search?q={}',
+        url: 'https://www.reddit.com',
+      },
+      {
+        category: 'Lurk',
+        hues: ['230', '280'],
+        key: 'i',
+        name: 'Instagram',
+        url: 'https://www.instagram.com',
+      },
+      {
+        category: 'Lurk',
+        hues: ['201', '221'],
+        key: 'l',
+        name: 'LinkedIn',
+        search: '/search/results/all/?keywords={}',
+        url: 'https://www.linkedin.com',
+      },
+      {
+        category: 'Lurk',
+        hues: ['203', '183'],
+        key: 't',
+        name: 'Twitter',
+        search: '/search?q={}',
+        url: 'https://twitter.com/home',
+      },
+      {
+        category: 'Inspire',
+        hues: ['349', '329'],
+        key: '1',
+        name: 'OPL',
+        search: '/?s={}',
+        url: 'https://onepagelove.com/inspiration',
+      },
+      {
+        category: 'Inspire',
+        hues: ['337', '317'],
+        key: 'b',
+        name: 'Dribbble',
+        search: '/search/{}',
+        url: 'https://dribbble.com/shots/popular',
+      },
+      {
+        category: 'Inspire',
+        key: 'u',
+        name: 'Unsplash',
+        search: '/search/{}',
+        url: 'https://unsplash.com/images',
+      },
+      {
+        category: 'Inspire',
+        hues: ['13', '33'],
+        key: 'p',
+        name: 'Hunt',
+        search: '/search?q={}',
+        url: 'https://www.producthunt.com',
+      },
+      {
+        category: 'Listen',
+        hues: ['141'],
+        key: 'S',
+        name: 'Spotify',
+        search: '/search/{}',
+        url: 'https://open.spotify.com',
+      },
+      {
+        category: 'Listen',
+        hues: ['32', '22'],
+        key: 'o',
+        name: 'SoundCloud',
+        search: '/search?q={}',
+        url: 'https://soundcloud.com/discover',
+      },
+      {
+        category: 'Listen',
+        hues: ['202', '222'],
+        key: 'P',
+        name: 'Pandora',
+        search: '/search/{}/all',
+        url: 'https://www.pandora.com',
+      },
+      {
+        category: 'Listen',
+        hues: ['90'],
+        key: 'h',
+        name: 'Hypem',
+        search: '/search/{}',
+        url: 'https://hypem.com/latest',
+      },
+      {
+        category: 'Watch',
+        hues: ['213', '193'],
+        key: 'v',
+        name: 'Vimeo',
+        search: '/search?q={}',
+        url: 'https://vimeo.com/watch',
+      },
+      {
+        category: 'Watch',
+        hues: ['5', '355'],
+        key: 'y',
+        name: 'YouTube',
+        search: '/results?search_query={}',
+        url: 'https://youtube.com',
+      },
+      {
+        category: 'Watch',
+        hues: ['357', '357'],
+        key: 'x',
+        name: 'Netflix',
+        search: '/search?q={}',
+        url: 'https://www.netflix.com/browse',
+      },
+      {
+        category: 'Watch',
+        hues: ['264', '244'],
+        key: 'T',
+        name: 'Twitch',
+        url: 'https://www.twitch.tv/directory/following',
+      },
+    ],
+
     // Instantly redirect when a key is matched. Put a space before any other
     // queries to prevent unwanted redirects.
     queryInstantRedirect: false,
@@ -57,12 +322,12 @@
     // An "influencer" is just a suggestion source. "limit" is the max number of
     // suggestions an influencer will produce. "minChars" determines how many
     // characters need to be typed before the influencer kicks in.
-    //
+
     // The following influencers are available:
     // - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
     // - "History" suggestions come from your previously entered queries (sync)
     // - "DuckDuckGo" suggestions come from the duck duck go search api (async)
-    //
+
     // To disable suggestions, remove all influencers.
     suggestionInfluencers: [
       { name: 'Default', limit: 4, minChars: 1 },
@@ -71,283 +336,6 @@
 
     // Max number of suggestions that will ever be shown.
     suggestionLimit: 4,
-
-    // The category, name, key, url, search path and color for your commands.
-    // If none of the specified keys are matched, the '*' key is used.
-    // Commands without a category don't show up in the help menu.
-    commands: [
-      {
-        name: 'Google',
-        key: '*',
-        url: 'www.google.com',
-        search: '/search?q={}',
-      },
-      {
-        category: 'Google',
-        name: 'Mail',
-        key: 'm',
-        url: 'mail.google.com/mail/u/0',
-        search: '/mail/u/0/?q={}#search/{}',
-        hues: ['217', '197'],
-      },
-      {
-        category: 'Google',
-        name: 'Drive',
-        key: 'd',
-        url: 'drive.google.com/drive/u/0/my-drive',
-        search: '/drive/u/0/search?q={}',
-        hues: ['136', '156'],
-      },
-      {
-        category: 'Google',
-        name: 'Keep',
-        key: 'k',
-        url: 'keep.google.com/u/0',
-        search: '/u/0/#search/text={}',
-        hues: ['45', '40'],
-      },
-      {
-        category: 'Google',
-        name: 'Cal',
-        key: 'c',
-        url: 'calendar.google.com/calendar/u/0/r',
-        search: '/calendar/u/0/r/search?q={}',
-        hues: ['5', '355'],
-      },
-      {
-        category: 'Work',
-        name: 'Slack',
-        key: 's',
-        url: 'app.slack.com/client/T09M5UWSV',
-        hues: ['190', '210'],
-      },
-      {
-        category: 'Work',
-        name: 'Notion',
-        key: 'n',
-        url: 'www.notion.so',
-        hues: ['4', '24'],
-      },
-      {
-        category: 'Work',
-        name: 'Asana',
-        key: 'a',
-        url: 'app.asana.com/0/inbox/490539250066176',
-        hues: ['357', '337'],
-      },
-      {
-        category: 'Work',
-        name: 'AND',
-        key: '.',
-        url: 'app.and.co/timers',
-        hues: ['167', '187'],
-      },
-      {
-        category: 'Create',
-        name: 'AWS',
-        key: 'A',
-        url: 'console.aws.amazon.com',
-        hues: ['36', '26'],
-      },
-      {
-        category: 'Create',
-        name: 'GitHub',
-        key: 'g',
-        url: 'github.com',
-        search: '/search?q={}',
-        hues: ['214', '234'],
-      },
-      {
-        category: 'Create',
-        name: 'Figma',
-        key: 'f',
-        url: 'www.figma.com/files/recent',
-        hues: ['266', '286'],
-      },
-      {
-        category: 'Create',
-        name: 'Local',
-        key: '0',
-        url: 'http://localhost:3000',
-        search: ':{}',
-      },
-      {
-        category: 'Learn',
-        name: 'Khan',
-        key: '+',
-        url: 'www.khanacademy.org',
-        search: '/search?page_search_query={}',
-        hues: ['166', '146'],
-      },
-      {
-        category: 'Learn',
-        name: 'Wolfram',
-        key: '=',
-        url: 'www.wolframalpha.com',
-        search: '/input/?i={}',
-        hues: ['5', '345'],
-      },
-      {
-        category: 'Learn',
-        name: 'Wikipedia',
-        key: 'w',
-        url: 'en.wikipedia.org/wiki/Main_Page',
-        search: '/wiki/{}',
-        hues: ['217', '237'],
-      },
-      {
-        category: 'Learn',
-        name: 'MDN',
-        key: ';',
-        url: 'developer.mozilla.org/en-US',
-        search: '/en-US/search?q={}',
-        hues: ['198', '218'],
-      },
-      {
-        category: 'Lurk',
-        name: 'Reddit',
-        key: 'r',
-        url: 'www.reddit.com',
-        search: '/search?q={}',
-        hues: ['254', '234'],
-      },
-      {
-        category: 'Lurk',
-        name: 'Instagram',
-        key: 'i',
-        url: 'www.instagram.com',
-        hues: ['230', '280'],
-      },
-      {
-        category: 'Lurk',
-        name: 'LinkedIn',
-        key: 'l',
-        url: 'www.linkedin.com',
-        search: '/search/results/all/?keywords={}',
-        hues: ['201', '221'],
-      },
-      {
-        category: 'Lurk',
-        name: 'Twitter',
-        key: 't',
-        url: 'twitter.com/home',
-        search: '/search?q={}',
-        hues: ['203', '183'],
-      },
-      {
-        category: 'Inspire',
-        name: 'OPL',
-        key: '1',
-        url: 'onepagelove.com/inspiration',
-        search: '/?s={}',
-        hues: ['349', '329'],
-      },
-      {
-        category: 'Inspire',
-        name: 'Dribbble',
-        key: 'b',
-        url: 'dribbble.com/shots/popular',
-        search: '/search/{}',
-        hues: ['337', '317'],
-      },
-      {
-        category: 'Inspire',
-        name: 'Unsplash',
-        key: 'u',
-        url: 'unsplash.com/images',
-        search: '/search/{}',
-      },
-      {
-        category: 'Inspire',
-        name: 'Hunt',
-        key: 'p',
-        url: 'www.producthunt.com',
-        search: '/search?q={}',
-        hues: ['13', '33'],
-      },
-      {
-        category: 'Listen',
-        name: 'Spotify',
-        key: 'S',
-        url: 'open.spotify.com',
-        search: '/search/{}',
-        hues: ['141'],
-      },
-      {
-        category: 'Listen',
-        name: 'SoundCloud',
-        key: 'o',
-        url: 'soundcloud.com/discover',
-        search: '/search?q={}',
-        hues: ['32', '22'],
-      },
-      {
-        category: 'Listen',
-        name: 'Pandora',
-        key: 'P',
-        url: 'www.pandora.com',
-        search: '/search/{}/all',
-        hues: ['202', '222'],
-      },
-      {
-        category: 'Listen',
-        name: 'Hypem',
-        key: 'h',
-        url: 'hypem.com/latest',
-        search: '/search/{}',
-        hues: ['90'],
-      },
-      {
-        category: 'Watch',
-        name: 'Vimeo',
-        key: 'v',
-        url: 'vimeo.com/watch',
-        search: '/search?q={}',
-        hues: ['213', '193'],
-      },
-      {
-        category: 'Watch',
-        name: 'YouTube',
-        key: 'y',
-        url: 'youtube.com',
-        search: '/results?search_query={}',
-        hues: ['5', '355'],
-      },
-      {
-        category: 'Watch',
-        name: 'Netflix',
-        key: 'x',
-        url: 'www.netflix.com/browse',
-        search: '/search?q={}',
-        hues: ['357', '357'],
-      },
-      {
-        category: 'Watch',
-        name: 'Twitch',
-        key: 'T',
-        url: 'www.twitch.tv/directory/following',
-        hues: ['264', '244'],
-      },
-    ].map((command) => {
-      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
-        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
-
-      command.url = `https://${command.url}`;
-      command.color = command.category ? hsla(0, '0%') : null;
-
-      if (!Array.isArray(command.hues) || command.hues.length === 0) {
-        return command;
-      }
-
-      if (command.hues.length === 1) {
-        command.color = hsla(command.hues[0]);
-      } else {
-        const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
-        command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
-      }
-
-      return command;
-    }),
   };
 </script>
 
@@ -1337,8 +1325,11 @@
     }
 
     _redirect(redirect) {
-      if (this._newTab) window.open(redirect, '_blank');
-      else window.location.href = redirect;
+      if (this._newTab) {
+        window.open(redirect, '_blank', 'noopener noreferrer');
+      } else {
+        window.location.href = redirect;
+      }
     }
 
     _registerEvents() {
@@ -1372,8 +1363,30 @@
     }
   }
 
+  class CommandParser {
+    static commandHuesToColor(command) {
+      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
+        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
+
+      if (command.color) return command;
+      command.color = command.category ? hsla(0, '0%') : null;
+      if (!command.hues) return command;
+
+      if (command.hues.length === 1) {
+        command.color = hsla(command.hues[0]);
+        return command;
+      }
+
+      const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
+      command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
+      return command;
+    }
+  }
+
+  const commands = CONFIG.commands.map(CommandParser.commandHuesToColor);
+
   const queryParser = new QueryParser({
-    commands: CONFIG.commands,
+    commands,
     pathDelimiter: CONFIG.queryPathDelimiter,
     searchDelimiter: CONFIG.querySearchDelimiter,
   });
@@ -1397,7 +1410,7 @@
   });
 
   const help = new Help({
-    commands: CONFIG.commands,
+    commands,
     newTab: CONFIG.queryNewTab,
   });
 
