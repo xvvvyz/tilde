@@ -41,6 +41,24 @@
         url: 'https://www.google.com',
       },
       {
+        key: 'duckduckgo',
+        name: 'DuckDuckGo',
+        search: '/?q={}',
+        url: 'https://duckduckgo.com',
+      },
+      {
+        key: 'ecosia',
+        name: 'Ecosia',
+        search: '/search?q={}',
+        url: 'https://www.ecosia.org',
+      },
+      {
+        key: 'bing',
+        name: 'Bing',
+        search: '/search?q={}',
+        url: 'https://www.bing.com',
+      },
+      {
         category: 'Google',
         hues: ['217', '197'],
         key: 'm',
@@ -302,6 +320,15 @@
     // The delimiter between a command key and your search query. For example,
     // to search GitHub for tilde, you'd type "g'tilde".
     querySearchDelimiter: "'",
+
+    // Scripts allow you to open or search multiple sites at once. For example,
+    // to search Google, DuckDuckGo, Ecosia and Bing for cats at the same time,
+    // you'd type "se'cats".
+    scripts: {
+      se: ['bing', 'ecosia', 'duckduckgo', '*'],
+      sn: ['f', 'n', 's'],
+      sp: ['g/notifications', 'a', 's/client/T7K3RFA1M', 'm/mail/u/1'],
+    },
 
     // Default search suggestions for the specified queries.
     suggestionDefaults: {
@@ -875,8 +902,8 @@
     }
 
     getSuggestions(rawQuery) {
-      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
       const { query } = this._parseQuery(rawQuery);
+      if (this._isTooShort(rawQuery) || !query) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         const callback = 'autocompleteCallback';
@@ -1150,60 +1177,95 @@
       this._commands = options.commands;
       this._searchDelimiter = options.searchDelimiter;
       this._pathDelimiter = options.pathDelimiter;
+      this._scripts = options.scripts;
       this._protocolRegex = /^[a-zA-Z]+:\/\//i;
       this._urlRegex = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
-      this._cachedQuery = '';
-      this._cachedRes = {};
       this.parse = this.parse.bind(this);
     }
 
     parse(query) {
-      if (this._cachedQuery === query) return this._cachedRes;
-      this._cachedQuery = query;
-      const res = { query: query, split: null };
+      const res = [];
+      res.query = query;
+      res.split = null;
 
       if (this._urlRegex.test(query)) {
         const hasProtocol = this._protocolRegex.test(query);
         res.redirect = hasProtocol ? query : 'http://' + query;
-      } else {
-        const trimmed = query.trim();
-        const splitSearch = trimmed.split(this._searchDelimiter);
-        const splitPath = trimmed.split(this._pathDelimiter);
-
-        this._commands.some(({ key, search, url }) => {
-          if (query === key) {
-            res.key = key;
-            res.isKey = true;
-            res.redirect = url;
-            return true;
-          }
-
-          if (splitSearch[0] === key && search) {
-            res.key = key;
-            res.isSearch = true;
-            res.split = this._searchDelimiter;
-            res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
-            res.redirect = QueryParser._prepSearch(url, search, res.query);
-            return true;
-          }
-
-          if (splitPath[0] === key) {
-            res.key = key;
-            res.isPath = true;
-            res.split = this._pathDelimiter;
-            res.path = QueryParser._shiftAndTrim(splitPath, res.split);
-            res.redirect = QueryParser._prepPath(url, res.path);
-            return true;
-          }
-
-          if (key === '*') {
-            res.redirect = QueryParser._prepSearch(url, search, query);
-          }
-        });
+        res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
+        return res;
       }
 
+      const trimmed = query.trim();
+      const splitSearch = trimmed.split(this._searchDelimiter);
+      const splitPath = trimmed.split(this._pathDelimiter);
+
+      const isScript = Object.entries(this._scripts).some(([key, script]) => {
+        if (query === key) {
+          res.key = key;
+          res.isKey = true;
+          script.forEach((command) => res.push(this.parse(command)));
+          return true;
+        }
+
+        if (splitSearch[0] === key) {
+          res.key = key;
+          res.isSearch = true;
+          res.split = this._searchDelimiter;
+          res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+
+          script.forEach((command) =>
+            res.push(this.parse(`${command}${res.split}${res.query}`))
+          );
+
+          return true;
+        }
+
+        if (splitPath[0] === key) {
+          res.key = key;
+          res.split = this._pathDelimiter;
+          res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+
+          script.forEach((command) =>
+            res.push(this.parse(`${command}${this._pathDelimiter}${res.path}`))
+          );
+
+          return true;
+        }
+      });
+
+      if (isScript) return res;
+
+      this._commands.some(({ key, search, url }) => {
+        if (query === key) {
+          res.key = key;
+          res.isKey = true;
+          res.redirect = url;
+          return true;
+        }
+
+        if (splitSearch[0] === key) {
+          res.key = key;
+          res.isSearch = true;
+          res.split = this._searchDelimiter;
+          res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+          res.redirect = QueryParser._prepSearch(url, search, res.query);
+          return true;
+        }
+
+        if (splitPath[0] === key) {
+          res.key = key;
+          res.split = this._pathDelimiter;
+          res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+          res.redirect = QueryParser._prepPath(url, res.path);
+          return true;
+        }
+
+        if (key === '*') {
+          res.redirect = QueryParser._prepSearch(url, search, query);
+        }
+      });
+
       res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
-      this._cachedRes = res;
       return res;
     }
 
@@ -1324,8 +1386,8 @@
       this._setColorsFromQuery(value);
     }
 
-    _redirect(redirect) {
-      if (this._newTab) {
+    _redirect(redirect, forceNewTab) {
+      if (this._newTab || forceNewTab) {
         window.open(redirect, '_blank', 'noopener noreferrer');
       } else {
         window.location.href = redirect;
@@ -1354,7 +1416,14 @@
       const query = this._inputEl.value;
       if (this._suggester) this._suggester.success(query);
       this.hide();
-      this._redirect(this._parseQuery(query).redirect);
+      const res = this._parseQuery(query);
+
+      if (res.length) {
+        res.forEach((r) => this._redirect(r.redirect, true));
+        return;
+      }
+
+      this._redirect(res.redirect);
     }
 
     _submitWithValue(value) {
@@ -1388,6 +1457,7 @@
   const queryParser = new QueryParser({
     commands,
     pathDelimiter: CONFIG.queryPathDelimiter,
+    scripts: CONFIG.scripts,
     searchDelimiter: CONFIG.querySearchDelimiter,
   });
 
