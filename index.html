@@ -12,13 +12,13 @@
     clockOnClickAction: 'Menu',
 
     // The delimiter between the hours and minutes on the clock.
-    clockDelimiter: ' ',
+    clockDelimiter: ' - ',
 
     // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
     clockShowAmPm: true,
 
     // Show seconds on the clock. A monospaced font is recommended for this.
-    clockShowSeconds: true,
+    clockShowSeconds: false,
 
     // Show a twenty-four-hour clock instead of a twelve-hour clock.
     clockTwentyFourHour: true,
@@ -351,26 +351,29 @@
 <style>
   :root {
     --base-background: #000;
-    --base-foreground: #efefef;
+    --base-foreground: #fff;
+
     --help-background: #000;
+    --help-foreground: #fff;
     --help-command-key-foreground: #000;
-    --help-foreground: #efefef;
+
     --search-background: #000;
-    --search-foreground: #efefef;
-    --search-highlight-background: hsla(0, 0%, 100%, 0.1);
-    --command-color-alpha: 0.9;
+    --search-foreground: #fff;
+    --search-highlight-background: hsla(0, 0%, 100%, 0.85);
+    --search-highlight-foreground: #000;
+
+    --command-color-alpha: 1;
     --command-color-gradient: 45deg;
     --command-color-lightness: 50%;
-    --command-color-saturation: 50%;
+    --command-color-saturation: 40%;
 
     --font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
       Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
 
-    --clock-font-family: Menlo, Consolas, Monaco, Liberation Mono,
-      Lucida Console, monospace;
+    --clock-font-family: var(--font-family);
 
-    --base-font-size: 16px;
-    --clock-font-size: 2rem;
+    --base-font-size: 17px;
+    --clock-font-size: 4rem;
     --search-input-font-size: 2rem;
 
     --font-weight-black: 900;
@@ -389,13 +392,13 @@
 
   @media (min-width: 400px) {
     :root {
-      --clock-font-size: 4rem;
+      --clock-font-size: 6rem;
     }
   }
 
   @media (min-width: 650px) {
     :root {
-      --clock-font-size: 6rem;
+      --clock-font-size: 8rem;
       --help-category-columns: 2;
       --search-input-text-align: center;
       --search-suggestions-align-items: center;
@@ -641,6 +644,7 @@
 
   .search-suggestion.highlight {
     background: var(--search-highlight-background);
+    color: var(--search-highlight-foreground);
   }
 
   .search-suggestion-match {
