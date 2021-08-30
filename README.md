@@ -40,9 +40,8 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 #### Other Sites
 
 - Entering `stallman.org` will redirect you to
-  [stallman.org](https://stallman.org/).
-- Entering `https://smile.amazon.com` will redirect you to
-  [smile.amazon.com](https://smile.amazon.com/).
+  [stallman.org](http://stallman.org/).
+- Entering `https://cade.me` will redirect you to [cade.me](https://cade.me/).
 
 ## License
 
