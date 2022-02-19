@@ -12,16 +12,19 @@
     clockOnClickAction: 'Menu',
 
     // The delimiter between the hours and minutes on the clock.
-    clockDelimiter: ' - ',
-
-    // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
-    clockShowAmPm: true,
+    clockDelimiter: ' – ',
 
     // Show seconds on the clock. A monospaced font is recommended for this.
     clockShowSeconds: false,
 
+    // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
+    clockShowAmPm: true,
+
     // Show a twenty-four-hour clock instead of a twelve-hour clock.
     clockTwentyFourHour: true,
+
+    // Force an IANA timezone. Useful when avoiding browser fingerprinting.
+    clockTimeZone: 'America/Los_Angeles',
 
     // The "category", "name", "key", "url", "search" path and "color"/"hues"
     // for your commands. If none of the specified keys are matched, the * key
@@ -729,6 +732,7 @@
       this._amPm = options.amPm;
       this._delimiter = options.delimiter;
       this._showSeconds = options.showSeconds;
+      this._timeZone = options.timeZone;
       this._twentyFourHour = options.twentyFourHour;
       this._setTime = this._setTime.bind(this);
       this._el.addEventListener('click', options.onClick);
@@ -737,22 +741,19 @@
 
     _setTime() {
       const date = new Date();
-      let hours = $.pad(date.getHours());
-      let amPm = '';
 
-      if (!this._twentyFourHour) {
-        hours = date.getHours();
-        if (hours > 12) hours -= 12;
-        else if (hours === 0) hours = 12;
-        if (this._amPm) amPm = date.getHours() >= 12 ? ' PM' : ' AM';
-      }
+      this._el.innerHTML = date
+        .toLocaleString('en-US', {
+          hour12: !this._twentyFourHour,
+          hour: 'numeric',
+          minute: 'numeric',
+          second: this._showSeconds ? 'numeric' : undefined,
+          timeZone: this._timeZone,
+        })
+        .replace(this._amPm ? '' : / (AM|PM)/, '')
+        .replace(/:/g, this._delimiter)
+        .replace(/^0/, '');
 
-      const minutes = this._delimiter + $.pad(date.getMinutes());
-      const seconds = this._showSeconds
-        ? this._delimiter + $.pad(date.getSeconds())
-        : '';
-
-      this._el.innerHTML = hours + minutes + seconds + amPm;
       this._el.setAttribute('datetime', date.toTimeString());
     }
 
@@ -1483,6 +1484,7 @@
     delimiter: CONFIG.clockDelimiter,
     onClick: CONFIG.clockOnClickAction === 'Search' ? form.show : help.toggle,
     showSeconds: CONFIG.clockShowSeconds,
+    timeZone: CONFIG.clockTimeZone,
     twentyFourHour: CONFIG.clockTwentyFourHour,
   });
 </script>
