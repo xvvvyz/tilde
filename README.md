@@ -45,5 +45,4 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 
 ## License
 
-Feel free to use and modify Tilde
-[however you like](https://github.com/cadejscroggins/tilde/blob/master/LICENSE).
+Feel free to use and modify Tilde [however you like](LICENSE).
