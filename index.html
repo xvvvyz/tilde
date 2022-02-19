@@ -11,7 +11,7 @@
     // - "Search" to show the search input (useful on mobile)
     clockOnClickAction: 'Menu',
 
-    // The delimiter between the hours and minutes on the clock.
+    // The delimiter between the hours, minutes and seconds on the clock.
     clockDelimiter: ' – ',
 
     // Show seconds on the clock. A monospaced font is recommended for this.
@@ -26,9 +26,9 @@
     // Force an IANA timezone. Useful when avoiding browser fingerprinting.
     clockTimeZone: 'America/Los_Angeles',
 
-    // The "category", "name", "key", "url", "search" path and "color"/"hues"
-    // for your commands. If none of the specified keys are matched, the * key
-    // is used. Commands without a category don't show up in the help menu.
+    // The "name", "key", "url", "search" path and "color"/"hues" for your
+    // commands. If none of the specified keys are matched, the * key is used.
+    // Commands without a name don't show up in the help menu.
 
     // You can specify either "hues" or "color" to change a command's background
     // color. "hues" is an array of HSL hues that will be converted into a
@@ -38,173 +38,55 @@
     // be applied as-is to the command's "background" CSS property.
     commands: [
       {
+        color: 'var(--base-background)',
         key: '*',
-        name: 'Google',
         search: '/search?q={}',
         url: 'https://www.google.com',
       },
       {
-        category: 'Google',
-        hues: ['217', '197'],
-        key: 'm',
-        name: 'Mail',
-        search: '/mail/u/0/?q={}#search/{}',
-        url: 'https://mail.google.com/mail/u/0',
+        color: 'var(--base-background)',
+        key: 'bing',
+        search: '/search?q={}',
+        url: 'https://www.bing.com',
       },
       {
-        category: 'Google',
-        hues: ['136', '156'],
-        key: 'd',
-        name: 'Drive',
-        search: '/drive/u/0/search?q={}',
-        url: 'https://drive.google.com/drive/u/0/my-drive',
+        color: 'var(--base-background)',
+        key: 'ddg',
+        search: '/?q={}',
+        url: 'https://duckduckgo.com',
       },
       {
-        category: 'Google',
-        hues: ['45', '40'],
-        key: 'k',
-        name: 'Keep',
-        search: '/u/0/#search/text={}',
-        url: 'https://keep.google.com/u/0',
+        color: 'var(--base-background)',
+        key: 'eco',
+        search: '/search?q={}',
+        url: 'https://www.ecosia.org',
       },
       {
-        category: 'Google',
-        hues: ['5', '355'],
-        key: 'c',
-        name: 'Cal',
-        search: '/calendar/u/0/r/search?q={}',
-        url: 'https://calendar.google.com/calendar/u/0/r',
+        color: 'var(--base-background)',
+        key: 'yah',
+        search: '/search?p={}',
+        url: 'https://search.yahoo.com',
       },
       {
-        category: 'Work',
-        hues: ['190', '210'],
-        key: 's',
-        name: 'Slack',
-        url: 'https://app.slack.com',
-      },
-      {
-        category: 'Work',
-        hues: ['4', '24'],
-        key: 'n',
-        name: 'Notion',
-        url: 'https://www.notion.so',
-      },
-      {
-        category: 'Work',
-        hues: ['234', '264'],
-        key: 'p',
-        name: 'Plausible',
-        url: 'https://plausible.io',
-      },
-      {
-        category: 'Work',
-        hues: ['167', '187'],
-        key: '.',
-        name: 'AND',
-        url: 'https://app.and.co/timers',
-      },
-      {
-        category: 'Create',
         hues: ['36', '26'],
         key: 'a',
         name: 'AWS',
         url: 'https://console.aws.amazon.com',
       },
       {
-        category: 'Create',
-        hues: ['214', '234'],
-        key: 'g',
-        name: 'GitHub',
-        search: '/search?q={}',
-        url: 'https://github.com',
+        hues: ['5', '355'],
+        key: 'c',
+        name: 'Calendar',
+        search: '/calendar/u/0/r/search?q={}',
+        url: 'https://calendar.google.com/calendar/u/0/r',
       },
       {
-        category: 'Create',
-        hues: ['266', '286'],
-        key: 'f',
-        name: 'Figma',
-        url: 'https://www.figma.com/files/recent',
+        hues: ['226', '236'],
+        key: 'e',
+        name: 'Disney',
+        url: 'https://www.disneyplus.com/home',
       },
       {
-        category: 'Create',
-        key: '0',
-        name: 'Local',
-        search: ':{}',
-        url: 'http://localhost:3000',
-      },
-      {
-        category: 'Learn',
-        hues: ['166', '146'],
-        key: '+',
-        name: 'Khan',
-        search: '/search?page_search_query={}',
-        url: 'https://www.khanacademy.org',
-      },
-      {
-        category: 'Learn',
-        hues: ['5', '345'],
-        key: '=',
-        name: 'Wolfram',
-        search: '/input/?i={}',
-        url: 'https://www.wolframalpha.com',
-      },
-      {
-        category: 'Learn',
-        hues: ['217', '237'],
-        key: 'w',
-        name: 'Wikipedia',
-        search: '/wiki/{}',
-        url: 'https://en.wikipedia.org/wiki/Main_Page',
-      },
-      {
-        category: 'Learn',
-        hues: ['198', '218'],
-        key: ';',
-        name: 'MDN',
-        search: '/en-US/search?q={}',
-        url: 'https://developer.mozilla.org/en-US',
-      },
-      {
-        category: 'Lurk',
-        hues: ['254', '234'],
-        key: 'r',
-        name: 'Reddit',
-        search: '/search?q={}',
-        url: 'https://www.reddit.com',
-      },
-      {
-        category: 'Lurk',
-        hues: ['230', '280'],
-        key: 'i',
-        name: 'Instagram',
-        url: 'https://www.instagram.com',
-      },
-      {
-        category: 'Lurk',
-        hues: ['201', '221'],
-        key: 'l',
-        name: 'LinkedIn',
-        search: '/search/results/all/?keywords={}',
-        url: 'https://www.linkedin.com',
-      },
-      {
-        category: 'Lurk',
-        hues: ['203', '183'],
-        key: 't',
-        name: 'Twitter',
-        search: '/search?q={}',
-        url: 'https://twitter.com/home',
-      },
-      {
-        category: 'Inspire',
-        hues: ['349', '329'],
-        key: '1',
-        name: 'OPL',
-        search: '/?s={}',
-        url: 'https://onepagelove.com/inspiration',
-      },
-      {
-        category: 'Inspire',
         hues: ['337', '317'],
         key: 'b',
         name: 'Dribbble',
@@ -212,61 +94,86 @@
         url: 'https://dribbble.com/shots/popular',
       },
       {
-        category: 'Inspire',
-        key: 'u',
-        name: 'Unsplash',
-        search: '/search/{}',
-        url: 'https://unsplash.com/images',
+        hues: ['136', '156'],
+        key: 'd',
+        name: 'Drive',
+        search: '/drive/u/0/search?q={}',
+        url: 'https://drive.google.com/drive/u/0/my-drive',
       },
       {
-        category: 'Inspire',
+        hues: ['266', '286'],
+        key: 'f',
+        name: 'Figma',
+        url: 'https://www.figma.com/files/recent',
+      },
+      {
+        hues: ['214', '234'],
+        key: 'g',
+        name: 'GitHub',
+        search: '/search?q={}',
+        url: 'https://github.com',
+      },
+      {
         hues: ['13', '33'],
-        key: 'H',
+        key: 'h',
         name: 'Hunt',
         search: '/search?q={}',
         url: 'https://www.producthunt.com',
       },
       {
-        category: 'Listen',
-        hues: ['141'],
-        key: 'S',
-        name: 'Spotify',
-        search: '/search/{}',
-        url: 'https://open.spotify.com',
-      },
-      {
-        category: 'Listen',
-        hues: ['32', '22'],
-        key: 'o',
-        name: 'SoundCloud',
-        search: '/search?q={}',
-        url: 'https://soundcloud.com/discover',
-      },
-      {
-        category: 'Listen',
-        hues: ['202', '222'],
-        key: 'P',
-        name: 'Pandora',
-        search: '/search/{}/all',
-        url: 'https://www.pandora.com',
-      },
-      {
-        category: 'Listen',
         hues: ['90'],
-        key: 'h',
+        key: 'H',
         name: 'Hypem',
         search: '/search/{}',
         url: 'https://hypem.com/latest',
       },
       {
-        category: 'Watch',
-        hues: ['226', '236'],
-        key: 'e',
-        name: 'Disney',
-        url: 'https://www.disneyplus.com/home',
+        hues: ['230', '280'],
+        key: 'i',
+        name: 'Instagram',
+        url: 'https://www.instagram.com',
       },
       {
-        category: 'Watch',
+        hues: ['45', '40'],
+        key: 'k',
+        name: 'Keep',
+        search: '/u/0/#search/text={}',
+        url: 'https://keep.google.com/u/0',
+      },
+      {
+        hues: ['166', '146'],
+        key: '+',
+        name: 'Khan',
+        search: '/search?page_search_query={}',
+        url: 'https://www.khanacademy.org',
+      },
+      {
+        hues: ['201', '221'],
+        key: 'l',
+        name: 'LinkedIn',
+        search: '/search/results/all/?keywords={}',
+        url: 'https://www.linkedin.com',
+      },
+      {
+        key: '0',
+        name: 'Local',
+        url: 'http://localhost:3000',
+      },
+      {
+        hues: ['198', '218'],
+        key: ';',
+        name: 'MDN',
+        search: '/en-US/search?q={}',
+        url: 'https://developer.mozilla.org/en-US',
+      },
+      {
+        hues: ['217', '197'],
+        key: 'm',
+        name: 'Mail',
+        search: '/mail/u/0/?q={}#search/{}',
+        url: 'https://mail.google.com/mail/u/0',
+      },
+      {
         hues: ['357', '357'],
         key: 'x',
         name: 'Netflix',
@@ -274,19 +181,90 @@
         url: 'https://www.netflix.com/browse',
       },
       {
-        category: 'Watch',
+        hues: ['4', '24'],
+        key: 'n',
+        name: 'Notion',
+        url: 'https://www.notion.so',
+      },
+      {
+        hues: ['349', '329'],
+        key: '1',
+        name: 'OPL',
+        search: '/?s={}',
+        url: 'https://onepagelove.com/inspiration',
+      },
+      {
+        hues: ['202', '222'],
+        key: 'P',
+        name: 'Pandora',
+        search: '/search/{}/all',
+        url: 'https://www.pandora.com',
+      },
+      {
+        hues: ['243', '204'],
+        key: 'p',
+        name: 'Plausible',
+        url: 'https://plausible.io',
+      },
+      {
+        hues: ['254', '234'],
+        key: 'r',
+        name: 'Reddit',
+        search: '/search?q={}',
+        url: 'https://www.reddit.com',
+      },
+      {
+        hues: ['190', '210'],
+        key: 's',
+        name: 'Slack',
+        url: 'https://app.slack.com',
+      },
+      {
+        hues: ['32', '22'],
+        key: 'o',
+        name: 'Sounds',
+        search: '/search?q={}',
+        url: 'https://soundcloud.com/discover',
+      },
+      {
+        hues: ['264', '244'],
+        key: 'T',
+        name: 'Twitch',
+        url: 'https://www.twitch.tv/directory/following',
+      },
+      {
+        hues: ['203', '183'],
+        key: 't',
+        name: 'Twitter',
+        search: '/search?q={}',
+        url: 'https://twitter.com/home',
+      },
+      {
+        key: 'u',
+        name: 'Unsplash',
+        search: '/search/{}',
+        url: 'https://unsplash.com/images',
+      },
+      {
+        hues: ['217', '237'],
+        key: 'w',
+        name: 'Wikipedia',
+        search: '/wiki/{}',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+      },
+      {
+        hues: ['5', '345'],
+        key: '=',
+        name: 'Wolfram',
+        search: '/input/?i={}',
+        url: 'https://www.wolframalpha.com',
+      },
+      {
         hues: ['5', '355'],
         key: 'y',
         name: 'YouTube',
         search: '/results?search_query={}',
         url: 'https://youtube.com/feed/subscriptions',
-      },
-      {
-        category: 'Watch',
-        hues: ['264', '244'],
-        key: 'T',
-        name: 'Twitch',
-        url: 'https://www.twitch.tv/directory/following',
       },
     ],
 
@@ -306,25 +284,24 @@
     querySearchDelimiter: "'",
 
     // Scripts allow you to open or search multiple sites at once. For example,
-    // to search Google, DuckDuckGo, Ecosia and Bing for cats at the same time,
-    // you'd type "se'cats".
+    // to search Google, Bing, DuckDuckGo, Ecosia and Yahoo for cats at the same
+    // time, you'd type "/'cats".
     scripts: {
-      se: ['bing', 'ecosia', 'duckduckgo', '*'],
-      sn: ['f', 'n', 's'],
-      sp: ['g/notifications', 'a', 's/client/T7K3RFA1M', 'm/mail/u/1'],
+      '/': ['*', 'bing', 'ddg', 'eco', 'yah'],
     },
 
     // Default search suggestions for the specified queries.
     suggestionDefaults: {
-      '.': ['./inout/in/invoices/create'],
       0: ["0'8000", "0'8080"],
+      H: ['H/popular', 'H/popular/lastweek', 'H/tags'],
       c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
       e: ['e/brand/national-geographic', 'e/brand/marvel', 'e/brand/star-wars'],
       g: ['g/notifications', 'g/trending', 'g/ossu', 'g/cadejscroggins/tilde'],
-      h: ['h/popular', 'h/popular/lastweek', 'h/tags'],
       k: ['k/u/1', 'k/u/2'],
       m: ['m/mail/u/1', 'm/mail/u/2'],
+      o: ['o/discover/sets/new-for-you', 'o/discover/sets/weekly'],
+      p: ['p/beema.finance'],
       r: ['r/r/superstonk', 'r/r/fujix', 'r/r/unixporn', 'r/r/startpages'],
       s: ['s/client/T09M5UWSV'],
       y: ['y/feed/trending'],
@@ -343,6 +320,7 @@
     // To disable suggestions, remove all influencers.
     suggestionInfluencers: [
       { name: 'Default', limit: 4, minChars: 1 },
+      { name: 'History', limit: 4, minChars: 2 },
       { name: 'DuckDuckGo', limit: 4, minChars: 2 },
     ],
 
@@ -354,55 +332,43 @@
 <style>
   :root {
     --base-background: #000;
+    --base-border-radius: 0;
+    --base-font-size: 16px;
     --base-foreground: #fff;
-
-    --help-background: #000;
-    --help-foreground: #fff;
-    --help-command-key-foreground: #000;
-
-    --search-background: #000;
-    --search-foreground: #fff;
-    --search-highlight-background: hsla(0, 0%, 100%, 0.85);
-    --search-highlight-foreground: #000;
-
+    --base-space: 1.5rem;
+    --clock-font-family: var(--font-family);
+    --clock-font-size: 3rem;
     --command-color-alpha: 1;
-    --command-color-gradient: 45deg;
+    --command-color-gradient: 135deg;
     --command-color-lightness: 50%;
     --command-color-saturation: 40%;
-
     --font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
       Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
-
-    --clock-font-family: var(--font-family);
-
-    --base-font-size: 16px;
-    --clock-font-size: 4rem;
-    --search-input-font-size: 2rem;
-
     --font-weight-black: 900;
     --font-weight-bold: 700;
     --font-weight-normal: 400;
-
-    --base-border-radius: 2px;
-    --base-transition-speed: 0.2s;
-
-    --help-category-columns: 1;
-
+    --help-background: var(--base-background);
+    --help-command-background: #181818;
+    --help-command-columns: 1;
+    --help-command-foreground: var(--base-foreground);
+    --help-foreground: var(--base-foreground);
+    --pill-height: 3.25rem;
+    --search-background: var(--base-background);
+    --search-foreground: var(--base-foreground);
+    --search-highlight-background: var(--base-foreground);
+    --search-highlight-foreground: var(--base-background);
+    --search-input-font-size: 2rem;
+    --search-input-foreground: var(--base-foreground);
     --search-input-text-align: left;
-    --search-suggestion-flex-direction: column;
     --search-suggestions-align-items: flex-start;
+    --search-suggestions-flex-direction: column;
   }
 
-  @media (min-width: 400px) {
+  @media (min-width: 600px) {
     :root {
-      --clock-font-size: 6rem;
-    }
-  }
-
-  @media (min-width: 650px) {
-    :root {
-      --clock-font-size: 8rem;
-      --help-category-columns: 2;
+      --base-border-radius: 4px;
+      --clock-font-size: 5rem;
+      --help-command-columns: 2;
       --search-input-text-align: center;
       --search-suggestions-align-items: center;
     }
@@ -410,15 +376,16 @@
 
   @media (min-width: 900px) {
     :root {
+      --clock-font-size: 7rem;
+      --help-command-columns: 3;
       --search-input-font-size: 3rem;
-      --help-category-columns: 3;
-      --search-suggestion-flex-direction: row;
+      --search-suggestions-flex-direction: row;
     }
   }
 
-  @media (min-width: 1200px) {
+  @media (min-width: 1400px) {
     :root {
-      --help-category-columns: 4;
+      --help-command-columns: 5;
     }
   }
 
@@ -494,9 +461,9 @@
     position: fixed;
     top: 0;
     left: 0;
-    overflow: auto;
     width: 100%;
     height: 100%;
+    overflow: auto;
   }
 
   .clock {
@@ -504,10 +471,6 @@
     font-family: var(--clock-font-family);
     font-size: var(--clock-font-size);
     cursor: pointer;
-  }
-
-  body.form .clock {
-    visibility: hidden;
   }
 
   .help {
@@ -525,78 +488,40 @@
     visibility: hidden;
   }
 
-  .categories {
-    padding: 2rem 0;
-    columns: var(--help-category-columns);
+  .command-list {
+    display: grid;
+    grid-gap: var(--base-space);
+    grid-template-columns: repeat(var(--help-command-columns), 1fr);
+    padding: 6rem 0;
   }
 
-  .category {
-    padding: 1.5rem 2.25rem;
-    vertical-align: text-top;
-    break-inside: avoid-column;
-    page-break-inside: avoid;
-  }
-
-  .category-name {
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-    font-weight: var(--font-weight-black);
-    letter-spacing: 0.075em;
-    text-transform: uppercase;
-  }
-
-  .command a {
+  .command {
     display: flex;
-    align-items: baseline;
-    position: relative;
-    width: 100%;
-    padding: 0.75rem 0;
+    background-color: var(--help-command-background);
+    border-radius: var(--base-border-radius);
+    color: var(--help-command-foreground);
+    opacity: 0.85;
+    line-height: var(--pill-height);
     text-decoration: none;
   }
 
+  .command:hover {
+    opacity: 1;
+  }
+
+  .command:hover .command-key {
+    background: transparent;
+  }
+
   .command-key {
-    display: block;
-    flex-shrink: 0;
-    float: left;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-right: 1.5rem;
+    width: var(--pill-height);
     border-radius: var(--base-border-radius);
-    color: var(--help-command-key-foreground);
     font-weight: var(--font-weight-bold);
-    line-height: 2.25rem;
     text-align: center;
   }
 
   .command-name {
-    position: relative;
-  }
-
-  .command-name::after {
-    content: ' ';
-    display: none;
-    position: absolute;
-    right: 0;
-    bottom: -0.175rem;
-    left: 0;
-    height: 0.4rem;
-    border-radius: 1px;
-    transition: transform var(--base-transition-speed),
-      opacity var(--base-transition-speed);
-    transform: translateX(-2rem);
-    background: var(--base-foreground);
-    opacity: 0;
-    z-index: -1;
-  }
-
-  .command a:hover .command-name::after,
-  .command a:focus .command-name::after {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  body.help .command-name::after {
-    display: block;
+    padding: 0 var(--base-space);
   }
 
   .search-form {
@@ -615,7 +540,8 @@
 
   .search-input {
     width: 100%;
-    padding: 0 1rem;
+    padding: 0 var(--base-space);
+    color: var(--search-input-foreground);
     font-size: var(--search-input-font-size);
     font-weight: var(--font-weight-black);
     text-align: var(--search-input-text-align);
@@ -626,21 +552,21 @@
     display: none;
     justify-content: center;
     align-items: var(--search-suggestions-align-items);
-    flex-direction: var(--search-suggestion-flex-direction);
+    flex-direction: var(--search-suggestions-flex-direction);
     flex-wrap: wrap;
+    margin-top: var(--pill-height);
     overflow: hidden;
   }
 
   body.suggestions .search-suggestions {
     display: flex;
-    margin-top: 2rem;
   }
 
   .search-suggestion {
-    padding: 0.75rem 1rem;
+    padding: 0 var(--base-space);
     border-radius: var(--base-border-radius);
     font-weight: var(--font-weight-bold);
-    text-align: left;
+    line-height: var(--pill-height);
     white-space: nowrap;
     cursor: pointer;
   }
@@ -680,7 +606,6 @@
     isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.whichKey(e)),
     isRemove: (e) => ['backspace', 'delete'].includes($.whichKey(e)),
     isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.whichKey(e)),
-    pad: (v) => ('0' + v.toString()).slice(-2),
     whichKey: (e) => {
       const ctrl = e.ctrlKey;
       const meta = e.metaKey;
@@ -771,7 +696,7 @@
       this._toggled = false;
       this.toggle = this.toggle.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
-      this._buildAndAppendLists();
+      this._buildCommands();
       this._registerEvents();
     }
 
@@ -780,55 +705,35 @@
       this._toggled ? $.bodyClassAdd('help') : $.bodyClassRemove('help');
     }
 
-    _buildAndAppendLists() {
-      const lists = document.createElement('ul');
-      lists.classList.add('categories');
+    _buildCommands() {
+      const list = document.createElement('ul');
+      list.classList.add('command-list');
 
-      this._getCategories().forEach((category) => {
-        lists.insertAdjacentHTML(
-          'beforeend',
-          `<li class="category">
-            <h2 class="category-name">${category}</h2>
-            <ul>${this._buildListCommands(category)}</ul>
-          </li>`
-        );
-      });
-
-      this._el.appendChild(lists);
-    }
-
-    _buildListCommands(currentCategory) {
-      return this._commands.reduce(
-        (acc, { category, color, name, key, url }, i) => {
-          if (category !== currentCategory) return acc;
+      list.insertAdjacentHTML(
+        'beforeend',
+        this._commands.reduce((acc, { color, name, key, url }, i) => {
+          if (!name) return acc;
           const target = this._newTab ? '_blank' : '_self';
 
           return `
             ${acc}
             <style>
               .command-key-${i},
-              .command-name-${i}::after {
+              .command-${i}:hover {
                 background: ${color};
               }
             </style>
-            <li class="command">
-              <a href="${url}" target="${target}" rel="noopener noreferrer">
+            <li>
+              <a class="command command-${i}" href="${url}" target="${target}" rel="noopener noreferrer">
                 <span class="command-key command-key-${i}">${key}</span>
-                <span class="command-name command-name-${i}">${name}</span>
+                <span class="command-name">${name}</span>
               </a>
             </li>
           `;
-        },
-        ''
+        }, '')
       );
-    }
 
-    _getCategories() {
-      const categories = this._commands
-        .map((v) => v.category)
-        .filter((category) => category);
-
-      return [...new Set(categories)];
+      this._el.appendChild(list);
     }
 
     _handleKeydown(e) {
@@ -893,19 +798,19 @@
       if (this._isTooShort(rawQuery) || !query) return Promise.resolve([]);
 
       return new Promise((resolve) => {
-        const callback = 'autocompleteCallback';
-
-        window[callback] = (res) => {
-          const suggestions = res
-            .map((i) => i.phrase)
-            .filter((s) => s.toLowerCase() !== query.toLowerCase())
-            .slice(0, this._limit);
-
-          resolve(this._addSearchPrefix(suggestions, rawQuery));
-        };
+        window.autocompleteCallback = (res) =>
+          resolve(
+            this._addSearchPrefix(
+              res
+                .map((i) => i.phrase)
+                .filter((s) => s.toLowerCase() !== query.toLowerCase())
+                .slice(0, this._limit),
+              rawQuery
+            )
+          );
 
         const script = document.createElement('script');
-        script.src = `https://duckduckgo.com/ac/?callback=${callback}&q=${query}`;
+        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${query}`;
         $.el('head').appendChild(script);
       });
     }
@@ -983,7 +888,7 @@
       this._influencers = options.influencers;
       this._limit = options.limit;
       this._currentInput = '';
-      this._highlitedSuggestion = null;
+      this._highlightedSuggestion = null;
       this._suggestionEls = [];
       this._handleKeydown = this._handleKeydown.bind(this);
       this._setSuggestions = this._setSuggestions.bind(this);
@@ -1009,7 +914,7 @@
 
     suggest(input) {
       this._currentInput = input.trim();
-      this._highlitedSuggestion = null;
+      this._highlightedSuggestion = null;
 
       if (!this._currentInput) {
         this._clearSuggestions();
@@ -1065,7 +970,7 @@
       this._clearSuggestionHighlightEvents();
       this._clearSuggestionClickEvents();
       this._el.innerHTML = '';
-      this._highlitedSuggestion = null;
+      this._highlightedSuggestion = null;
       this._suggestionEls = [];
     }
 
@@ -1105,8 +1010,8 @@
     _highlight(el, e) {
       this._unHighlight();
       if (!el) return;
-      this._highlitedSuggestion = el.getAttribute('data-suggestion');
-      this._onHighlight(this._highlitedSuggestion);
+      this._highlightedSuggestion = el.getAttribute('data-suggestion');
+      this._onHighlight(this._highlightedSuggestion);
       el.classList.add('highlight');
       if (e) e.preventDefault();
     }
@@ -1136,8 +1041,10 @@
     }
 
     _rehighlight() {
-      if (!this._highlitedSuggestion) return;
-      this._highlight($.el(`[data-suggestion="${this._highlitedSuggestion}"]`));
+      if (!this._highlightedSuggestion) return;
+      this._highlight(
+        $.el(`[data-suggestion="${this._highlightedSuggestion}"]`)
+      );
     }
 
     _setSuggestions(newSuggestions) {
@@ -1419,27 +1326,34 @@
     }
   }
 
-  class CommandParser {
+  class CommandFormatter {
     static commandHuesToColor(command) {
-      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
-        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
-
       if (command.color) return command;
-      command.color = command.category ? hsla(0, '0%') : null;
-      if (!command.hues) return command;
+      const newCommand = { ...command };
+
+      newCommand.color = CommandFormatter.hsla(0, '0%');
+      if (!command.hues) return newCommand;
 
       if (command.hues.length === 1) {
-        command.color = hsla(command.hues[0]);
-        return command;
+        newCommand.color = CommandFormatter.hsla(command.hues[0]);
+        return newCommand;
       }
 
-      const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
-      command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
-      return command;
+      const c = command.hues.reduce(
+        (a, h) => `${a}, ${CommandFormatter.hsla(h)}`,
+        ''
+      );
+
+      newCommand.color = `linear-gradient(var(--command-color-gradient) ${c})`;
+      return newCommand;
+    }
+
+    static hsla(hue, saturation = 'var(--command-color-saturation)') {
+      return `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
     }
   }
 
-  const commands = CONFIG.commands.map(CommandParser.commandHuesToColor);
+  const commands = CONFIG.commands.map(CommandFormatter.commandHuesToColor);
 
   const queryParser = new QueryParser({
     commands,

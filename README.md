@@ -34,14 +34,14 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 
 - Entering `r/r/startpages` will redirect you to
   [reddit.com/r/startpages](https://www.reddit.com/r/startpages)
-- Entering `h/popular` will redirect you to
+- Entering `H/popular` will redirect you to
   [hypem.com/popular](http://hypem.com/popular).
 
 #### Other Sites
 
 - Entering `stallman.org` will redirect you to
   [stallman.org](http://stallman.org/).
-- Entering `https://cade.me` will redirect you to [cade.me](https://cade.me/).
+- Entering `https://cade.me` will redirect you to [cade.me](https://cade.me).
 
 ## License
 
