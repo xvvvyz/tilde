@@ -86,7 +86,7 @@
      *
      * - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
      * - "History" suggestions come from your previously entered queries (sync)
-     * - "DuckDuckGo" suggestions come from the DuckDuckGo search api (async)
+     * - "DuckDuckGo" suggestions come from the DuckDuckGo search API (async)
      *
      * To disable suggestions, remove all influencers.
      */
@@ -387,60 +387,57 @@
 <style>
   :root {
     --base-background: #000;
-    --base-border-radius: 0;
+    --base-border-radius: 4px;
+    --base-font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue,
+      Helvetica, Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --base-font-size: 16px;
+    --base-font-weight-black: 900;
+    --base-font-weight-bold: 700;
+    --base-font-weight-normal: 400;
     --base-foreground: #fff;
-    --base-space: 1.5rem;
-    --clock-font-family: var(--font-family);
     --clock-font-size: 3rem;
+    --command-background: #181818;
     --command-color-alpha: 1;
     --command-color-gradient: 135deg;
     --command-color-lightness: 50%;
     --command-color-saturation: 40%;
-    --font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
-      Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
-    --font-weight-black: 900;
-    --font-weight-bold: 700;
-    --font-weight-normal: 400;
-    --help-background: var(--base-background);
-    --help-command-background: #181818;
-    --help-command-columns: 1;
-    --help-command-foreground: var(--base-foreground);
-    --help-foreground: var(--base-foreground);
-    --pill-height: 3.5rem;
-    --search-background: var(--base-background);
-    --search-foreground: var(--base-foreground);
-    --search-highlight-background: var(--base-foreground);
-    --search-highlight-foreground: var(--base-background);
+    --command-foreground: var(--base-foreground);
+    --command-height: 4rem;
+    --command-padding: calc(var(--command-height) / 2 - 1ch / 2);
+    --help-grid-columns: 1;
+    --help-grid-gap: 1rem;
+    --help-overlay-background: var(--base-background);
+    --help-overlay-foreground: var(--base-foreground);
     --search-input-font-size: 2rem;
-    --search-input-foreground: var(--base-foreground);
     --search-input-text-align: left;
-    --search-suggestions-align-items: flex-start;
-    --search-suggestions-flex-direction: column;
+    --search-overlay-background: var(--base-background);
+    --search-overlay-foreground: var(--base-foreground);
+    --suggestion-height: 3rem;
+    --suggestion-highlight-background: var(--search-overlay-foreground);
+    --suggestion-highlight-foreground: var(--search-overlay-background);
+    --suggestion-padding: calc(var(--suggestion-height) / 2 - 1ch / 2);
+    --suggestions-flex-direction: column;
   }
 
   @media (min-width: 600px) {
     :root {
-      --base-border-radius: 4px;
       --clock-font-size: 5rem;
-      --help-command-columns: 2;
-      --search-input-text-align: center;
-      --search-suggestions-align-items: center;
+      --help-grid-columns: 2;
     }
   }
 
   @media (min-width: 900px) {
     :root {
       --clock-font-size: 7rem;
-      --help-command-columns: 3;
+      --help-grid-columns: 3;
       --search-input-font-size: 3rem;
-      --search-suggestions-flex-direction: row;
+      --suggestions-flex-direction: row;
     }
   }
 
   @media (min-width: 1400px) {
     :root {
-      --help-command-columns: 5;
+      --help-grid-columns: 5;
     }
   }
 
@@ -449,9 +446,9 @@
   }
 
   html {
-    font-family: var(--font-family);
+    font-family: var(--base-font-family);
     font-size: var(--base-font-size);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--base-font-weight-normal);
   }
 
   body {
@@ -474,8 +471,8 @@
     padding: 0;
     background: transparent;
     color: inherit;
-    font-family: var(--font-family);
-    font-weight: var(--font-weight-normal);
+    font-family: var(--base-font-family);
+    font-weight: var(--base-font-weight-normal);
     font-size: 1rem;
   }
 
@@ -523,15 +520,14 @@
 
   .clock {
     display: block;
-    font-family: var(--clock-font-family);
     font-size: var(--clock-font-size);
     cursor: pointer;
   }
 
   .help {
-    background: var(--help-background);
+    background: var(--help-overlay-background);
     visibility: hidden;
-    color: var(--help-foreground);
+    color: var(--help-overlay-foreground);
     z-index: 1;
   }
 
@@ -545,18 +541,18 @@
 
   .command-list {
     display: grid;
-    grid-gap: var(--base-space);
-    grid-template-columns: repeat(var(--help-command-columns), 1fr);
+    grid-gap: var(--help-grid-gap);
+    grid-template-columns: repeat(var(--help-grid-columns), 1fr);
     padding: 6rem 0;
   }
 
   .command {
     display: flex;
-    background-color: var(--help-command-background);
+    background-color: var(--command-background);
     border-radius: var(--base-border-radius);
-    color: var(--help-command-foreground);
+    color: var(--command-foreground);
     opacity: 0.85;
-    line-height: var(--pill-height);
+    line-height: var(--command-height);
     text-decoration: none;
   }
 
@@ -569,19 +565,19 @@
   }
 
   .command-key {
-    width: var(--pill-height);
+    width: var(--command-height);
     border-radius: var(--base-border-radius);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--base-font-weight-bold);
     text-align: center;
   }
 
   .command-name {
-    padding: 0 var(--base-space);
+    padding: 0 var(--command-padding);
   }
 
   .search-form {
-    background: var(--search-background);
-    color: var(--search-foreground);
+    background: var(--search-overlay-background);
+    color: var(--search-overlay-foreground);
     visibility: hidden;
   }
 
@@ -595,21 +591,19 @@
 
   .search-input {
     width: 100%;
-    padding: 0 var(--base-space);
-    color: var(--search-input-foreground);
     font-size: var(--search-input-font-size);
-    font-weight: var(--font-weight-black);
-    text-align: var(--search-input-text-align);
+    font-weight: var(--base-font-weight-black);
+    text-align: center;
     text-transform: uppercase;
   }
 
   .search-suggestions {
     display: none;
     justify-content: center;
-    align-items: var(--search-suggestions-align-items);
-    flex-direction: var(--search-suggestions-flex-direction);
+    align-items: center;
+    flex-direction: var(--suggestions-flex-direction);
     flex-wrap: wrap;
-    margin-top: var(--pill-height);
+    margin-top: var(--suggestion-padding);
     overflow: hidden;
   }
 
@@ -618,21 +612,21 @@
   }
 
   .search-suggestion {
-    padding: 0 var(--base-space);
     border-radius: var(--base-border-radius);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--pill-height);
-    white-space: nowrap;
     cursor: pointer;
+    font-weight: var(--base-font-weight-bold);
+    height: var(--suggestion-height);
+    padding: 0 var(--suggestion-padding);
+    white-space: nowrap;
   }
 
   .search-suggestion.highlight {
-    background: var(--search-highlight-background);
-    color: var(--search-highlight-foreground);
+    background: var(--suggestion-highlight-background);
+    color: var(--suggestion-highlight-foreground);
   }
 
   .search-suggestion-match {
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--base-font-weight-normal);
   }
 </style>
 
