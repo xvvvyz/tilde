@@ -6,36 +6,134 @@
 
 <script>
   const CONFIG = {
-    // Action to take when the clock is clicked. Options include:
-    // - "Menu" to show the help menu
-    // - "Search" to show the search input (useful on mobile)
+    /**
+     * Action to take when the clock is clicked. Options include:
+     *
+     * - "Menu" to show the help menu
+     * - "Search" to show the search input (useful on mobile)
+     */
     clockOnClickAction: 'Menu',
 
-    // The delimiter between the hours, minutes and seconds on the clock.
+    /**
+     * The delimiter between the hours, minutes and seconds on the clock.
+     */
     clockDelimiter: ' – ',
 
-    // Show seconds on the clock. A monospaced font is recommended for this.
+    /**
+     * Show seconds on the clock. A monospaced font is recommended for this.
+     */
     clockShowSeconds: false,
 
-    // Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
+    /**
+     * Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
+     */
     clockShowAmPm: true,
 
-    // Show a twenty-four-hour clock instead of a twelve-hour clock.
+    /**
+     * Show a twenty-four-hour clock instead of a twelve-hour clock.
+     */
     clockTwentyFourHour: true,
 
-    // Force an IANA timezone. Useful when avoiding browser fingerprinting.
-    // clockTimeZone: 'America/Los_Angeles',
+    /**
+     * Force an IANA timezone. Useful when attempting to prevent browser
+     * fingerprinting. For example, "America/Los_Angeles" would force Pacific
+     * Time, "Asia/Kolkata" would force Indian Standard Time, etc. Read:
+     *
+     * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+     */
+    clockTimeZone: undefined,
 
-    // The "name", "key", "url", "search" path and "color"/"hues" for your
-    // commands. If none of the specified keys are matched, the * key is used.
-    // Commands without a name don't show up in the help menu.
+    /**
+     * Instantly redirect when a key is matched. Put a space before any other
+     * queries to prevent unwanted redirects.
+     */
+    queryInstantRedirect: false,
 
-    // You can specify either "hues" or "color" to change a command's background
-    // color. "hues" is an array of HSL hues that will be converted into a
-    // linear gradient. There are CSS variables defined below, prefixed with
-    // "--command-color-", that determine the gradient angle, saturation,
-    // lightness and alpha for each generated color. "color", if defined, will
-    // be applied as-is to the command's "background" CSS property.
+    /**
+     * Open triggered queries in a new tab.
+     */
+    queryNewTab: true,
+
+    /**
+     * The delimiter between a command key and a path. For example, you'd type
+     * "r/r/unixporn" to go to "https://reddit.com/r/unixporn".
+     */
+    queryPathDelimiter: '/',
+
+    /**
+     * The delimiter between a command key and your search query. For example,
+     * to search GitHub for tilde, you'd type "g'tilde".
+     */
+    querySearchDelimiter: "'",
+
+    /**
+     * Scripts allow you to open or search multiple sites at once. For example,
+     * to search Google, Bing, DuckDuckGo, Ecosia and Yahoo for cats at the same
+     * time, you'd type "q'cats".
+     */
+    scripts: {
+      q: ['bing', 'yah', 'eco', 'ddg', '*'],
+    },
+
+    /**
+     * The order, limit and minimum characters for each suggestion influencer.
+     *
+     * An "influencer" is just a suggestion source. "limit" is the max number of
+     * suggestions an influencer will produce. "minChars" determines how many
+     * characters need to be typed before the influencer kicks in.
+     *
+     * The following influencers are available:
+     *
+     * - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
+     * - "History" suggestions come from your previously entered queries (sync)
+     * - "DuckDuckGo" suggestions come from the DuckDuckGo search api (async)
+     *
+     * To disable suggestions, remove all influencers.
+     */
+    suggestionInfluencers: [
+      { name: 'Default', limit: 4, minChars: 1 },
+      { name: 'History', limit: 4, minChars: 2 },
+      { name: 'DuckDuckGo', limit: 4, minChars: 2 },
+    ],
+
+    /**
+     * Max number of suggestions that will ever be shown.
+     */
+    suggestionLimit: 4,
+
+    /**
+     * Default search suggestions for the specified queries.
+     */
+    suggestionDefaults: {
+      0: ["0'8000", "0'8080"],
+      a: ['a/cognito/v2/idp/user-pools', 'a/dynamodbv2#item-explorer'],
+      c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
+      d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
+      e: ['e/brand/national-geographic', 'e/brand/marvel', 'e/brand/star-wars'],
+      g: ['g/trending', 'g/ossu', 'g/cadejscroggins/tilde'],
+      j: ['j/popular', 'j/popular/lastweek', 'j/tags'],
+      k: ['k/u/1', 'k/u/2'],
+      m: ['m/mail/u/1', 'm/mail/u/2'],
+      o: ['o/discover/sets/new-for-you', 'o/discover/sets/weekly'],
+      p: ['p/beema.finance'],
+      r: ['r/r/startpages', 'r/r/onebag', 'r/r/fujix'],
+      s: ['s/collection/tracks', 's/playlist/37i9dQZEVXcXr3r4FYT3J7'],
+      u: ['u/explore', 'u/backgrounds'],
+      y: ['y/feed/trending'],
+    },
+
+    /**
+     * The name, key, url, search path and color for your commands. If none of
+     * the specified keys are matched, the * key is used. Commands without a
+     * name don't show up in the help menu.
+     *
+     * "hues" is an array of HSL hues that will be converted into a linear
+     * gradient. CSS variables are defined defined below, prefixed with
+     * --command-color-, that determine the gradient angle, saturation,
+     * lightness and alpha for each generated color.
+     *
+     * "color", if defined, will be applied to the command as-is.
+     */
     commands: [
       {
         color: 'var(--base-background)',
@@ -122,7 +220,7 @@
       },
       {
         hues: ['90'],
-        key: 'H',
+        key: 'j',
         name: 'Hypem',
         search: '/search/{}',
         url: 'https://hypem.com/latest',
@@ -228,7 +326,7 @@
       },
       {
         hues: ['264', '244'],
-        key: 'T',
+        key: 'v',
         name: 'Twitch',
         url: 'https://www.twitch.tv/directory/following',
       },
@@ -266,68 +364,23 @@
         search: '/results?search_query={}',
         url: 'https://youtube.com/feed/subscriptions',
       },
-    ],
+    ].map((command) => {
+      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
+        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
 
-    // Instantly redirect when a key is matched. Put a space before any other
-    // queries to prevent unwanted redirects.
-    queryInstantRedirect: false,
+      if (command.color) {
+        return command;
+      } else if (!Array.isArray(command.hues) || !command.hues.length) {
+        command.color = hsla(0, '0%');
+      } else if (command.hues.length === 1) {
+        command.color = hsla(command.hues[0]);
+      } else {
+        const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
+        command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
+      }
 
-    // Open triggered queries in a new tab.
-    queryNewTab: true,
-
-    // The delimiter between a command key and a path. For example, you'd type
-    // "r/r/unixporn" to go to "https://reddit.com/r/unixporn".
-    queryPathDelimiter: '/',
-
-    // The delimiter between a command key and your search query. For example,
-    // to search GitHub for tilde, you'd type "g'tilde".
-    querySearchDelimiter: "'",
-
-    // Scripts allow you to open or search multiple sites at once. For example,
-    // to search Google, Bing, DuckDuckGo, Ecosia and Yahoo for cats at the same
-    // time, you'd type "/'cats".
-    scripts: {
-      '/': ['*', 'bing', 'ddg', 'eco', 'yah'],
-    },
-
-    // Default search suggestions for the specified queries.
-    suggestionDefaults: {
-      0: ["0'8000", "0'8080"],
-      H: ['H/popular', 'H/popular/lastweek', 'H/tags'],
-      a: ['a/cognito/v2/idp/user-pools', 'a/dynamodbv2#item-explorer'],
-      c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
-      d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
-      e: ['e/brand/national-geographic', 'e/brand/marvel', 'e/brand/star-wars'],
-      g: ['g/notifications', 'g/trending', 'g/ossu', 'g/cadejscroggins/tilde'],
-      k: ['k/u/1', 'k/u/2'],
-      m: ['m/mail/u/1', 'm/mail/u/2'],
-      o: ['o/discover/sets/new-for-you', 'o/discover/sets/weekly'],
-      p: ['p/beema.finance'],
-      r: ['r/r/superstonk', 'r/r/fujix', 'r/r/unixporn', 'r/r/startpages'],
-      s: ['s/playlist/37i9dQZEVXcXr3r4FYT3J7', 's/collection/tracks'],
-      u: ['u/explore', 'u/backgrounds'],
-      y: ['y/feed/trending'],
-    },
-
-    // The order, limit and minimum characters for each suggestion influencer.
-    // An "influencer" is just a suggestion source. "limit" is the max number of
-    // suggestions an influencer will produce. "minChars" determines how many
-    // characters need to be typed before the influencer kicks in.
-
-    // The following influencers are available:
-    // - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
-    // - "History" suggestions come from your previously entered queries (sync)
-    // - "DuckDuckGo" suggestions come from the DuckDuckGo search api (async)
-
-    // To disable suggestions, remove all influencers.
-    suggestionInfluencers: [
-      { name: 'Default', limit: 4, minChars: 1 },
-      { name: 'History', limit: 4, minChars: 2 },
-      { name: 'DuckDuckGo', limit: 4, minChars: 2 },
-    ],
-
-    // Max number of suggestions that will ever be shown.
-    suggestionLimit: 4,
+      return command;
+    }),
   };
 </script>
 
@@ -583,7 +636,9 @@
   }
 </style>
 
-<div class="center"><time class="clock" id="clock"></time></div>
+<div class="center">
+  <time class="clock" id="clock" />
+</div>
 <form
   autocomplete="off"
   class="center overlay search-form"
@@ -592,10 +647,10 @@
 >
   <div class="search-form-content">
     <input class="search-input" id="search-input" title="search" type="text" />
-    <ul class="search-suggestions" id="search-suggestions"></ul>
+    <ul class="search-suggestions" id="search-suggestions" />
   </div>
 </form>
-<aside class="center help overlay" id="help"></aside>
+<aside class="center help overlay" id="help" />
 
 <script>
   const $ = {
@@ -704,7 +759,8 @@
 
     toggle(show) {
       this._toggled = typeof show !== 'undefined' ? show : !this._toggled;
-      this._toggled ? $.bodyClassAdd('help') : $.bodyClassRemove('help');
+      if (this._toggled) $.bodyClassAdd('help');
+      else $.bodyClassRemove('help');
     }
 
     _buildCommands() {
@@ -939,18 +995,18 @@
           : suggestion;
 
         return `
-            ${acc}
-            <li>
-              <button
-                type="button"
-                class="js-search-suggestion search-suggestion"
-                data-suggestion="${suggestion}"
-                tabindex="-1"
-              >
-                ${suggestionHtml}
-              </button>
-            </li>
-          `;
+          ${acc}
+          <li>
+            <button
+              type="button"
+              class="js-search-suggestion search-suggestion"
+              data-suggestion="${suggestion}"
+              tabindex="-1"
+            >
+              ${suggestionHtml}
+            </button>
+          </li>
+        `;
       }, '');
     }
 
@@ -1044,6 +1100,7 @@
 
     _rehighlight() {
       if (!this._highlightedSuggestion) return;
+
       this._highlight(
         $.el(`[data-suggestion="${this._highlightedSuggestion}"]`)
       );
@@ -1169,11 +1226,8 @@
       const domain = new URL(url).hostname;
       const domainRegex = new RegExp(`${domain}$`);
 
-      return (
-        commands
-          .filter((c) => domainRegex.test(new URL(c.url).hostname))
-          .map((c) => c.color)[0] || null
-      );
+      return commands.find((c) => domainRegex.test(new URL(c.url).hostname))
+        ?.color;
     }
 
     static _prepPath(url, path) {
@@ -1328,37 +1382,8 @@
     }
   }
 
-  class CommandFormatter {
-    static commandHuesToColor(command) {
-      if (command.color) return command;
-      const newCommand = { ...command };
-
-      newCommand.color = CommandFormatter.hsla(0, '0%');
-      if (!command.hues) return newCommand;
-
-      if (command.hues.length === 1) {
-        newCommand.color = CommandFormatter.hsla(command.hues[0]);
-        return newCommand;
-      }
-
-      const c = command.hues.reduce(
-        (a, h) => `${a}, ${CommandFormatter.hsla(h)}`,
-        ''
-      );
-
-      newCommand.color = `linear-gradient(var(--command-color-gradient) ${c})`;
-      return newCommand;
-    }
-
-    static hsla(hue, saturation = 'var(--command-color-saturation)') {
-      return `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
-    }
-  }
-
-  const commands = CONFIG.commands.map(CommandFormatter.commandHuesToColor);
-
   const queryParser = new QueryParser({
-    commands,
+    commands: CONFIG.commands,
     pathDelimiter: CONFIG.queryPathDelimiter,
     scripts: CONFIG.scripts,
     searchDelimiter: CONFIG.querySearchDelimiter,
@@ -1383,7 +1408,7 @@
   });
 
   const help = new Help({
-    commands,
+    commands: CONFIG.commands,
     newTab: CONFIG.queryNewTab,
   });
 

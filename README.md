@@ -34,7 +34,7 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 
 - Entering `r/r/startpages` will redirect you to
   [reddit.com/r/startpages](https://www.reddit.com/r/startpages)
-- Entering `H/popular` will redirect you to
+- Entering `j/popular` will redirect you to
   [hypem.com/popular](http://hypem.com/popular).
 
 #### Other Sites
