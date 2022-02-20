@@ -91,7 +91,7 @@
      * To disable suggestions, remove all influencers.
      */
     suggestionInfluencers: [
-      { name: 'Default', limit: 4, minChars: 1 },
+      { name: 'Default', limit: 4 },
       { name: 'History', limit: 4, minChars: 2 },
       { name: 'DuckDuckGo', limit: 4, minChars: 2 },
     ],
@@ -828,8 +828,6 @@
     }
 
     getSuggestions({ raw }) {
-      if (this._isTooShort(raw)) return Promise.resolve([]);
-
       return new Promise((resolve) =>
         resolve((this._suggestionDefaults[raw] || []).slice(0, this._limit))
       );
@@ -843,7 +841,7 @@
 
     getSuggestions(parsedQuery) {
       const { query } = parsedQuery;
-      if (this._isTooShort(query) || !query) return Promise.resolve([]);
+      if (this._isTooShort(query)) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         window.autocompleteCallback = (res) =>
@@ -874,8 +872,8 @@
       localStorage.clear();
     }
 
-    addItem(query) {
-      if (query.length < 2) return;
+    addItem({ query }) {
+      if (query.length < this._minChars) return;
       let exists;
 
       const history = this._getHistory().map(([item, count]) => {
@@ -893,20 +891,24 @@
       this._setHistory(sorted);
     }
 
-    getSuggestions({ raw }) {
-      if (this._isTooShort(raw)) return Promise.resolve([]);
+    getSuggestions(parsedQuery) {
+      const { query } = parsedQuery;
+      if (this._isTooShort(query)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
         resolve(
-          this._getHistory()
-            .map(([item]) => item)
-            .filter(
-              (item) =>
-                raw &&
-                item.toLowerCase() !== raw.toLowerCase() &&
-                item.toLowerCase().indexOf(raw.toLowerCase()) !== -1
-            )
-            .slice(0, this._limit)
+          this._addSearchPrefix(
+            this._getHistory()
+              .map(([item]) => item)
+              .filter(
+                (item) =>
+                  query &&
+                  item.toLowerCase() !== query.toLowerCase() &&
+                  item.toLowerCase().includes(query.toLowerCase())
+              )
+              .slice(0, this._limit),
+            parsedQuery
+          )
         )
       );
     }
@@ -955,8 +957,8 @@
       this._onUnhighlight = callback;
     }
 
-    success(query) {
-      this._influencers.forEach((i) => i.addItem(query));
+    success(parsedQuery) {
+      this._influencers.forEach((i) => i.addItem(parsedQuery));
       this._clearSuggestions();
     }
 
@@ -1357,17 +1359,16 @@
 
     _submitForm(e) {
       if (e) e.preventDefault();
-      const query = this._inputEl.value;
-      if (this._suggester) this._suggester.success(query);
-      this.hide();
-      const res = this._parseQuery(query);
+      const parsedQuery = this._parseQuery(this._inputEl.value);
 
-      if (res.length) {
-        res.forEach((r) => this._redirect(r.redirect, true));
-        return;
+      if (parsedQuery.length) {
+        parsedQuery.forEach((r) => this._redirect(r.redirect, true));
+      } else {
+        this._redirect(parsedQuery.redirect);
       }
 
-      this._redirect(res.redirect);
+      this._suggester.success(parsedQuery);
+      this.hide();
     }
 
     _submitWithValue(value) {
