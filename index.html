@@ -7,6 +7,11 @@
 <script>
   const CONFIG = {
     /**
+     * Type this to toggle the help menu.
+     */
+    helpKey: '?',
+
+    /**
      * Action to take when the clock is clicked. Options include:
      *
      * - "Menu" to show the help menu
@@ -1251,6 +1256,7 @@
       this._inputEl = $.el('#search-input');
       this._inputElVal = '';
       this._instantRedirect = options.instantRedirect;
+      this._helpKey = options.helpKey;
       this._newTab = options.newTab;
       this._parseQuery = options.parseQuery;
       this._suggester = options.suggester;
@@ -1287,7 +1293,7 @@
 
     _handleInput() {
       const newQuery = this._inputEl.value;
-      const isHelp = newQuery === '?';
+      const isHelp = newQuery === this._helpKey;
       const parsedQuery = this._parseQuery(newQuery);
       this._inputElVal = newQuery;
       this._suggester.suggest(parsedQuery);
@@ -1406,6 +1412,7 @@
   });
 
   const form = new Form({
+    helpKey: CONFIG.helpKey,
     instantRedirect: CONFIG.queryInstantRedirect,
     newTab: CONFIG.queryNewTab,
     parseQuery: queryParser.parse,
