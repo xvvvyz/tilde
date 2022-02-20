@@ -876,8 +876,8 @@
       localStorage.clear();
     }
 
-    addItem({ query }) {
-      if (query.length < this._minChars) return;
+    addItem({ isPath, query }) {
+      if (isPath || query.length < this._minChars) return;
       let exists;
 
       const history = this._getHistory().map(([item, count]) => {
@@ -1171,6 +1171,7 @@
 
         if (splitPath[0] === key) {
           res.key = key;
+          res.isPath = true;
           res.split = this._pathDelimiter;
           res.path = QueryParser._shiftAndTrim(splitPath, res.split);
 
@@ -1203,6 +1204,7 @@
 
         if (splitPath[0] === key) {
           res.key = key;
+          res.isPath = true;
           res.split = this._pathDelimiter;
           res.path = QueryParser._shiftAndTrim(splitPath, res.split);
           res.redirect = QueryParser._prepPath(url, res.path);
