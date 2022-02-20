@@ -801,7 +801,6 @@
     constructor(options) {
       this._limit = options.limit;
       this._minChars = options.minChars;
-      this._parseQuery = options.parseQuery;
     }
 
     addItem() {
@@ -812,9 +811,8 @@
       return Promise.resolve([]);
     }
 
-    _addSearchPrefix(items, query) {
-      const { isSearch, key, split } = this._parseQuery(query);
-      const searchPrefix = isSearch ? `${key}${split} ` : false;
+    _addSearchPrefix(items, { isSearch, key, split }) {
+      const searchPrefix = isSearch ? `${key}${split}` : false;
       return items.map((s) => (searchPrefix ? searchPrefix + s : s));
     }
 
@@ -829,25 +827,23 @@
       this._suggestionDefaults = suggestionDefaults;
     }
 
-    getSuggestions(rawQuery) {
-      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
+    getSuggestions({ raw }) {
+      if (this._isTooShort(raw)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
-        resolve(
-          (this._suggestionDefaults[rawQuery] || []).slice(0, this._limit)
-        )
+        resolve((this._suggestionDefaults[raw] || []).slice(0, this._limit))
       );
     }
   }
 
   class DuckDuckGoInfluencer extends Influencer {
-    constructor({ queryParser }) {
+    constructor() {
       super(...arguments);
     }
 
-    getSuggestions(rawQuery) {
-      const { query } = this._parseQuery(rawQuery);
-      if (this._isTooShort(rawQuery) || !query) return Promise.resolve([]);
+    getSuggestions(parsedQuery) {
+      const { query } = parsedQuery;
+      if (this._isTooShort(query) || !query) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         window.autocompleteCallback = (res) =>
@@ -857,7 +853,7 @@
                 .map((i) => i.phrase)
                 .filter((s) => s.toLowerCase() !== query.toLowerCase())
                 .slice(0, this._limit),
-              rawQuery
+              parsedQuery
             )
           );
 
@@ -897,8 +893,8 @@
       this._setHistory(sorted);
     }
 
-    getSuggestions(rawQuery) {
-      if (this._isTooShort(rawQuery)) return Promise.resolve([]);
+    getSuggestions({ raw }) {
+      if (this._isTooShort(raw)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
         resolve(
@@ -906,9 +902,9 @@
             .map(([item]) => item)
             .filter(
               (item) =>
-                rawQuery &&
-                item.toLowerCase() !== rawQuery.toLowerCase() &&
-                item.toLowerCase().indexOf(rawQuery.toLowerCase()) !== -1
+                raw &&
+                item.toLowerCase() !== raw.toLowerCase() &&
+                item.toLowerCase().indexOf(raw.toLowerCase()) !== -1
             )
             .slice(0, this._limit)
         )
@@ -939,7 +935,7 @@
       this._el = $.el('#search-suggestions');
       this._influencers = options.influencers;
       this._limit = options.limit;
-      this._currentInput = '';
+      this._parsedQuery = '';
       this._highlightedSuggestion = null;
       this._suggestionEls = [];
       this._handleKeydown = this._handleKeydown.bind(this);
@@ -964,11 +960,11 @@
       this._clearSuggestions();
     }
 
-    suggest(input) {
-      this._currentInput = input.trim();
+    suggest(parsedQuery) {
+      this._parsedQuery = parsedQuery;
       this._highlightedSuggestion = null;
 
-      if (!this._currentInput) {
+      if (!parsedQuery.query) {
         this._clearSuggestions();
         return;
       }
@@ -978,7 +974,7 @@
 
     _buildSuggestionsHtml(suggestions) {
       return suggestions.slice(0, this._limit).reduce((acc, suggestion) => {
-        const match = new RegExp($.escapeRegex(this._currentInput), 'i');
+        const match = new RegExp($.escapeRegex(this._parsedQuery.query), 'i');
         const matched = suggestion.match(match);
 
         const suggestionHtml = matched
@@ -1050,7 +1046,7 @@
 
     _getInfluencers() {
       return this._influencers.map((influencer) =>
-        influencer.getSuggestions(this._currentInput)
+        influencer.getSuggestions(this._parsedQuery)
       );
     }
 
@@ -1132,7 +1128,8 @@
 
     parse(query) {
       const res = [];
-      res.query = query;
+      res.raw = query.trim();
+      res.query = res.raw;
       res.split = null;
 
       if (this._urlRegex.test(query)) {
@@ -1142,9 +1139,8 @@
         return res;
       }
 
-      const trimmed = query.trim();
-      const splitSearch = trimmed.split(this._searchDelimiter);
-      const splitPath = trimmed.split(this._pathDelimiter);
+      const splitSearch = res.query.split(this._searchDelimiter);
+      const splitPath = res.query.split(this._pathDelimiter);
 
       const isScript = Object.entries(this._scripts).some(([key, script]) => {
         if (query === key) {
@@ -1291,13 +1287,17 @@
     _handleInput() {
       const newQuery = this._inputEl.value;
       const isHelp = newQuery === '?';
-      const { isKey } = this._parseQuery(newQuery);
+      const parsedQuery = this._parseQuery(newQuery);
       this._inputElVal = newQuery;
-      this._suggester.suggest(newQuery);
+      this._suggester.suggest(parsedQuery);
       this._setColorsFromQuery(newQuery);
+
       if (!newQuery || isHelp) this.hide();
       if (isHelp) this._toggleHelp();
-      if (this._instantRedirect && isKey) this._submitWithValue(newQuery);
+
+      if (this._instantRedirect && parsedQuery.isKey) {
+        this._submitWithValue(newQuery);
+      }
     }
 
     _handleKeydown(e) {
@@ -1376,6 +1376,11 @@
     }
   }
 
+  const help = new Help({
+    commands: CONFIG.commands,
+    newTab: CONFIG.queryNewTab,
+  });
+
   const queryParser = new QueryParser({
     commands: CONFIG.commands,
     pathDelimiter: CONFIG.queryPathDelimiter,
@@ -1391,7 +1396,6 @@
     }[influencerConfig.name]({
       limit: influencerConfig.limit,
       minChars: influencerConfig.minChars,
-      parseQuery: queryParser.parse,
       suggestionDefaults: CONFIG.suggestionDefaults,
     });
   });
@@ -1399,11 +1403,6 @@
   const suggester = new Suggester({
     influencers,
     limit: CONFIG.suggestionLimit,
-  });
-
-  const help = new Help({
-    commands: CONFIG.commands,
-    newTab: CONFIG.queryNewTab,
   });
 
   const form = new Form({
