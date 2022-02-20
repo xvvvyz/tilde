@@ -115,13 +115,13 @@
       c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
       d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
       e: ['e/brand/national-geographic', 'e/brand/marvel', 'e/brand/star-wars'],
-      g: ['g/trending', 'g/ossu', 'g/cadejscroggins/tilde'],
+      g: ['g/trending', 'g/ossu', 'g/cadejscroggins/tilde', 'gist.github.com'],
       j: ['j/popular', 'j/popular/lastweek', 'j/tags'],
       k: ['k/u/1', 'k/u/2'],
       m: ['m/mail/u/1', 'm/mail/u/2'],
       o: ['o/discover/sets/new-for-you', 'o/discover/sets/weekly'],
       p: ['p/beema.finance'],
-      r: ['r/r/startpages', 'r/r/onebag', 'r/r/fujix'],
+      r: ['r/r/startpages', 'r/r/onebag', 'r/r/fujix', 'r/r/superstonk'],
       s: ['s/collection/tracks', 's/playlist/37i9dQZEVXcXr3r4FYT3J7'],
       u: ['u/explore', 'u/backgrounds'],
       y: ['y/feed/trending'],
@@ -391,17 +391,17 @@
 
 <style>
   :root {
-    --base-background: #000;
+    --base-background: #111;
     --base-border-radius: 4px;
     --base-font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue,
       Helvetica, Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
-    --base-font-size: 16px;
+    --base-font-size: 17px;
     --base-font-weight-black: 900;
     --base-font-weight-bold: 700;
     --base-font-weight-normal: 400;
     --base-foreground: #fff;
     --clock-font-size: 3rem;
-    --command-background: #1a1a1a;
+    --command-background: #222;
     --command-color-alpha: 1;
     --command-color-gradient: 135deg;
     --command-color-lightness: 50%;
@@ -556,7 +556,7 @@
     background-color: var(--command-background);
     border-radius: var(--base-border-radius);
     color: var(--command-foreground);
-    opacity: 0.8;
+    opacity: 0.9;
     line-height: var(--command-height);
     text-decoration: none;
   }
@@ -607,7 +607,7 @@
     align-items: center;
     flex-direction: var(--suggestions-flex-direction);
     flex-wrap: wrap;
-    margin-top: var(--suggestion-padding);
+    margin-top: 2rem;
     overflow: hidden;
   }
 
