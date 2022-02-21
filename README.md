@@ -1,9 +1,9 @@
 # Tilde
 
-Inspired by [/r/startpages](https://www.reddit.com/r/startpages)&mdash;the idea
+Inspired by [r/startpages](https://www.reddit.com/r/startpages)&mdash;the idea
 is to have a browser homepage that is functional and sexy.
 
-## Usage
+## Basic Usage
 
 This is how you can use Tilde out of the box, but it&rsquo;s
 [meant to be customized](index.html).
@@ -14,17 +14,17 @@ This is how you can use Tilde out of the box, but it&rsquo;s
   triggered.
 - To search a site, type a single quote after the site&rsquo;s key, followed by
   your query.
-- To go to a specific path an a site, type the path after the site&rsquo;s key.
+- To go to a specific path on a site, type the path after the site&rsquo;s key.
 
 ### Examples
 
 - Entering `t` will redirect you to [twitter.com](https://twitter.com/home).
 - Entering `u` will redirect you to [unsplash.com](https://unsplash.com/images).
-- Entering `duckduckgo` will
-  [search Google for duckduckgo](https://www.google.com/search?q=duckduckgo).
 
 #### Searching
 
+- Entering `anything` will
+  [search Google for anything](https://www.google.com/search?q=anything).
 - Entering `g'tilde` will
   [search GitHub for tilde](https://github.com/search?q=tilde).
 - Entering `y'vox` will
@@ -33,7 +33,7 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 #### Specific Paths
 
 - Entering `r/r/startpages` will redirect you to
-  [reddit.com/r/startpages](https://www.reddit.com/r/startpages)
+  [r/startpages](https://www.reddit.com/r/startpages).
 - Entering `j/popular` will redirect you to
   [hypem.com/popular](http://hypem.com/popular).
 
@@ -45,4 +45,5 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 
 ## License
 
-Feel free to use and modify Tilde [however you like](LICENSE).
+Thank you for reading! Feel free to use and modify Tilde
+[as you see fit](LICENSE).
