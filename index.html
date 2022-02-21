@@ -121,7 +121,7 @@
       m: ['m/mail/u/1', 'm/mail/u/2'],
       o: ['o/discover/sets/new-for-you', 'o/discover/sets/weekly'],
       p: ['p/beema.finance'],
-      r: ['r/r/startpages', 'r/r/onebag', 'r/r/fujix', 'r/r/superstonk'],
+      r: ['r/r/startpages', 'r/r/unixporn', 'r/r/onebag', 'r/r/fujix'],
       s: ['s/collection/tracks', 's/playlist/37i9dQZEVXcXr3r4FYT3J7'],
       u: ['u/explore', 'u/backgrounds'],
       y: ['y/feed/trending'],
@@ -844,7 +844,7 @@
     }
 
     getSuggestions(parsedQuery) {
-      const { query } = parsedQuery;
+      const { lower, query } = parsedQuery;
       if (this._isTooShort(query)) return Promise.resolve([]);
 
       return new Promise((resolve) => {
@@ -853,7 +853,7 @@
             this._addSearchPrefix(
               res
                 .map((i) => i.phrase)
-                .filter((s) => s.toLowerCase() !== query.toLowerCase())
+                .filter((s) => s.toLowerCase() !== lower)
                 .slice(0, this._limit),
               parsedQuery
             )
@@ -872,67 +872,49 @@
       this._storeName = 'history';
     }
 
-    static clearHistory() {
-      localStorage.clear();
-    }
-
-    addItem({ isPath, query }) {
-      if (isPath || query.length < this._minChars) return;
+    addItem({ isPath, lower }) {
+      if (isPath || this._isTooShort(lower)) return;
       let exists;
 
       const history = this._getHistory().map(([item, count]) => {
-        const match = item.toLowerCase() === query.toLowerCase();
+        const match = item === lower;
         if (match) exists = true;
         return [item, match ? count + 1 : count];
       });
 
-      if (!exists) history.push([query, 1]);
-
-      const sorted = history
-        .sort((current, next) => current[1] - next[1])
-        .reverse();
-
-      this._setHistory(sorted);
+      if (!exists) history.push([lower, 1]);
+      this._setHistory(history.sort((a, b) => b[1] - a[1]));
     }
 
     getSuggestions(parsedQuery) {
-      const { query } = parsedQuery;
-      if (this._isTooShort(query)) return Promise.resolve([]);
+      const { lower } = parsedQuery;
+      if (this._isTooShort(lower)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
         resolve(
           this._addSearchPrefix(
             this._getHistory()
-              .map(([item]) => item)
-              .filter(
-                (item) =>
-                  query &&
-                  item.toLowerCase() !== query.toLowerCase() &&
-                  item.toLowerCase().includes(query.toLowerCase())
-              )
-              .slice(0, this._limit),
+              .filter(([item]) => item !== lower && item.includes(lower))
+              .slice(0, this._limit)
+              .map(([item]) => item),
             parsedQuery
           )
         )
       );
     }
 
-    _fetch() {
-      return JSON.parse(localStorage.getItem(this._storeName)) || [];
-    }
-
     _getHistory() {
-      this._history = this._history || this._fetch();
-      return this._history;
-    }
+      this._history =
+        this._history ||
+        JSON.parse(localStorage.getItem(this._storeName)) ||
+        [];
 
-    _save(history) {
-      localStorage.setItem(this._storeName, JSON.stringify(history));
+      return this._history;
     }
 
     _setHistory(history) {
       this._history = history;
-      this._save(history);
+      localStorage.setItem(this._storeName, JSON.stringify(history));
     }
   }
 
@@ -1136,6 +1118,7 @@
       const res = [];
       res.raw = query.trim();
       res.query = res.raw;
+      res.lower = res.raw.toLowerCase();
       res.split = null;
 
       if (this._urlRegex.test(query)) {
