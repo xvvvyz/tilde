@@ -7,17 +7,12 @@
 <script>
   const CONFIG = {
     /**
-     * Type this to toggle the help menu.
-     */
-    helpKey: '?',
-
-    /**
      * Action to take when the clock is clicked. Options include:
      *
-     * - "Menu" to show the help menu
+     * - "Help" to show the help menu
      * - "Search" to show the search input (useful on mobile)
      */
-    clockOnClickAction: 'Menu',
+    clockOnClickAction: 'Help',
 
     /**
      * The delimiter between the hours, minutes and seconds on the clock.
@@ -47,6 +42,11 @@
      * https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
      */
     clockTimeZone: undefined,
+
+    /**
+     * Type this to toggle the help menu.
+     */
+    helpKey: '?',
 
     /**
      * Instantly redirect when a key is matched. Put a space before any other
@@ -141,6 +141,194 @@
      */
     commands: [
       {
+        hues: ['0', '0'],
+        key: 'x',
+        name: 'Netflix',
+        search: '/search?q={}',
+        url: 'https://www.netflix.com/browse',
+      },
+      {
+        hues: ['0', '350'],
+        key: 'c',
+        name: 'Calendar',
+        search: '/calendar/u/0/r/search?q={}',
+        url: 'https://calendar.google.com/calendar/u/0/r',
+      },
+      {
+        hues: ['5', '345'],
+        key: 'y',
+        name: 'YouTube',
+        search: '/results?search_query={}',
+        url: 'https://youtube.com/feed/subscriptions',
+      },
+      {
+        hues: ['355', '335'],
+        key: '=',
+        name: 'Wolfram',
+        search: '/input/?i={}',
+        url: 'https://www.wolframalpha.com',
+      },
+      {
+        hues: ['349', '329'],
+        key: '1',
+        name: 'OPL',
+        search: '/?s={}',
+        url: 'https://onepagelove.com/inspiration',
+      },
+      {
+        hues: ['337', '317'],
+        key: 'b',
+        name: 'Dribbble',
+        search: '/search/{}',
+        url: 'https://dribbble.com/shots/popular',
+      },
+      {
+        hues: ['266', '286'],
+        key: 'f',
+        name: 'Figma',
+        url: 'https://www.figma.com/files/recent',
+      },
+      {
+        hues: ['230', '280'],
+        key: 'i',
+        name: 'Instagram',
+        url: 'https://www.instagram.com',
+      },
+      {
+        hues: ['264', '244'],
+        key: 'v',
+        name: 'Twitch',
+        url: 'https://www.twitch.tv/directory/following',
+      },
+      {
+        hues: ['254', '234'],
+        key: 'r',
+        name: 'Reddit',
+        search: '/search?q={}',
+        url: 'https://www.reddit.com',
+      },
+      {
+        hues: ['226', '236'],
+        key: 'e',
+        name: 'Disney',
+        url: 'https://www.disneyplus.com/home',
+      },
+      {
+        hues: ['217', '237'],
+        key: 'w',
+        name: 'Wikipedia',
+        search: '/wiki/{}',
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+      },
+      {
+        hues: ['214', '234'],
+        key: 'g',
+        name: 'GitHub',
+        search: '/search?q={}',
+        url: 'https://github.com',
+      },
+      {
+        hues: ['243', '204'],
+        key: 'p',
+        name: 'Plausible',
+        url: 'https://plausible.io',
+      },
+      {
+        hues: ['192', '232'],
+        key: 'z',
+        name: 'Telegram',
+        url: 'https://web.telegram.org/z/',
+      },
+      {
+        hues: ['201', '221'],
+        key: 'l',
+        name: 'LinkedIn',
+        search: '/search/results/all/?keywords={}',
+        url: 'https://www.linkedin.com',
+      },
+      {
+        hues: ['198', '218'],
+        key: ';',
+        name: 'MDN',
+        search: '/en-US/search?q={}',
+        url: 'https://developer.mozilla.org/en-US',
+      },
+      {
+        hues: ['217', '197'],
+        key: 'm',
+        name: 'Mail',
+        search: '/mail/u/0/?q={}#search/{}',
+        url: 'https://mail.google.com/mail/u/0',
+      },
+      {
+        hues: ['203', '183'],
+        key: 't',
+        name: 'Twitter',
+        search: '/search?q={}',
+        url: 'https://twitter.com/home',
+      },
+      {
+        hues: ['166', '146'],
+        key: '+',
+        name: 'Khan',
+        search: '/search?page_search_query={}',
+        url: 'https://www.khanacademy.org',
+      },
+      {
+        hues: ['136', '156'],
+        key: 'd',
+        name: 'Drive',
+        search: '/drive/u/0/search?q={}',
+        url: 'https://drive.google.com/drive/u/0/my-drive',
+      },
+      {
+        hues: ['124', '164'],
+        key: 's',
+        name: 'Spotify',
+        search: '/search/{}',
+        url: 'https://open.spotify.com',
+      },
+      {
+        hues: ['90'],
+        key: 'j',
+        name: 'Hypem',
+        search: '/search/{}',
+        url: 'https://hypem.com/latest',
+      },
+      {
+        hues: ['45', '40'],
+        key: 'k',
+        name: 'Keep',
+        search: '/u/0/#search/text={}',
+        url: 'https://keep.google.com/u/0',
+      },
+      {
+        hues: ['36', '26'],
+        key: 'a',
+        name: 'AWS',
+        url: 'https://us-west-2.console.aws.amazon.com/console/home',
+      },
+      {
+        hues: ['32', '22'],
+        key: 'o',
+        name: 'Sounds',
+        search: '/search?q={}',
+        url: 'https://soundcloud.com/discover',
+      },
+      {
+        hues: ['13', '33'],
+        key: 'h',
+        name: 'Hunt',
+        search: '/search?q={}',
+        url: 'https://www.producthunt.com',
+      },
+      {
+        hues: ['4', '24'],
+        key: 'n',
+        name: 'Notion',
+        url: 'https://www.notion.so',
+      },
+      {
         color: 'var(--base-background)',
         key: '*',
         search: '/search?q={}',
@@ -171,203 +359,15 @@
         url: 'https://search.yahoo.com',
       },
       {
-        hues: ['36', '26'],
-        key: 'a',
-        name: 'AWS',
-        url: 'https://us-west-2.console.aws.amazon.com/console/home',
-      },
-      {
-        hues: ['5', '355'],
-        key: 'c',
-        name: 'Calendar',
-        search: '/calendar/u/0/r/search?q={}',
-        url: 'https://calendar.google.com/calendar/u/0/r',
-      },
-      {
-        hues: ['226', '236'],
-        key: 'e',
-        name: 'Disney',
-        url: 'https://www.disneyplus.com/home',
-      },
-      {
-        hues: ['337', '317'],
-        key: 'b',
-        name: 'Dribbble',
-        search: '/search/{}',
-        url: 'https://dribbble.com/shots/popular',
-      },
-      {
-        hues: ['136', '156'],
-        key: 'd',
-        name: 'Drive',
-        search: '/drive/u/0/search?q={}',
-        url: 'https://drive.google.com/drive/u/0/my-drive',
-      },
-      {
-        hues: ['266', '286'],
-        key: 'f',
-        name: 'Figma',
-        url: 'https://www.figma.com/files/recent',
-      },
-      {
-        hues: ['214', '234'],
-        key: 'g',
-        name: 'GitHub',
-        search: '/search?q={}',
-        url: 'https://github.com',
-      },
-      {
-        hues: ['13', '33'],
-        key: 'h',
-        name: 'Hunt',
-        search: '/search?q={}',
-        url: 'https://www.producthunt.com',
-      },
-      {
-        hues: ['90'],
-        key: 'j',
-        name: 'Hypem',
-        search: '/search/{}',
-        url: 'https://hypem.com/latest',
-      },
-      {
-        hues: ['230', '280'],
-        key: 'i',
-        name: 'Instagram',
-        url: 'https://www.instagram.com',
-      },
-      {
-        hues: ['45', '40'],
-        key: 'k',
-        name: 'Keep',
-        search: '/u/0/#search/text={}',
-        url: 'https://keep.google.com/u/0',
-      },
-      {
-        hues: ['166', '146'],
-        key: '+',
-        name: 'Khan',
-        search: '/search?page_search_query={}',
-        url: 'https://www.khanacademy.org',
-      },
-      {
-        hues: ['201', '221'],
-        key: 'l',
-        name: 'LinkedIn',
-        search: '/search/results/all/?keywords={}',
-        url: 'https://www.linkedin.com',
-      },
-      {
         key: '0',
         name: 'Local',
         url: 'http://localhost:3000',
-      },
-      {
-        hues: ['198', '218'],
-        key: ';',
-        name: 'MDN',
-        search: '/en-US/search?q={}',
-        url: 'https://developer.mozilla.org/en-US',
-      },
-      {
-        hues: ['217', '197'],
-        key: 'm',
-        name: 'Mail',
-        search: '/mail/u/0/?q={}#search/{}',
-        url: 'https://mail.google.com/mail/u/0',
-      },
-      {
-        hues: ['357', '357'],
-        key: 'x',
-        name: 'Netflix',
-        search: '/search?q={}',
-        url: 'https://www.netflix.com/browse',
-      },
-      {
-        hues: ['4', '24'],
-        key: 'n',
-        name: 'Notion',
-        url: 'https://www.notion.so',
-      },
-      {
-        hues: ['349', '329'],
-        key: '1',
-        name: 'OPL',
-        search: '/?s={}',
-        url: 'https://onepagelove.com/inspiration',
-      },
-      {
-        hues: ['243', '204'],
-        key: 'p',
-        name: 'Plausible',
-        url: 'https://plausible.io',
-      },
-      {
-        hues: ['254', '234'],
-        key: 'r',
-        name: 'Reddit',
-        search: '/search?q={}',
-        url: 'https://www.reddit.com',
-      },
-      {
-        hues: ['32', '22'],
-        key: 'o',
-        name: 'Sounds',
-        search: '/search?q={}',
-        url: 'https://soundcloud.com/discover',
-      },
-      {
-        hues: ['124', '164'],
-        key: 's',
-        name: 'Spotify',
-        search: '/search/{}',
-        url: 'https://open.spotify.com',
-      },
-      {
-        hues: ['192', '232'],
-        key: 'z',
-        name: 'Telegram',
-        url: 'https://web.telegram.org/z/',
-      },
-      {
-        hues: ['264', '244'],
-        key: 'v',
-        name: 'Twitch',
-        url: 'https://www.twitch.tv/directory/following',
-      },
-      {
-        hues: ['203', '183'],
-        key: 't',
-        name: 'Twitter',
-        search: '/search?q={}',
-        url: 'https://twitter.com/home',
       },
       {
         key: 'u',
         name: 'Unsplash',
         search: '/search/{}',
         url: 'https://unsplash.com/images',
-      },
-      {
-        hues: ['217', '237'],
-        key: 'w',
-        name: 'Wikipedia',
-        search: '/wiki/{}',
-        url: 'https://en.wikipedia.org/wiki/Main_Page',
-      },
-      {
-        hues: ['5', '345'],
-        key: '=',
-        name: 'Wolfram',
-        search: '/input/?i={}',
-        url: 'https://www.wolframalpha.com',
-      },
-      {
-        hues: ['5', '355'],
-        key: 'y',
-        name: 'YouTube',
-        search: '/results?search_query={}',
-        url: 'https://youtube.com/feed/subscriptions',
       },
     ].map((command) => {
       const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
@@ -656,7 +656,7 @@
     bodyClassRemove: (c) => $.el('body').classList.remove(c),
     el: (s) => document.querySelector(s),
     els: (s) => [].slice.call(document.querySelectorAll(s) || []),
-    escapeRegex: (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
+    escapeRegex: (s) => s?.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
     flattenAndUnique: (arr) => [...new Set([].concat.apply([], arr))],
     isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.whichKey(e)),
     isRemove: (e) => ['backspace', 'delete'].includes($.whichKey(e)),
