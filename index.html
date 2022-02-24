@@ -7,6 +7,20 @@
 <script>
   const CONFIG = {
     /**
+     * Choose a predefined theme:
+     *
+     * - "ashes-dark"
+     * - "gruvbox-dark"
+     * - "lovelace-dark"
+     * - "nord-dark"
+     * - "ocean-light"
+     * - "tilde-dark"
+     *
+     * Alternatively, create your own in the <style> tag below!
+     */
+    theme: 'tilde-dark',
+
+    /**
      * Action to take when the clock is clicked. Options include:
      *
      * - "Help" to show the help menu
@@ -77,7 +91,7 @@
      * time, you'd type "q'cats".
      */
     scripts: {
-      q: ['bing', 'yah', 'eco', 'ddg', '*'],
+      q: ['bin', 'yah', 'eco', 'ddg', '*'],
     },
 
     /**
@@ -133,13 +147,37 @@
      * name don't show up in the help menu.
      *
      * "hues" is an array of HSL hues that will be converted into a linear
-     * gradient. CSS variables are defined defined below, prefixed with
-     * --command-color-, that determine the gradient angle, saturation,
-     * lightness and alpha for each generated color.
+     * gradient. CSS variables defined below, prefixed with --command-color-,
+     * determine the saturation and lightness for each generated color.
      *
      * "color", if defined, will be applied to the command as-is.
      */
     commands: [
+      {
+        key: '*',
+        search: '/search?q={}',
+        url: 'https://www.google.com',
+      },
+      {
+        key: 'bin',
+        search: '/search?q={}',
+        url: 'https://www.bing.com',
+      },
+      {
+        key: 'ddg',
+        search: '/?q={}',
+        url: 'https://duckduckgo.com',
+      },
+      {
+        key: 'eco',
+        search: '/search?q={}',
+        url: 'https://www.ecosia.org',
+      },
+      {
+        key: 'yah',
+        search: '/search?p={}',
+        url: 'https://search.yahoo.com',
+      },
       {
         hues: ['0', '0'],
         key: 'x',
@@ -329,51 +367,21 @@
         url: 'https://www.notion.so',
       },
       {
-        color: 'var(--base-background)',
-        key: '*',
-        search: '/search?q={}',
-        url: 'https://www.google.com',
-      },
-      {
-        color: 'var(--base-background)',
-        key: 'bing',
-        search: '/search?q={}',
-        url: 'https://www.bing.com',
-      },
-      {
-        color: 'var(--base-background)',
-        key: 'ddg',
-        search: '/?q={}',
-        url: 'https://duckduckgo.com',
-      },
-      {
-        color: 'var(--base-background)',
-        key: 'eco',
-        search: '/search?q={}',
-        url: 'https://www.ecosia.org',
-      },
-      {
-        color: 'var(--base-background)',
-        key: 'yah',
-        search: '/search?p={}',
-        url: 'https://search.yahoo.com',
+        key: 'u',
+        name: 'Unsplash',
+        search: '/search/{}',
+        url: 'https://unsplash.com/images',
       },
       {
         key: '0',
         name: 'Local',
         url: 'http://localhost:3000',
       },
-      {
-        key: 'u',
-        name: 'Unsplash',
-        search: '/search/{}',
-        url: 'https://unsplash.com/images',
-      },
     ].map((command) => {
       const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
-        `hsla(${hue}, ${saturation}, var(--command-color-lightness), var(--command-color-alpha))`;
+        `hsla(${hue}, ${saturation}, var(--command-color-lightness), 1)`;
 
-      if (command.color) {
+      if (command.color || !command.name) {
         return command;
       } else if (!Array.isArray(command.hues) || !command.hues.length) {
         command.color = hsla(0, '0%');
@@ -381,7 +389,7 @@
         command.color = hsla(command.hues[0]);
       } else {
         const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
-        command.color = `linear-gradient(var(--command-color-gradient) ${c})`;
+        command.color = `linear-gradient(135deg ${c})`;
       }
 
       return command;
@@ -390,36 +398,86 @@
 </script>
 
 <style>
-  :root {
+  /* themes */
+
+  .ashes-dark {
+    --base-background: #1c2023;
+    --base-foreground: #c7ccd1;
+    --command-color-complementary: var(--base-background);
+    --command-color-highlight-foreground: var(--base-foreground);
+    --command-color-lightness: 68%;
+    --command-color-saturation: 25%;
+    --help-command-background: #272e32;
+  }
+
+  .gruvbox-dark {
+    --base-background: #282828;
+    --base-foreground: #ebdbb2;
+    --command-color-complementary: #fbf1c7;
+    --command-color-highlight-foreground: var(--base-background);
+    --command-color-lightness: 45%;
+    --command-color-saturation: 34%;
+    --help-command-background: #3c3836;
+  }
+
+  .lovelace-dark {
+    --base-background: #1d1f28;
+    --base-foreground: #fdfdfd;
+    --command-color-complementary: var(--base-foreground);
+    --command-color-highlight-foreground: var(--base-background);
+    --command-color-lightness: 55%;
+    --command-color-saturation: 60%;
+    --help-command-background: #282a36;
+  }
+
+  .nord-dark {
+    --base-background: #2e3440;
+    --base-foreground: #d8dee9;
+    --command-color-complementary: #fff;
+    --command-color-highlight-foreground: var(--help-command-background);
+    --command-color-lightness: 56%;
+    --command-color-saturation: 42%;
+    --help-command-background: #3b4252;
+  }
+
+  .ocean-light {
+    --base-background: #eff1f5;
+    --base-foreground: #4f5b66;
+    --command-color-complementary: var(--base-background);
+    --command-color-highlight-foreground: var(--base-foreground);
+    --command-color-lightness: 56%;
+    --command-color-saturation: 32%;
+    --help-command-background: #e4e6ea;
+  }
+
+  .tilde-dark {
     --base-background: #111;
-    --base-border-radius: 4px;
+    --base-foreground: #ddd;
+    --command-color-complementary: #eee;
+    --command-color-highlight-foreground: var(--base-background);
+    --command-color-lightness: 50%;
+    --command-color-saturation: 40%;
+    --help-command-background: #222;
+  }
+
+  /* root variables */
+
+  :root {
+    --base-border-radius: 2px;
     --base-font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue,
       Helvetica, Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --base-font-size: 17px;
     --base-font-weight-black: 900;
     --base-font-weight-bold: 700;
     --base-font-weight-normal: 400;
-    --base-foreground: #fff;
     --clock-font-size: 3rem;
-    --command-background: #222;
-    --command-color-alpha: 1;
-    --command-color-gradient: 135deg;
-    --command-color-lightness: 50%;
-    --command-color-saturation: 40%;
-    --command-foreground: var(--base-foreground);
     --command-height: 4rem;
     --command-padding: calc(var(--command-height) / 2 - 1ch / 2);
     --help-grid-columns: 1;
     --help-grid-gap: 1rem;
-    --help-overlay-background: var(--base-background);
-    --help-overlay-foreground: var(--base-foreground);
     --search-input-font-size: 2rem;
     --search-input-text-align: left;
-    --search-overlay-background: var(--base-background);
-    --search-overlay-foreground: var(--base-foreground);
     --suggestion-height: 3rem;
-    --suggestion-highlight-background: var(--search-overlay-foreground);
-    --suggestion-highlight-foreground: var(--search-overlay-background);
     --suggestion-padding: calc(var(--suggestion-height) / 2 - 1ch / 2);
     --suggestions-flex-direction: column;
   }
@@ -445,6 +503,8 @@
       --help-grid-columns: 5;
     }
   }
+
+  /* reset */
 
   * {
     box-sizing: border-box;
@@ -504,6 +564,8 @@
     outline: 0;
   }
 
+  /* reusable classes */
+
   .center {
     display: flex;
     width: 100%;
@@ -523,6 +585,8 @@
     overflow: auto;
   }
 
+  /* main styles */
+
   .clock {
     display: block;
     font-size: var(--clock-font-size);
@@ -530,9 +594,8 @@
   }
 
   .help {
-    background: var(--help-overlay-background);
+    background: var(--base-background);
     visibility: hidden;
-    color: var(--help-overlay-foreground);
     z-index: 1;
   }
 
@@ -553,9 +616,8 @@
 
   .command {
     display: flex;
-    background-color: var(--command-background);
+    background: var(--help-command-background);
     border-radius: var(--base-border-radius);
-    color: var(--command-foreground);
     opacity: 0.9;
     line-height: var(--command-height);
     text-decoration: none;
@@ -572,6 +634,7 @@
   .command-key {
     width: var(--command-height);
     border-radius: var(--base-border-radius);
+    color: var(--command-color-complementary);
     font-weight: var(--base-font-weight-bold);
     text-align: center;
   }
@@ -581,13 +644,16 @@
   }
 
   .search-form {
-    background: var(--search-overlay-background);
-    color: var(--search-overlay-foreground);
+    background: var(--base-background);
     visibility: hidden;
   }
 
   body.form .search-form {
     visibility: visible;
+  }
+
+  body.color .search-form {
+    color: var(--command-color-complementary);
   }
 
   .search-form-content {
@@ -625,8 +691,13 @@
   }
 
   .search-suggestion.highlight {
-    background: var(--suggestion-highlight-background);
-    color: var(--suggestion-highlight-foreground);
+    background: var(--base-foreground);
+    color: var(--base-background);
+  }
+
+  body.color .search-suggestion.highlight {
+    background: var(--command-color-complementary);
+    color: var(--command-color-highlight-foreground);
   }
 
   .search-suggestion-match {
@@ -777,6 +848,7 @@
               .command-key-${i},
               .command-${i}:hover {
                 background: ${color};
+                color: var(--command-color-complementary);
               }
             </style>
             <li>
@@ -1343,8 +1415,15 @@
     }
 
     _setColorsFromQuery(query) {
-      const color = this._parseQuery(query).color;
-      this._formEl.style.background = color || '';
+      const { color } = this._parseQuery(query);
+
+      if (color) {
+        this._formEl.style.background = color;
+        $.bodyClassAdd('color');
+      } else {
+        this._formEl.style.background = '';
+        $.bodyClassRemove('color');
+      }
     }
 
     _submitForm(e) {
@@ -1366,6 +1445,8 @@
       this._submitForm();
     }
   }
+
+  $.bodyClassAdd(CONFIG.theme);
 
   const help = new Help({
     commands: CONFIG.commands,
