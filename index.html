@@ -425,8 +425,8 @@
     --base-foreground: #fdfdfd;
     --command-color-complementary: var(--base-foreground);
     --command-color-highlight-foreground: var(--base-background);
-    --command-color-lightness: 55%;
-    --command-color-saturation: 60%;
+    --command-color-lightness: 53%;
+    --command-color-saturation: 57%;
     --help-command-background: #282a36;
   }
 
@@ -463,7 +463,7 @@
   /* root variables */
 
   :root {
-    --base-border-radius: 2px;
+    --base-border-radius: 4rem;
     --base-font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue,
       Helvetica, Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --base-font-size: 17px;
@@ -1216,6 +1216,7 @@
           res.isSearch = true;
           res.split = this._searchDelimiter;
           res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+          res.lower = res.query.toLowerCase();
 
           script.forEach((command) =>
             res.push(this.parse(`${command}${res.split}${res.query}`))
@@ -1253,6 +1254,7 @@
           res.isSearch = true;
           res.split = this._searchDelimiter;
           res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+          res.lower = res.query.toLowerCase();
           res.redirect = QueryParser._prepSearch(url, search, res.query);
           return true;
         }
