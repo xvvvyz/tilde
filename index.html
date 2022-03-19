@@ -112,6 +112,7 @@
     suggestionInfluencers: [
       { name: 'Default', limit: 4 },
       { name: 'History', limit: 4, minChars: 2 },
+      { name: 'Google', limit: 10, minChars: 2 },
       { name: 'DuckDuckGo', limit: 4, minChars: 2 },
     ],
 
@@ -937,6 +938,33 @@
     }
   }
 
+  class GoogleInfluencer extends Influencer {
+    constructor() {
+      super(...arguments);
+    }
+
+    getSuggestions(parsedQuery) {
+      const { lower, query } = parsedQuery;
+      if (!this._isAllowed(parsedQuery)) return Promise.resolve([]);
+
+      return new Promise((resolve) => {
+        window.googleAutocompleteCallback = (res) =>
+          resolve(
+            this._addSearchPrefix(
+              res[1]
+                .filter((s) => s.toLowerCase() !== lower)
+                .slice(0, this._limit),
+              parsedQuery
+            )
+          );
+
+        const script = document.createElement('script');
+        script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${query}&callback=googleAutocompleteCallback`;
+        $.el('head').appendChild(script);
+      });
+    }
+  }
+
   class HistoryInfluencer extends Influencer {
     constructor() {
       super(...arguments);
@@ -1465,6 +1493,7 @@
     return new {
       Default: DefaultInfluencer,
       DuckDuckGo: DuckDuckGoInfluencer,
+      Google: GoogleInfluencer,
       History: HistoryInfluencer,
     }[influencerConfig.name]({
       limit: influencerConfig.limit,
