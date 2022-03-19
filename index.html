@@ -159,6 +159,8 @@
       {
         key: '*',
         search: '/search?q={}',
+        searchCtrl: '/?q=!ducky+{}', // "I'm feeling lucky" from Google need a refferer from Google
+        urlCtrl: 'https://duckduckgo.com',
         url: 'https://www.google.com',
         suggestionInfluencers: ['Google'],
       },
@@ -170,6 +172,7 @@
       {
         key: 'ddg',
         search: '/?q={}',
+        searchCtrl: '/?q=!ducky+{}',
         url: 'https://duckduckgo.com',
         suggestionInfluencers: ['DuckDuckGo'],
       },
@@ -1378,6 +1381,7 @@
 
   class Form {
     constructor(options) {
+      this._ctrlKeyPressed = false;
       this._formEl = $.el('#search-form');
       this._inputEl = $.el('#search-input');
       this._inputElVal = '';
@@ -1390,6 +1394,7 @@
       this._clearPreview = this._clearPreview.bind(this);
       this._handleInput = this._handleInput.bind(this);
       this._handleKeydown = this._handleKeydown.bind(this);
+      this._handleKeyup = this._handleKeyup.bind(this);
       this._previewValue = this._previewValue.bind(this);
       this._submitForm = this._submitForm.bind(this);
       this._submitWithValue = this._submitWithValue.bind(this);
@@ -1433,13 +1438,15 @@
       }
     }
 
-    _handleKeydown(e) {
+    _handleKeydown(e, down = true) {
       if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
 
       switch ($.whichKey(e)) {
-        case 'alt':
         case 'ctrl':
         case 'ctrl-*':
+          this._ctrlKeyPressed = down;
+          return;
+        case 'alt':
         case 'enter':
         case 'meta':
         case 'meta-*':
@@ -1451,6 +1458,10 @@
       }
 
       this.show();
+    }
+
+    _handleKeyup(e) {
+      return this._handleKeydown(e, false);
     }
 
     _loadQueryParam() {
@@ -1473,6 +1484,7 @@
 
     _registerEvents() {
       document.addEventListener('keydown', this._handleKeydown);
+      document.addEventListener('keyup', this._handleKeyup);
       this._inputEl.addEventListener('input', this._handleInput);
       this._formEl.addEventListener('submit', this._submitForm, false);
 
@@ -1500,9 +1512,20 @@
       const parsedQuery = this._parseQuery(this._inputEl.value);
 
       if (parsedQuery.length) {
-        parsedQuery.forEach((r) => this._redirect(r.redirect, true));
+        parsedQuery.forEach((r) =>
+          this._redirect(
+            this._ctrlKeyPressed && r.redirectCtrl
+              ? r.redirectCtrl
+              : r.redirect,
+            true
+          )
+        );
       } else {
-        this._redirect(parsedQuery.redirect);
+        this._redirect(
+          this._ctrlKeyPressed && parsedQuery.redirectCtrl
+            ? parsedQuery.redirectCtrl
+            : parsedQuery.redirect
+        );
       }
 
       this._suggester.success(parsedQuery);
