@@ -106,6 +106,7 @@
      * - "Default" suggestions come from CONFIG.suggestionDefaults (sync)
      * - "History" suggestions come from your previously entered queries (sync)
      * - "DuckDuckGo" suggestions come from the DuckDuckGo search API (async)
+     * - "Google" suggestions come from the Google search API (async)
      *
      * To disable suggestions, remove all influencers.
      */
@@ -115,6 +116,7 @@
       { name: 'Google', limit: 10, minChars: 2 },
       { name: 'DuckDuckGo', limit: 4, minChars: 2 },
     ],
+    defaultSuggestionInfluencers: ['Default', 'History'],
 
     /**
      * Max number of suggestions that will ever be shown.
@@ -158,6 +160,7 @@
         key: '*',
         search: '/search?q={}',
         url: 'https://www.google.com',
+        suggestionInfluencers: ['Google'],
       },
       {
         key: 'bin',
@@ -168,6 +171,7 @@
         key: 'ddg',
         search: '/?q={}',
         url: 'https://duckduckgo.com',
+        suggestionInfluencers: ['DuckDuckGo'],
       },
       {
         key: 'eco',
@@ -877,6 +881,7 @@
     constructor(options) {
       this._limit = options.limit;
       this._minChars = options.minChars;
+      this._name = options.name;
     }
 
     addItem() {
@@ -895,6 +900,19 @@
     _isTooShort(query) {
       return query.length < this._minChars;
     }
+
+    _isIncluded(parsedQuery) {
+      if (parsedQuery.suggestionInfluencers) {
+        return parsedQuery.suggestionInfluencers.includes(this._name);
+      }
+      return CONFIG.defaultSuggestionInfluencers.includes(this._name);
+    }
+
+    _isAllowed(parsedQuery) {
+      return (
+        !this._isTooShort(parsedQuery.query) && this._isIncluded(parsedQuery)
+      );
+    }
   }
 
   class DefaultInfluencer extends Influencer {
@@ -903,9 +921,15 @@
       this._suggestionDefaults = suggestionDefaults;
     }
 
-    getSuggestions({ raw }) {
+    getSuggestions(parsedQuery) {
+      if (!this._isAllowed(parsedQuery)) return Promise.resolve([]);
       return new Promise((resolve) =>
-        resolve((this._suggestionDefaults[raw] || []).slice(0, this._limit))
+        resolve(
+          (this._suggestionDefaults[parsedQuery.raw] || []).slice(
+            0,
+            this._limit
+          )
+        )
       );
     }
   }
@@ -917,7 +941,7 @@
 
     getSuggestions(parsedQuery) {
       const { lower, query } = parsedQuery;
-      if (this._isTooShort(query)) return Promise.resolve([]);
+      if (!this._isAllowed(parsedQuery)) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         window.autocompleteCallback = (res) =>
@@ -987,7 +1011,7 @@
 
     getSuggestions(parsedQuery) {
       const { lower } = parsedQuery;
-      if (this._isTooShort(lower)) return Promise.resolve([]);
+      if (!this._isAllowed(parsedQuery)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
         resolve(
@@ -1268,37 +1292,53 @@
 
       if (isScript) return res;
 
-      this._commands.some(({ key, search, url }) => {
-        if (query === key) {
-          res.key = key;
-          res.isKey = true;
-          res.redirect = url;
-          return true;
-        }
+      this._commands.some(
+        ({ key, search, searchCtrl, url, urlCtrl, suggestionInfluencers }) => {
+          if (query === key) {
+            res.suggestionInfluencers = suggestionInfluencers;
+            res.key = key;
+            res.isKey = true;
+            res.redirect = url;
+            return true;
+          }
 
-        if (splitSearch[0] === key) {
-          res.key = key;
-          res.isSearch = true;
-          res.split = this._searchDelimiter;
-          res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
-          res.lower = res.query.toLowerCase();
-          res.redirect = QueryParser._prepSearch(url, search, res.query);
-          return true;
-        }
+          if (splitSearch[0] === key) {
+            res.suggestionInfluencers = suggestionInfluencers;
+            res.command = res.key = key;
+            res.isSearch = true;
+            res.split = this._searchDelimiter;
+            res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+            res.lower = res.query.toLowerCase();
+            res.redirect = QueryParser._prepSearch(url, search, res.query);
+            res.redirectCtrl = QueryParser._prepSearch(
+              urlCtrl || url,
+              searchCtrl || search,
+              res.query
+            );
+            return true;
+          }
 
-        if (splitPath[0] === key) {
-          res.key = key;
-          res.isPath = true;
-          res.split = this._pathDelimiter;
-          res.path = QueryParser._shiftAndTrim(splitPath, res.split);
-          res.redirect = QueryParser._prepPath(url, res.path);
-          return true;
-        }
+          if (splitPath[0] === key) {
+            res.suggestionInfluencers = suggestionInfluencers;
+            res.key = key;
+            res.isPath = true;
+            res.split = this._pathDelimiter;
+            res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+            res.redirect = QueryParser._prepPath(url, res.path);
+            return true;
+          }
 
-        if (key === '*') {
-          res.redirect = QueryParser._prepSearch(url, search, query);
+          if (key === '*') {
+            res.suggestionInfluencers = suggestionInfluencers;
+            res.redirect = QueryParser._prepSearch(url, search, query);
+            res.redirectCtrl = QueryParser._prepSearch(
+              urlCtrl || url,
+              searchCtrl || search,
+              query
+            );
+          }
         }
-      });
+      );
 
       res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
       return res;
@@ -1496,6 +1536,7 @@
       Google: GoogleInfluencer,
       History: HistoryInfluencer,
     }[influencerConfig.name]({
+      name: influencerConfig.name,
       limit: influencerConfig.limit,
       minChars: influencerConfig.minChars,
       suggestionDefaults: CONFIG.suggestionDefaults,
