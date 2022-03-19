@@ -31,12 +31,12 @@
     /**
      * The delimiter between the hours, minutes and seconds on the clock.
      */
-    clockDelimiter: ' – ',
+    clockDelimiter: ' : ',
 
     /**
      * Show seconds on the clock. A monospaced font is recommended for this.
      */
-    clockShowSeconds: false,
+    clockShowSeconds: true,
 
     /**
      * Show AM/PM indication when CONFIG.clockTwentyFourHours is false.
@@ -71,7 +71,7 @@
     /**
      * Open triggered queries in a new tab.
      */
-    queryNewTab: true,
+    queryNewTab: false,
 
     /**
      * The delimiter between a command key and a path. For example, you'd type
@@ -83,7 +83,7 @@
      * The delimiter between a command key and your search query. For example,
      * to search GitHub for tilde, you'd type "g'tilde".
      */
-    querySearchDelimiter: "'",
+    querySearchDelimiter: '!',
 
     /**
      * Scripts allow you to open or search multiple sites at once. For example,
@@ -121,7 +121,7 @@
     /**
      * Max number of suggestions that will ever be shown.
      */
-    suggestionLimit: 4,
+    suggestionLimit: 10,
 
     /**
      * Default search suggestions for the specified queries.
@@ -158,7 +158,7 @@
     commands: [
       {
         key: '*',
-        search: '/search?q={}',
+        search: '/search?q={}&hl=fr',
         searchCtrl: '/?q=!ducky+{}', // "I'm feeling lucky" from Google need a refferer from Google
         urlCtrl: 'https://duckduckgo.com',
         url: 'https://www.google.com',
