@@ -41,7 +41,8 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 
 - Entering `stallman.org` will redirect you to
   [stallman.org](http://stallman.org/).
-- Entering `https://cade.me` will redirect you to [cade.me](https://cade.me).
+- Entering `https://xvvvyz.xyz` will redirect you to
+  [xvvvyz.xyz](https://xvvvyz.xyz).
 
 ## License
 
