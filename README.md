@@ -47,4 +47,4 @@ This is how you can use Tilde out of the box, but it&rsquo;s
 ## License
 
 Thank you for reading! Feel free to use and modify Tilde
-[as you see fit](LICENSE).
+[as you see fit](UNLICENSE).
