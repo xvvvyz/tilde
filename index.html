@@ -345,23 +345,7 @@
         search: ':{}',
         url: 'http://localhost:3000',
       },
-    ].map((command) => {
-      const hsla = (hue, saturation = 'var(--command-color-saturation)') =>
-        `hsla(${hue}, ${saturation}, var(--command-color-lightness), 1)`;
-
-      if (command.color || !command.name) {
-        return command;
-      } else if (!Array.isArray(command.hues) || !command.hues.length) {
-        command.color = hsla(0, '0%');
-      } else if (command.hues.length === 1) {
-        command.color = hsla(command.hues[0]);
-      } else {
-        const c = command.hues.reduce((a, h) => `${a}, ${hsla(h)}`, '');
-        command.color = `linear-gradient(135deg ${c})`;
-      }
-
-      return command;
-    }),
+    ],
   };
 </script>
 
@@ -690,6 +674,8 @@
 <aside class="center help overlay" id="help" />
 
 <script>
+  'use strict';
+
   const $ = {
     bodyClassAdd: (c) => $.el('body').classList.add(c),
     bodyClassRemove: (c) => $.el('body').classList.remove(c),
@@ -697,118 +683,91 @@
     els: (s) => [].slice.call(document.querySelectorAll(s) || []),
     escapeRegex: (s) => s?.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
     flattenAndUnique: (arr) => [...new Set([].concat.apply([], arr))],
-    isDown: (e) => ['ctrl-n', 'down', 'tab'].includes($.whichKey(e)),
-    isRemove: (e) => ['backspace', 'delete'].includes($.whichKey(e)),
-    isUp: (e) => ['ctrl-p', 'up', 's-tab'].includes($.whichKey(e)),
-    whichKey: (e) => {
-      const ctrl = e.ctrlKey;
-      const meta = e.metaKey;
-      const shift = e.shiftKey;
-
-      switch (e.which) {
-        case 8:
-          return 'backspace';
-        case 9:
-          return shift ? 's-tab' : 'tab';
-        case 13:
-          return 'enter';
-        case 16:
-          return 'shift';
-        case 17:
-          return 'ctrl';
-        case 18:
-          return 'alt';
-        case 27:
-          return 'escape';
-        case 38:
-          return 'up';
-        case 40:
-          return 'down';
-        case 46:
-          return 'delete';
-        case 78:
-          return ctrl ? 'ctrl-n' : 'n';
-        case 80:
-          return ctrl ? 'ctrl-p' : 'p';
-        case 86:
-          if (ctrl) return 'ctrl-v';
-          if (meta) return 'ctrl-v';
-          break;
-        case 91:
-        case 93:
-        case 224:
-          return 'meta';
-      }
-
-      if (ctrl) return 'ctrl-*';
-      if (meta) return 'meta-*';
-    },
+    isDown: (e) => /^(ArrowDown|Tab|c-n)$/.test($.prefix(e) + e.key),
+    isEscape: (e) => /^Escape$/.test(e.key),
+    isModifier: (e) => /^(Alt|Control|Enter|Meta|Shift)$/.test(e.key),
+    isRemove: (e) => /^(Backspace|Delete)$/.test(e.key),
+    isUp: (e) => /^(ArrowUp|c-p|s-Tab)$/.test($.prefix(e) + e.key),
+    prefix: (e) => (e.ctrlKey ? 'c-' : '') + (e.shiftKey ? 's-' : ''),
   };
 
   class Clock {
+    static #EL = $.el('#clock');
+
+    #amPm = false;
+    #delimiter = ':';
+    #showSeconds = false;
+    #timeZone = null;
+    #twentyFourHour = true;
+
     constructor(options) {
-      this._el = $.el('#clock');
-      this._amPm = options.amPm;
-      this._delimiter = options.delimiter;
-      this._showSeconds = options.showSeconds;
-      this._timeZone = options.timeZone;
-      this._twentyFourHour = options.twentyFourHour;
-      this._setTime = this._setTime.bind(this);
-      this._el.addEventListener('click', options.onClick);
-      this._start();
+      this.#amPm = options.amPm;
+      this.#delimiter = options.delimiter;
+      this.#showSeconds = options.showSeconds;
+      this.#timeZone = options.timeZone;
+      this.#twentyFourHour = options.twentyFourHour;
+      Clock.#EL.addEventListener('click', options.onClick);
+      this.#start();
     }
 
-    _setTime() {
+    #setTime = () => {
       const date = new Date();
 
-      this._el.innerHTML = date
+      Clock.#EL.innerHTML = date
         .toLocaleString('en-US', {
-          hour12: !this._twentyFourHour,
+          hour12: !this.#twentyFourHour,
           hour: 'numeric',
           minute: 'numeric',
-          second: this._showSeconds ? 'numeric' : undefined,
-          timeZone: this._timeZone,
+          second: this.#showSeconds ? 'numeric' : undefined,
+          timeZone: this.#timeZone,
         })
-        .replace(this._amPm ? '' : / (AM|PM)/, '')
-        .replace(/:/g, this._delimiter)
+        .replace(this.#amPm ? '' : / (AM|PM)/, '')
+        .replace(/:/g, this.#delimiter)
         .replace(/^0/, '');
 
-      this._el.setAttribute('datetime', date.toTimeString());
-    }
+      Clock.#EL.setAttribute('datetime', date.toTimeString());
+    };
 
-    _start() {
-      this._setTime();
-      setInterval(this._setTime, 1000);
+    #start() {
+      this.#setTime();
+      setInterval(this.#setTime, 1000);
     }
   }
 
   class Help {
+    static #CN_COMMAND = 'command';
+    static #CN_COMMAND_KEY = 'command-key';
+    static #CN_COMMAND_LIST = 'command-list';
+    static #CN_COMMAND_NAME = 'command-name';
+    static #CN_HELP = 'help';
+    static #EL = $.el('#help');
+
+    #commands = [];
+    #newTab = false;
+    #toggled = false;
+
     constructor(options) {
-      this._el = $.el('#help');
-      this._commands = options.commands;
-      this._newTab = options.newTab;
-      this._toggled = false;
-      this.toggle = this.toggle.bind(this);
-      this._handleKeydown = this._handleKeydown.bind(this);
-      this._buildCommands();
-      this._registerEvents();
+      this.#commands = options.commands;
+      this.#newTab = options.newTab;
+      this.#buildCommands();
+      this.#registerEvents();
     }
 
-    toggle(show) {
-      this._toggled = typeof show !== 'undefined' ? show : !this._toggled;
-      if (this._toggled) $.bodyClassAdd('help');
-      else $.bodyClassRemove('help');
-    }
+    toggle = (show) => {
+      this.#toggled = typeof show !== 'undefined' ? show : !this.#toggled;
+      if (this.#toggled) $.bodyClassAdd(Help.#CN_HELP);
+      else $.bodyClassRemove(Help.#CN_HELP);
+    };
 
-    _buildCommands() {
+    #buildCommands() {
       const list = document.createElement('ul');
-      list.classList.add('command-list');
+      list.classList.add(Help.#CN_COMMAND_LIST);
 
       list.insertAdjacentHTML(
         'beforeend',
-        this._commands.reduce((acc, { color, name, key, url }, i) => {
+        this.#commands.reduce((acc, { color, name, key, url }, i) => {
           if (!name) return acc;
-          const target = this._newTab ? '_blank' : '_self';
+          const target = this.#newTab ? '_blank' : '_self';
 
           return `
             ${acc}
@@ -820,60 +779,74 @@
               }
             </style>
             <li>
-              <a class="command command-${i}" href="${url}" target="${target}" rel="noopener noreferrer">
-                <span class="command-key command-key-${i}">${key}</span>
-                <span class="command-name">${name}</span>
+              <a
+                class="${Help.#CN_COMMAND} command-${i}"
+                href="${url}"
+                rel="noopener noreferrer"
+                target="${target}"
+              >
+                <span
+                  class="${Help.#CN_COMMAND_KEY} command-key-${i}"
+                >
+                  ${key}
+                </span>
+                <span class="${Help.#CN_COMMAND_NAME}">${name}</span>
               </a>
             </li>
           `;
         }, '')
       );
 
-      this._el.appendChild(list);
+      Help.#EL.appendChild(list);
     }
 
-    _handleKeydown(e) {
-      if ($.whichKey(e) === 'escape') this.toggle(false);
-    }
+    #handleKeydown = (e) => {
+      if ($.isEscape(e)) this.toggle(false);
+    };
 
-    _registerEvents() {
-      document.addEventListener('keydown', this._handleKeydown);
+    #registerEvents() {
+      document.addEventListener('keydown', this.#handleKeydown);
     }
   }
 
   class Influencer {
+    limit = 0;
+    minChars = 0;
+
     constructor(options) {
-      this._limit = options.limit;
-      this._minChars = options.minChars;
+      this.limit = options.limit;
+      this.minChars = options.minChars;
     }
 
     addItem() {
-      return undefined;
+      // noop
     }
 
     getSuggestions() {
       return Promise.resolve([]);
     }
 
-    _addSearchPrefix(items, { isSearch, key, split }) {
-      const searchPrefix = isSearch ? `${key}${split}` : false;
-      return items.map((s) => (searchPrefix ? searchPrefix + s : s));
+    isTooShort(query) {
+      return query.length < this.minChars;
     }
 
-    _isTooShort(query) {
-      return query.length < this._minChars;
+    static addSearchPrefix(items, { isSearch, key, split }) {
+      const searchPrefix = isSearch ? `${key}${split}` : false;
+      return items.map((s) => (searchPrefix ? searchPrefix + s : s));
     }
   }
 
   class DefaultInfluencer extends Influencer {
-    constructor({ suggestionDefaults }) {
+    #suggestionDefaults = {};
+
+    constructor(options) {
       super(...arguments);
-      this._suggestionDefaults = suggestionDefaults;
+      this.#suggestionDefaults = options.suggestionDefaults;
     }
 
     getSuggestions({ raw }) {
       return new Promise((resolve) =>
-        resolve((this._suggestionDefaults[raw] || []).slice(0, this._limit))
+        resolve((this.#suggestionDefaults[raw] || []).slice(0, this.limit))
       );
     }
   }
@@ -885,16 +858,16 @@
 
     getSuggestions(parsedQuery) {
       const { lower, query } = parsedQuery;
-      if (this._isTooShort(query)) return Promise.resolve([]);
+      if (this.isTooShort(query)) return Promise.resolve([]);
 
       return new Promise((resolve) => {
         window.autocompleteCallback = (res) =>
           resolve(
-            this._addSearchPrefix(
+            Influencer.addSearchPrefix(
               res
-                .map((i) => i.phrase)
+                .map((s) => s.phrase)
                 .filter((s) => s.toLowerCase() !== lower)
-                .slice(0, this._limit),
+                .slice(0, this.limit),
               parsedQuery
             )
           );
@@ -907,35 +880,38 @@
   }
 
   class HistoryInfluencer extends Influencer {
+    static #LOCALSTORAGE_KEY = 'history';
+
+    #history = null;
+
     constructor() {
       super(...arguments);
-      this._storeName = 'history';
     }
 
     addItem({ isPath, lower }) {
-      if (isPath || this._isTooShort(lower)) return;
+      if (isPath || this.isTooShort(lower)) return;
       let exists;
 
-      const history = this._getHistory().map(([item, count]) => {
+      const history = this.#getHistory().map(([item, count]) => {
         const match = item === lower;
         if (match) exists = true;
         return [item, match ? count + 1 : count];
       });
 
       if (!exists) history.push([lower, 1]);
-      this._setHistory(history.sort((a, b) => b[1] - a[1]));
+      this.#setHistory(history.sort((a, b) => b[1] - a[1]));
     }
 
     getSuggestions(parsedQuery) {
       const { lower } = parsedQuery;
-      if (this._isTooShort(lower)) return Promise.resolve([]);
+      if (this.isTooShort(lower)) return Promise.resolve([]);
 
       return new Promise((resolve) =>
         resolve(
-          this._addSearchPrefix(
-            this._getHistory()
+          Influencer.addSearchPrefix(
+            this.#getHistory()
               .filter(([item]) => item !== lower && item.includes(lower))
-              .slice(0, this._limit)
+              .slice(0, this.limit)
               .map(([item]) => item),
             parsedQuery
           )
@@ -943,72 +919,90 @@
       );
     }
 
-    _getHistory() {
-      this._history =
-        this._history ||
-        JSON.parse(localStorage.getItem(this._storeName)) ||
+    #getHistory() {
+      this.#history =
+        this.#history ||
+        JSON.parse(localStorage.getItem(HistoryInfluencer.#LOCALSTORAGE_KEY)) ||
         [];
 
-      return this._history;
+      return this.#history;
     }
 
-    _setHistory(history) {
-      this._history = history;
-      localStorage.setItem(this._storeName, JSON.stringify(history));
+    #setHistory(history) {
+      this.#history = history;
+
+      localStorage.setItem(
+        HistoryInfluencer.#LOCALSTORAGE_KEY,
+        JSON.stringify(history)
+      );
     }
   }
 
   class Suggester {
+    static #ATTR_DATA_SUGGESTION = 'data-suggestion';
+    static #CN_HIGHLIGHT = 'highlight';
+    static #CN_SEARCH_SUGGESTION = 'search-suggestion';
+    static #CN_SEARCH_SUGGESTION_MATCH = 'search-suggestion-match';
+    static #CN_SUGGESTIONS = 'suggestions';
+    static #EL = $.el('#search-suggestions');
+
+    #highlightedSuggestion = null;
+    #influencers = [];
+    #limit = 0;
+    #onSuggestionClick = () => {};
+    #onSuggestionHighlight = () => {};
+    #onSuggestionUnhighlight = () => {};
+    #parsedQuery = '';
+    #suggestionEls = [];
+
     constructor(options) {
-      this._el = $.el('#search-suggestions');
-      this._influencers = options.influencers;
-      this._limit = options.limit;
-      this._parsedQuery = '';
-      this._highlightedSuggestion = null;
-      this._suggestionEls = [];
-      this._handleKeydown = this._handleKeydown.bind(this);
-      this._setSuggestions = this._setSuggestions.bind(this);
-      this._registerEvents();
+      this.#influencers = options.influencers;
+      this.#limit = options.limit;
+      this.#registerEvents();
+    }
+
+    onSuccess(parsedQuery) {
+      this.#influencers.forEach((i) => i.addItem(parsedQuery));
+      this.#clearSuggestions();
     }
 
     setOnClick(callback) {
-      this._onClick = callback;
+      this.#onSuggestionClick = callback;
     }
 
     setOnHighlight(callback) {
-      this._onHighlight = callback;
+      this.#onSuggestionHighlight = callback;
     }
 
     setOnUnhighlight(callback) {
-      this._onUnhighlight = callback;
-    }
-
-    success(parsedQuery) {
-      this._influencers.forEach((i) => i.addItem(parsedQuery));
-      this._clearSuggestions();
+      this.#onSuggestionUnhighlight = callback;
     }
 
     suggest(parsedQuery) {
-      this._parsedQuery = parsedQuery;
-      this._highlightedSuggestion = null;
+      this.#parsedQuery = parsedQuery;
+      this.#highlightedSuggestion = null;
 
       if (!parsedQuery.query) {
-        this._clearSuggestions();
+        this.#clearSuggestions();
         return;
       }
 
-      Promise.all(this._getInfluencers()).then(this._setSuggestions);
+      Promise.all(this.#getInfluencerSuggestions()).then(this.#setSuggestions);
     }
 
-    _buildSuggestionsHtml(suggestions) {
-      return suggestions.slice(0, this._limit).reduce((acc, suggestion) => {
-        const match = new RegExp($.escapeRegex(this._parsedQuery.query), 'i');
+    #buildSuggestionsHtml(suggestions) {
+      return suggestions.slice(0, this.#limit).reduce((acc, suggestion) => {
+        const match = new RegExp($.escapeRegex(this.#parsedQuery.query), 'i');
         const matched = suggestion.match(match);
 
         const suggestionHtml = matched
           ? suggestion.replace(
               match,
-              `<span class="search-suggestion-match">${matched[0]}</span>`
+              `
+                <span class="${Suggester.#CN_SEARCH_SUGGESTION_MATCH}">
+                  ${matched[0]}
+                </span>
+              `
             )
           : suggestion;
 
@@ -1016,10 +1010,10 @@
           ${acc}
           <li>
             <button
-              type="button"
-              class="js-search-suggestion search-suggestion"
-              data-suggestion="${suggestion}"
+              ${Suggester.#ATTR_DATA_SUGGESTION}="${suggestion}"
+              class=${Suggester.#CN_SEARCH_SUGGESTION}
               tabindex="-1"
+              type="button"
             >
               ${suggestionHtml}
             </button>
@@ -1028,150 +1022,168 @@
       }, '');
     }
 
-    _clearSuggestionClickEvents() {
-      this._suggestionEls.forEach((el) => {
-        el.removeEventListener('click', this._onClick);
-      });
-    }
-
-    _clearSuggestionHighlightEvents() {
-      this._suggestionEls.forEach((el) => {
-        el.removeEventListener('mouseover', this._highlight);
-        el.removeEventListener('mouseout', this._unHighlight);
-      });
-    }
-
-    _clearSuggestions() {
-      $.bodyClassRemove('suggestions');
-      this._clearSuggestionHighlightEvents();
-      this._clearSuggestionClickEvents();
-      this._el.innerHTML = '';
-      this._highlightedSuggestion = null;
-      this._suggestionEls = [];
-    }
-
-    _focusNext(e) {
-      const exists = this._suggestionEls.some((el, i) => {
-        if (el.classList.contains('highlight')) {
-          this._highlight(this._suggestionEls[i + 1], e);
-          return true;
-        }
-      });
-
-      if (!exists) this._highlight(this._suggestionEls[0], e);
-    }
-
-    _focusPrevious(e) {
-      const exists = this._suggestionEls.some((el, i) => {
-        if (el.classList.contains('highlight') && i) {
-          this._highlight(this._suggestionEls[i - 1], e);
-          return true;
-        }
-      });
-
-      if (!exists) this._unHighlight(e);
-    }
-
-    _getInfluencers() {
-      return this._influencers.map((influencer) =>
-        influencer.getSuggestions(this._parsedQuery)
+    #clearSuggestionClickEvents() {
+      this.#suggestionEls.forEach((el) =>
+        el.removeEventListener('click', this.#onSuggestionClick)
       );
     }
 
-    _handleKeydown(e) {
-      if ($.isDown(e)) this._focusNext(e);
-      if ($.isUp(e)) this._focusPrevious(e);
-    }
-
-    _highlight(el, e) {
-      this._unHighlight();
-      if (!el) return;
-      this._highlightedSuggestion = el.getAttribute('data-suggestion');
-      this._onHighlight(this._highlightedSuggestion);
-      el.classList.add('highlight');
-      if (e) e.preventDefault();
-    }
-
-    _registerEvents() {
-      document.addEventListener('keydown', this._handleKeydown);
-    }
-
-    _registerSuggestionClickEvents() {
-      this._suggestionEls.forEach((el) => {
-        const value = el.getAttribute('data-suggestion');
-        el.addEventListener('click', this._onClick.bind(null, value));
+    #clearSuggestionHighlightEvents() {
+      this.#suggestionEls.forEach((el) => {
+        el.removeEventListener('mouseover', this.#highlightSuggestion);
+        el.removeEventListener('mouseout', this.#unhighlightSuggestion);
       });
     }
 
-    _registerSuggestionHighlightEvents() {
+    #clearSuggestions() {
+      $.bodyClassRemove(Suggester.#CN_SUGGESTIONS);
+      this.#clearSuggestionHighlightEvents();
+      this.#clearSuggestionClickEvents();
+      Suggester.#EL.innerHTML = '';
+      this.#highlightedSuggestion = null;
+      this.#suggestionEls = [];
+    }
+
+    #focusNext(e) {
+      const exists = this.#suggestionEls.some((el, i) => {
+        if (el.classList.contains(Suggester.#CN_HIGHLIGHT)) {
+          this.#highlightSuggestion(this.#suggestionEls[i + 1], e);
+          return true;
+        }
+      });
+
+      if (!exists) this.#highlightSuggestion(this.#suggestionEls[0], e);
+    }
+
+    #focusPrevious(e) {
+      const exists = this.#suggestionEls.some((el, i) => {
+        if (el.classList.contains(Suggester.#CN_HIGHLIGHT) && i) {
+          this.#highlightSuggestion(this.#suggestionEls[i - 1], e);
+          return true;
+        }
+      });
+
+      if (!exists) this.#unhighlightSuggestion(e);
+    }
+
+    #getInfluencerSuggestions() {
+      return this.#influencers.map((influencer) =>
+        influencer.getSuggestions(this.#parsedQuery)
+      );
+    }
+
+    #handleKeydown = (e) => {
+      if ($.isDown(e)) this.#focusNext(e);
+      if ($.isUp(e)) this.#focusPrevious(e);
+    };
+
+    #highlightSuggestion(el, e) {
+      this.#unhighlightSuggestion();
+      if (!el) return;
+
+      this.#highlightedSuggestion = el.getAttribute(
+        Suggester.#ATTR_DATA_SUGGESTION
+      );
+
+      this.#onSuggestionHighlight(this.#highlightedSuggestion);
+      el.classList.add(Suggester.#CN_HIGHLIGHT);
+      if (e) e.preventDefault();
+    }
+
+    #registerEvents() {
+      document.addEventListener('keydown', this.#handleKeydown);
+    }
+
+    #registerSuggestionClickEvents() {
+      this.#suggestionEls.forEach((el) =>
+        el.addEventListener('click', () =>
+          this.#onSuggestionClick(
+            el.getAttribute(Suggester.#ATTR_DATA_SUGGESTION)
+          )
+        )
+      );
+    }
+
+    #registerSuggestionHighlightEvents() {
       const noHighlightUntilMouseMove = () => {
         window.removeEventListener('mousemove', noHighlightUntilMouseMove);
 
-        this._suggestionEls.forEach((el) => {
-          el.addEventListener('mouseover', this._highlight.bind(this, el));
-          el.addEventListener('mouseout', this._unHighlight.bind(this));
+        this.#suggestionEls.forEach((el) => {
+          el.addEventListener('mouseover', () => this.#highlightSuggestion(el));
+          el.addEventListener('mouseout', this.#unhighlightSuggestion);
         });
       };
 
       window.addEventListener('mousemove', noHighlightUntilMouseMove);
     }
 
-    _rehighlight() {
-      if (!this._highlightedSuggestion) return;
-
-      this._highlight(
-        $.el(`[data-suggestion="${this._highlightedSuggestion}"]`)
-      );
+    #rehighlightSuggestion() {
+      if (!this.#highlightedSuggestion) return;
+      const attr = Suggester.#ATTR_DATA_SUGGESTION;
+      const value = this.#highlightedSuggestion;
+      this.#highlightSuggestion($.el(`[${attr}="${value}"]`));
     }
 
-    _setSuggestions(newSuggestions) {
+    #setSuggestions = (newSuggestions) => {
       const suggestions = $.flattenAndUnique(newSuggestions);
-      this._el.innerHTML = this._buildSuggestionsHtml(suggestions);
-      this._suggestionEls = $.els('.js-search-suggestion');
-      this._registerSuggestionHighlightEvents();
-      this._registerSuggestionClickEvents();
-      if (this._suggestionEls.length) $.bodyClassAdd('suggestions');
-      this._rehighlight();
-    }
+      Suggester.#EL.innerHTML = this.#buildSuggestionsHtml(suggestions);
+      this.#suggestionEls = $.els(`.${Suggester.#CN_SEARCH_SUGGESTION}`);
+      this.#registerSuggestionHighlightEvents();
+      this.#registerSuggestionClickEvents();
+      if (this.#suggestionEls.length) $.bodyClassAdd(Suggester.#CN_SUGGESTIONS);
+      this.#rehighlightSuggestion();
+    };
 
-    _unHighlight(e) {
-      const el = $.el('.highlight');
+    #unhighlightSuggestion(e) {
+      const el = $.el(`.${Suggester.#CN_HIGHLIGHT}`);
       if (!el) return;
-      this._onUnhighlight();
-      el.classList.remove('highlight');
+      this.#onSuggestionUnhighlight();
+      el.classList.remove(Suggester.#CN_HIGHLIGHT);
       if (e) e.preventDefault();
     }
   }
 
   class QueryParser {
+    static #DEFAULT_PROTOCOL = 'http://';
+    static #PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//i;
+
+    static #URL_REGEX =
+      /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
+
+    #commands = [];
+    #pathDelimiter = '/';
+    #scripts = {};
+    #searchDelimiter = "'";
+
     constructor(options) {
-      this._commands = options.commands;
-      this._searchDelimiter = options.searchDelimiter;
-      this._pathDelimiter = options.pathDelimiter;
-      this._scripts = options.scripts;
-      this._protocolRegex = /^[a-zA-Z]+:\/\//i;
-      this._urlRegex = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i;
-      this.parse = this.parse.bind(this);
+      this.#commands = options.commands;
+      this.#searchDelimiter = options.searchDelimiter;
+      this.#pathDelimiter = options.pathDelimiter;
+      this.#scripts = options.scripts;
     }
 
-    parse(query) {
+    parse = (query) => {
       const res = [];
       res.raw = query.trim();
       res.query = res.raw;
       res.lower = res.raw.toLowerCase();
       res.split = null;
 
-      if (this._urlRegex.test(query)) {
-        const hasProtocol = this._protocolRegex.test(query);
-        res.redirect = hasProtocol ? query : 'http://' + query;
-        res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
+      if (QueryParser.#URL_REGEX.test(query)) {
+        const hasProtocol = QueryParser.#PROTOCOL_REGEX.test(query);
+
+        res.redirect = hasProtocol
+          ? query
+          : QueryParser.#DEFAULT_PROTOCOL + query;
+
+        res.color = QueryParser.#getColorFromUrl(this.#commands, res.redirect);
         return res;
       }
 
-      const splitSearch = res.query.split(this._searchDelimiter);
-      const splitPath = res.query.split(this._pathDelimiter);
+      const splitSearch = res.query.split(this.#searchDelimiter);
+      const splitPath = res.query.split(this.#pathDelimiter);
 
-      const isScript = Object.entries(this._scripts).some(([key, script]) => {
+      const isScript = Object.entries(this.#scripts).some(([key, script]) => {
         if (query === key) {
           res.key = key;
           res.isKey = true;
@@ -1182,8 +1194,8 @@
         if (splitSearch[0] === key) {
           res.key = key;
           res.isSearch = true;
-          res.split = this._searchDelimiter;
-          res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+          res.split = this.#searchDelimiter;
+          res.query = QueryParser.#shiftAndTrim(splitSearch, res.split);
           res.lower = res.query.toLowerCase();
 
           script.forEach((command) =>
@@ -1196,11 +1208,11 @@
         if (splitPath[0] === key) {
           res.key = key;
           res.isPath = true;
-          res.split = this._pathDelimiter;
-          res.path = QueryParser._shiftAndTrim(splitPath, res.split);
+          res.split = this.#pathDelimiter;
+          res.path = QueryParser.#shiftAndTrim(splitPath, res.split);
 
           script.forEach((command) =>
-            res.push(this.parse(`${command}${this._pathDelimiter}${res.path}`))
+            res.push(this.parse(`${command}${this.#pathDelimiter}${res.path}`))
           );
 
           return true;
@@ -1209,7 +1221,7 @@
 
       if (isScript) return res;
 
-      this._commands.some(({ key, search, url }) => {
+      this.#commands.some(({ key, search, url }) => {
         if (query === key) {
           res.key = key;
           res.isKey = true;
@@ -1220,32 +1232,32 @@
         if (splitSearch[0] === key) {
           res.key = key;
           res.isSearch = true;
-          res.split = this._searchDelimiter;
-          res.query = QueryParser._shiftAndTrim(splitSearch, res.split);
+          res.split = this.#searchDelimiter;
+          res.query = QueryParser.#shiftAndTrim(splitSearch, res.split);
           res.lower = res.query.toLowerCase();
-          res.redirect = QueryParser._prepSearch(url, search, res.query);
+          res.redirect = QueryParser.#prepSearch(url, search, res.query);
           return true;
         }
 
         if (splitPath[0] === key) {
           res.key = key;
           res.isPath = true;
-          res.split = this._pathDelimiter;
-          res.path = QueryParser._shiftAndTrim(splitPath, res.split);
-          res.redirect = QueryParser._prepPath(url, res.path);
+          res.split = this.#pathDelimiter;
+          res.path = QueryParser.#shiftAndTrim(splitPath, res.split);
+          res.redirect = QueryParser.#prepPath(url, res.path);
           return true;
         }
 
         if (key === '*') {
-          res.redirect = QueryParser._prepSearch(url, search, query);
+          res.redirect = QueryParser.#prepSearch(url, search, query);
         }
       });
 
-      res.color = QueryParser._getColorFromUrl(this._commands, res.redirect);
+      res.color = QueryParser.#getColorFromUrl(this.#commands, res.redirect);
       return res;
-    }
+    };
 
-    static _getColorFromUrl(commands, url) {
+    static #getColorFromUrl(commands, url) {
       const domain = new URL(url).hostname;
       const domainRegex = new RegExp(`${domain}$`);
 
@@ -1253,24 +1265,24 @@
         ?.color;
     }
 
-    static _prepPath(url, path) {
-      return QueryParser._stripUrlPath(url) + '/' + path;
+    static #prepPath(url, path) {
+      return QueryParser.#stripUrlPath(url) + '/' + path;
     }
 
-    static _prepSearch(url, searchPath, query) {
+    static #prepSearch(url, searchPath, query) {
       if (!searchPath) return url;
-      const baseUrl = QueryParser._stripUrlPath(url);
+      const baseUrl = QueryParser.#stripUrlPath(url);
       const urlQuery = encodeURIComponent(query);
       searchPath = searchPath.replace(/{}/g, urlQuery);
       return baseUrl + searchPath;
     }
 
-    static _shiftAndTrim(arr, delimiter) {
+    static #shiftAndTrim(arr, delimiter) {
       arr.shift();
       return arr.join(delimiter).trim();
     }
 
-    static _stripUrlPath(url) {
+    static #stripUrlPath(url) {
       const parser = document.createElement('a');
       parser.href = url;
       return `${parser.protocol}//${parser.hostname}`;
@@ -1278,190 +1290,225 @@
   }
 
   class Form {
+    static #CL_COLOR = 'color';
+    static #CL_FORM = 'form';
+    static #EL_FORM = $.el('#search-input');
+    static #EL_INPUT = $.el('#search-form');
+    static #URL_PARAM_Q = 'q';
+
+    #helpKey = '?';
+    #instantRedirect = false;
+    #toggleHelp = () => {};
+    #inputValue = '';
+    #suggester;
+    #parseQuery = () => {};
+    #newTab = false;
+
     constructor(options) {
-      this._formEl = $.el('#search-form');
-      this._inputEl = $.el('#search-input');
-      this._inputElVal = '';
-      this._instantRedirect = options.instantRedirect;
-      this._helpKey = options.helpKey;
-      this._newTab = options.newTab;
-      this._parseQuery = options.parseQuery;
-      this._suggester = options.suggester;
-      this._toggleHelp = options.toggleHelp;
-      this._clearPreview = this._clearPreview.bind(this);
-      this._handleInput = this._handleInput.bind(this);
-      this._handleKeydown = this._handleKeydown.bind(this);
-      this._previewValue = this._previewValue.bind(this);
-      this._submitForm = this._submitForm.bind(this);
-      this._submitWithValue = this._submitWithValue.bind(this);
-      this.hide = this.hide.bind(this);
-      this.show = this.show.bind(this);
-      this._registerEvents();
-      this._loadQueryParam();
+      this.#helpKey = options.helpKey;
+      this.#instantRedirect = options.instantRedirect;
+      this.#newTab = options.newTab;
+      this.#parseQuery = options.parseQuery;
+      this.#suggester = options.suggester;
+      this.#toggleHelp = options.toggleHelp;
+      this.#registerEvents();
+      this.#loadQueryParam();
     }
 
     hide() {
-      $.bodyClassRemove('form');
-      this._inputEl.value = '';
-      this._inputElVal = '';
-      this._suggester.suggest('');
-      this._setColorsFromQuery('');
+      $.bodyClassRemove(Form.#CL_FORM);
+      Form.#EL_FORM.value = '';
+      this.#inputValue = '';
+      this.#suggester.suggest('');
+      this.#setColorsFromQuery('');
     }
 
     show() {
-      $.bodyClassAdd('form');
-      this._inputEl.focus();
+      $.bodyClassAdd(Form.#CL_FORM);
+      Form.#EL_FORM.focus();
     }
 
-    _clearPreview() {
-      this._previewValue(this._inputElVal);
-      this._inputEl.focus();
-    }
+    #clearPreview = () => {
+      this.#previewValue(this.#inputValue);
+      Form.#EL_FORM.focus();
+    };
 
-    _handleInput() {
-      const newQuery = this._inputEl.value;
-      const isHelp = newQuery === this._helpKey;
-      const parsedQuery = this._parseQuery(newQuery);
-      this._inputElVal = newQuery;
-      this._suggester.suggest(parsedQuery);
-      this._setColorsFromQuery(newQuery);
-
+    #handleInput = () => {
+      const newQuery = Form.#EL_FORM.value;
+      const isHelp = newQuery === this.#helpKey;
+      const parsedQuery = this.#parseQuery(newQuery);
+      this.#inputValue = newQuery;
+      this.#suggester.suggest(parsedQuery);
+      this.#setColorsFromQuery(newQuery);
       if (!newQuery || isHelp) this.hide();
-      if (isHelp) this._toggleHelp();
+      if (isHelp) this.#toggleHelp();
 
-      if (this._instantRedirect && parsedQuery.isKey) {
-        this._submitWithValue(newQuery);
+      if (this.#instantRedirect && parsedQuery.isKey) {
+        this.#submitWithValue(newQuery);
       }
-    }
+    };
 
-    _handleKeydown(e) {
-      if ($.isUp(e) || $.isDown(e) || $.isRemove(e)) return;
+    #handleKeydown = (e) => {
+      if (
+        $.isDown(e) ||
+        $.isModifier(e) ||
+        $.isRemove(e) ||
+        $.isUp(e) ||
+        e.ctrlKey ||
+        e.metaKey
+      ) {
+        return;
+      }
 
-      switch ($.whichKey(e)) {
-        case 'alt':
-        case 'ctrl':
-        case 'ctrl-*':
-        case 'enter':
-        case 'meta':
-        case 'meta-*':
-        case 'shift':
-          return;
-        case 'escape':
-          this.hide();
-          return;
+      if ($.isEscape(e)) {
+        this.hide();
+        return;
       }
 
       this.show();
+    };
+
+    #loadQueryParam() {
+      const q = new URLSearchParams(window.location.search).get(
+        Form.#URL_PARAM_Q
+      );
+
+      if (q) this.#submitWithValue(q);
     }
 
-    _loadQueryParam() {
-      const q = new URLSearchParams(window.location.search).get('q');
-      if (q) this._submitWithValue(q);
-    }
+    #previewValue = (value) => {
+      Form.#EL_FORM.value = value;
+      this.#setColorsFromQuery(value);
+    };
 
-    _previewValue(value) {
-      this._inputEl.value = value;
-      this._setColorsFromQuery(value);
-    }
-
-    _redirect(redirect, forceNewTab) {
-      if (this._newTab || forceNewTab) {
+    #redirect(redirect, forceNewTab) {
+      if (this.#newTab || forceNewTab) {
         window.open(redirect, '_blank', 'noopener noreferrer');
       } else {
         window.location.href = redirect;
       }
     }
 
-    _registerEvents() {
-      document.addEventListener('keydown', this._handleKeydown);
-      this._inputEl.addEventListener('input', this._handleInput);
-      this._formEl.addEventListener('submit', this._submitForm, false);
+    #registerEvents() {
+      document.addEventListener('keydown', this.#handleKeydown);
+      Form.#EL_FORM.addEventListener('input', this.#handleInput);
+      Form.#EL_INPUT.addEventListener('submit', this.#submitForm, false);
 
-      if (this._suggester) {
-        this._suggester.setOnClick(this._submitWithValue);
-        this._suggester.setOnHighlight(this._previewValue);
-        this._suggester.setOnUnhighlight(this._clearPreview);
+      if (this.#suggester) {
+        this.#suggester.setOnClick(this.#submitWithValue);
+        this.#suggester.setOnHighlight(this.#previewValue);
+        this.#suggester.setOnUnhighlight(this.#clearPreview);
       }
     }
 
-    _setColorsFromQuery(query) {
-      const { color } = this._parseQuery(query);
+    #setColorsFromQuery(query) {
+      const { color } = this.#parseQuery(query);
 
       if (color) {
-        this._formEl.style.background = color;
-        $.bodyClassAdd('color');
+        Form.#EL_INPUT.style.background = color;
+        $.bodyClassAdd(Form.#CL_COLOR);
       } else {
-        this._formEl.style.background = '';
-        $.bodyClassRemove('color');
+        Form.#EL_INPUT.style.background = '';
+        $.bodyClassRemove(Form.#CL_COLOR);
       }
     }
 
-    _submitForm(e) {
+    #submitForm = (e) => {
       if (e) e.preventDefault();
-      const parsedQuery = this._parseQuery(this._inputEl.value);
+      const parsedQuery = this.#parseQuery(Form.#EL_FORM.value);
 
       if (parsedQuery.length) {
-        parsedQuery.forEach((r) => this._redirect(r.redirect, true));
+        parsedQuery.forEach((r) => this.#redirect(r.redirect, true));
       } else {
-        this._redirect(parsedQuery.redirect);
+        this.#redirect(parsedQuery.redirect);
       }
 
-      this._suggester.success(parsedQuery);
+      this.#suggester.onSuccess(parsedQuery);
       this.hide();
+    };
+
+    #submitWithValue = (value) => {
+      Form.#EL_FORM.value = value;
+      this.#submitForm();
+    };
+  }
+
+  class CommandFormatter {
+    static #CSS_VAR_COMMAND_COLOR_LIGHTNESS = 'var(--command-color-lightness)';
+
+    static #CSS_VAR_COMMAND_COLOR_SATURATION =
+      'var(--command-color-saturation)';
+
+    static format(commands) {
+      return commands.map((command) => {
+        if (command.color || !command.name) return command;
+        command.color = CommandFormatter.#huesToGradient(command.hues);
+        return command;
+      });
     }
 
-    _submitWithValue(value) {
-      this._inputEl.value = value;
-      this._submitForm();
+    static #huesToGradient(hues) {
+      if (!Array.isArray(hues) || !hues.length) {
+        return CommandFormatter.#hsla(0, '0%');
+      }
+
+      if (hues.length === 1) {
+        return CommandFormatter.#hsla(hues[0]);
+      }
+
+      const c = hues.reduce((a, h) => `${a}, ${CommandFormatter.#hsla(h)}`, '');
+      return `linear-gradient(135deg ${c})`;
+    }
+
+    static #hsla(
+      hue,
+      saturation = CommandFormatter.#CSS_VAR_COMMAND_COLOR_SATURATION
+    ) {
+      const lightness = CommandFormatter.#CSS_VAR_COMMAND_COLOR_LIGHTNESS;
+      return `hsla(${hue}, ${saturation}, ${lightness}, 1)`;
     }
   }
 
-  $.bodyClassAdd(CONFIG.theme);
+  (() => {
+    $.bodyClassAdd(CONFIG.theme);
+    const commands = CommandFormatter.format(CONFIG.commands);
+    const help = new Help({ commands, newTab: CONFIG.queryNewTab });
 
-  const help = new Help({
-    commands: CONFIG.commands,
-    newTab: CONFIG.queryNewTab,
-  });
-
-  const queryParser = new QueryParser({
-    commands: CONFIG.commands,
-    pathDelimiter: CONFIG.queryPathDelimiter,
-    scripts: CONFIG.scripts,
-    searchDelimiter: CONFIG.querySearchDelimiter,
-  });
-
-  const influencers = CONFIG.suggestionInfluencers.map((influencerConfig) => {
-    return new {
-      Default: DefaultInfluencer,
-      DuckDuckGo: DuckDuckGoInfluencer,
-      History: HistoryInfluencer,
-    }[influencerConfig.name]({
-      limit: influencerConfig.limit,
-      minChars: influencerConfig.minChars,
-      suggestionDefaults: CONFIG.suggestionDefaults,
+    const form = new Form({
+      helpKey: CONFIG.helpKey,
+      instantRedirect: CONFIG.queryInstantRedirect,
+      newTab: CONFIG.queryNewTab,
+      parseQuery: new QueryParser({
+        commands,
+        pathDelimiter: CONFIG.queryPathDelimiter,
+        scripts: CONFIG.scripts,
+        searchDelimiter: CONFIG.querySearchDelimiter,
+      }).parse,
+      suggester: new Suggester({
+        influencers: CONFIG.suggestionInfluencers.map(
+          (influencerConfig) =>
+            new {
+              Default: DefaultInfluencer,
+              DuckDuckGo: DuckDuckGoInfluencer,
+              History: HistoryInfluencer,
+            }[influencerConfig.name]({
+              limit: influencerConfig.limit,
+              minChars: influencerConfig.minChars,
+              suggestionDefaults: CONFIG.suggestionDefaults,
+            })
+        ),
+        limit: CONFIG.suggestionLimit,
+      }),
+      toggleHelp: help.toggle,
     });
-  });
 
-  const suggester = new Suggester({
-    influencers,
-    limit: CONFIG.suggestionLimit,
-  });
-
-  const form = new Form({
-    helpKey: CONFIG.helpKey,
-    instantRedirect: CONFIG.queryInstantRedirect,
-    newTab: CONFIG.queryNewTab,
-    parseQuery: queryParser.parse,
-    suggester,
-    toggleHelp: help.toggle,
-  });
-
-  new Clock({
-    amPm: CONFIG.clockShowAmPm,
-    delimiter: CONFIG.clockDelimiter,
-    onClick: CONFIG.clockOnClickAction === 'Search' ? form.show : help.toggle,
-    showSeconds: CONFIG.clockShowSeconds,
-    timeZone: CONFIG.clockTimeZone,
-    twentyFourHour: CONFIG.clockTwentyFourHour,
-  });
+    new Clock({
+      amPm: CONFIG.clockShowAmPm,
+      delimiter: CONFIG.clockDelimiter,
+      onClick: CONFIG.clockOnClickAction === 'Search' ? form.show : help.toggle,
+      showSeconds: CONFIG.clockShowSeconds,
+      timeZone: CONFIG.clockTimeZone,
+      twentyFourHour: CONFIG.clockTwentyFourHour,
+    });
+  })();
 </script>
