@@ -429,6 +429,7 @@
       this.#refs.form = clone.querySelector('.form');
       this.#refs.input = clone.querySelector('.input');
       this.#refs.suggestionsContainer = clone.querySelector('.suggestions');
+      this.#refs.input.addEventListener('focus', this.#onFocusInput);
       this.#refs.input.addEventListener('input', this.#onInput);
       const onSubmit = () => this.#execute(this.#refs.input.value);
       this.#refs.form.addEventListener('submit', onSubmit, false);
@@ -450,8 +451,8 @@
         window.autocompleteCallback = (res) =>
           resolve(
             res
+              .filter((item) => item.phrase !== search.toLowerCase())
               .map((item) => item.phrase)
-              .filter((item) => item.toLowerCase() !== search.toLowerCase())
           );
 
         const script = document.createElement('script');
@@ -533,6 +534,7 @@
 
     #close() {
       this.#refs.input.value = '';
+      this.#refs.input.blur();
       this.#refs.dialog.close();
       this.#clearSuggestions();
     }
@@ -559,6 +561,14 @@
       else this.#refs.input.focus();
     }
 
+    #onFocusInput = (e) => {
+      const target = e.currentTarget;
+
+      requestAnimationFrame(() => {
+        if (!target.value) this.#close();
+      });
+    };
+
     #onInput = async (e) => {
       const q = SearchComponent.#parseQuery(e.currentTarget.value);
       let suggestions = CONFIG.suggestions[q.query] ?? [];
@@ -573,31 +583,36 @@
     };
 
     #onKeydown = (e) => {
-      if (/^Escape$/.test(e.key)) return this.#close();
-
-      const keyWithModifiers =
-        (e.altKey ? 'alt-' : '') +
-        (e.ctrlKey ? 'ctrl-' : '') +
-        (e.metaKey ? 'meta-' : '') +
-        (e.shiftKey ? 'shift-' : '') +
-        e.key;
-
-      if (/^(ArrowDown|Tab|ctrl-n)$/.test(keyWithModifiers)) {
-        e.preventDefault();
-        return this.#focusNextSuggestion();
-      }
-
-      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(keyWithModifiers)) {
-        e.preventDefault();
-        return this.#focusNextSuggestion(true);
-      }
-
-      if (/^(Alt|Enter|Shift)$/.test(e.key) || e.ctrlKey || e.metaKey) {
+      if (!this.#refs.dialog.open) {
+        this.#refs.dialog.showModal();
+        this.#refs.input.focus();
         return;
       }
 
-      if (!this.#refs.dialog.open) this.#refs.dialog.showModal();
-      this.#refs.input.focus();
+      if (
+        e.key === 'Escape' ||
+        (e.key === 'Backspace' && !this.#refs.input.value)
+      ) {
+        this.#close();
+        return;
+      }
+
+      const alt = e.altKey ? 'alt-' : '';
+      const ctrl = e.ctrlKey ? 'ctrl-' : '';
+      const meta = e.metaKey ? 'meta-' : '';
+      const shift = e.shiftKey ? 'shift-' : '';
+      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${e.key}`;
+
+      if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
+        e.preventDefault();
+        this.#focusNextSuggestion();
+        return;
+      }
+
+      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
+        e.preventDefault();
+        this.#focusNextSuggestion(true);
+      }
     };
 
     #renderSuggestions(suggestions, query) {
