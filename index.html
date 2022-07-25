@@ -407,62 +407,7 @@
 </template>
 
 <script type="module">
-  class Influencer {
-    limit = 4;
-
-    constructor(options) {
-      this.limit = options?.limit ?? this.limit;
-    }
-
-    static attachSearchPrefix(items, { key, splitBy }) {
-      return items.map((s) => (splitBy ? `${key}${splitBy}${s}` : s));
-    }
-
-    getSuggestions = async () => {
-      return [];
-    };
-  }
-
-  class DefaultInfluencer extends Influencer {
-    constructor() {
-      super(...arguments);
-    }
-
-    getSuggestions = async ({ query }) => {
-      if (!query) return [];
-      return (CONFIG.suggestions[query] ?? []).slice(0, this.limit);
-    };
-  }
-
-  class DuckDuckGoInfluencer extends Influencer {
-    constructor() {
-      super(...arguments);
-    }
-
-    getSuggestions = async ({ key, search, splitBy }) => {
-      if (!search) return [];
-
-      return new Promise((resolve) => {
-        window.autocompleteCallback = (res) =>
-          resolve(
-            DuckDuckGoInfluencer.attachSearchPrefix(
-              res
-                .map((s) => s.phrase)
-                .filter((s) => s.toLowerCase() !== search.toLowerCase())
-                .slice(0, this.limit),
-              { key, splitBy }
-            )
-          );
-
-        const script = document.createElement('script');
-        document.querySelector('head').appendChild(script);
-        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
-      });
-    };
-  }
-
   class SearchComponent extends HTMLElement {
-    static #INFLUENCERS = [new DefaultInfluencer(), new DuckDuckGoInfluencer()];
     static #PATH_DELIMITER = '/';
     static #SEARCH_DELIMITER = "'";
     static #SUGGESTION_LIMIT = 4;
@@ -491,8 +436,28 @@
       this.shadowRoot.append(clone);
     }
 
+    static #attachSearchPrefix(array, { key, splitBy }) {
+      if (!splitBy) return array;
+      return array.map((search) => `${key}${splitBy}${search}`);
+    }
+
     static #escapeRegexCharacters(s) {
       return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    static #fetchDuckDuckGoSuggestions(search) {
+      return new Promise((resolve) => {
+        window.autocompleteCallback = (res) =>
+          resolve(
+            res
+              .map((item) => item.phrase)
+              .filter((item) => item.toLowerCase() !== search.toLowerCase())
+          );
+
+        const script = document.createElement('script');
+        document.querySelector('head').appendChild(script);
+        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
+      });
     }
 
     static #hasProtocol(s) {
@@ -595,20 +560,16 @@
     }
 
     #onInput = async (e) => {
-      const query = e.currentTarget.value;
-      if (!query) return this.#close();
-      const parsedQuery = SearchComponent.#parseQuery(query);
+      const q = SearchComponent.#parseQuery(e.currentTarget.value);
+      let suggestions = CONFIG.suggestions[q.query] ?? [];
 
-      const suggestions = await Promise.all(
-        SearchComponent.#INFLUENCERS.map((influencer) =>
-          influencer.getSuggestions(parsedQuery)
-        )
-      );
+      if (q.search && suggestions.length < SearchComponent.#SUGGESTION_LIMIT) {
+        const res = await SearchComponent.#fetchDuckDuckGoSuggestions(q.search);
+        const formatted = SearchComponent.#attachSearchPrefix(res, q);
+        suggestions = suggestions.concat(formatted);
+      }
 
-      this.#renderSuggestions(
-        [...new Set([].concat.apply([], suggestions))],
-        parsedQuery.query
-      );
+      this.#renderSuggestions(suggestions, q.query);
     };
 
     #onKeydown = (e) => {
