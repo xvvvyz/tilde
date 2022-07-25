@@ -27,7 +27,7 @@ To go to a specific path on a site, type the path after the site&rsquo;s key.
 For example:
 
 - `r/r/startpages` will redirect you to
-  [r/startpages](https://www.reddit.com/r/startpages).
+  [reddit.com/r/startpages](https://www.reddit.com/r/startpages).
 - `h/popular` will redirect you to
   [hypem.com/popular](http://hypem.com/popular).
 
