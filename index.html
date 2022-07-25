@@ -344,6 +344,7 @@
       position: relative;
       transition: color var(--transition-speed);
       white-space: nowrap;
+      z-index: 1;
     }
 
     .suggestion:focus,
@@ -585,7 +586,7 @@
 
     #onKeydown = (e) => {
       if (!this.#refs.dialog.open) {
-        this.#refs.dialog.showModal();
+        this.#refs.dialog.show();
         this.#refs.input.focus();
 
         requestAnimationFrame(() => {
