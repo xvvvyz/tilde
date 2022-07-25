@@ -429,7 +429,6 @@
       this.#refs.form = clone.querySelector('.form');
       this.#refs.input = clone.querySelector('.input');
       this.#refs.suggestionsContainer = clone.querySelector('.suggestions');
-      this.#refs.input.addEventListener('focus', this.#onFocusInput);
       this.#refs.input.addEventListener('input', this.#onInput);
       const onSubmit = () => this.#execute(this.#refs.input.value);
       this.#refs.form.addEventListener('submit', onSubmit, false);
@@ -448,12 +447,16 @@
 
     static #fetchDuckDuckGoSuggestions(search) {
       return new Promise((resolve) => {
-        window.autocompleteCallback = (res) =>
-          resolve(
-            res
-              .filter((item) => item.phrase !== search.toLowerCase())
-              .map((item) => item.phrase)
-          );
+        window.autocompleteCallback = (res) => {
+          const suggestions = [];
+
+          for (const item of res) {
+            if (item.phrase === search.toLowerCase()) continue;
+            suggestions.push(item.phrase);
+          }
+
+          resolve(suggestions);
+        };
 
         const script = document.createElement('script');
         document.querySelector('head').appendChild(script);
@@ -561,16 +564,14 @@
       else this.#refs.input.focus();
     }
 
-    #onFocusInput = (e) => {
-      const target = e.currentTarget;
+    #onInput = async () => {
+      const q = SearchComponent.#parseQuery(this.#refs.input.value);
 
-      requestAnimationFrame(() => {
-        if (!target.value) this.#close();
-      });
-    };
+      if (!q.query) {
+        this.#close();
+        return;
+      }
 
-    #onInput = async (e) => {
-      const q = SearchComponent.#parseQuery(e.currentTarget.value);
       let suggestions = CONFIG.suggestions[q.query] ?? [];
 
       if (q.search && suggestions.length < SearchComponent.#SUGGESTION_LIMIT) {
@@ -586,13 +587,17 @@
       if (!this.#refs.dialog.open) {
         this.#refs.dialog.showModal();
         this.#refs.input.focus();
+
+        requestAnimationFrame(() => {
+          // close the search dialog before the next repaint if a character is
+          // not produced (e.g. if you type shift, control, alt etc.)
+          if (!this.#refs.input.value) this.#close();
+        });
+
         return;
       }
 
-      if (
-        e.key === 'Escape' ||
-        (e.key === 'Backspace' && !this.#refs.input.value)
-      ) {
+      if (e.key === 'Escape') {
         this.#close();
         return;
       }
