@@ -258,7 +258,7 @@
 <script type="module">
   class CommandsComponent extends HTMLElement {
     #refs = {
-      commandsContainer: null,
+      commands: null,
     };
 
     constructor() {
@@ -266,7 +266,7 @@
       this.attachShadow({ mode: 'open' });
       const template = document.getElementById('commands-template');
       const clone = template.content.cloneNode(true);
-      this.#refs.commandsContainer = clone.querySelector('.commands');
+      this.#refs.commands = clone.querySelector('.commands');
       this.#renderCommands();
       this.shadowRoot.append(clone);
     }
@@ -279,7 +279,7 @@
         clone.querySelector('.command').href = url;
         clone.querySelector('.key').innerText = key;
         clone.querySelector('.name').innerText = name;
-        this.#refs.commandsContainer.append(clone);
+        this.#refs.commands.append(clone);
       }
     }
   }
@@ -305,16 +305,20 @@
       border: none;
       display: none;
       flex-direction: column;
-      height: 100vh;
+      height: 100%;
       justify-content: center;
       left: 0;
       padding: 0;
       top: 0;
-      width: 100vw;
+      width: 100%;
     }
 
     .dialog[open] {
       display: flex;
+    }
+
+    .form {
+      width: 100%;
     }
 
     .input {
@@ -417,8 +421,7 @@
       dialog: null,
       form: null,
       input: null,
-      suggestions: [],
-      suggestionsContainer: null,
+      suggestions: null,
     };
 
     constructor() {
@@ -429,10 +432,10 @@
       this.#refs.dialog = clone.querySelector('.dialog');
       this.#refs.form = clone.querySelector('.form');
       this.#refs.input = clone.querySelector('.input');
-      this.#refs.suggestionsContainer = clone.querySelector('.suggestions');
+      this.#refs.suggestions = clone.querySelector('.suggestions');
+      this.#refs.form.addEventListener('submit', this.#onSubmit, false);
       this.#refs.input.addEventListener('input', this.#onInput);
-      const onSubmit = () => this.#execute(this.#refs.input.value);
-      this.#refs.form.addEventListener('submit', onSubmit, false);
+      this.#refs.suggestions.addEventListener('click', this.#onSuggestionClick);
       document.addEventListener('keydown', this.#onKeydown);
       this.shadowRoot.append(clone);
     }
@@ -531,16 +534,11 @@
       return `${parser.protocol}//${parser.hostname}`;
     }
 
-    #clearSuggestions() {
-      this.#refs.suggestions = [];
-      this.#refs.suggestionsContainer.innerHTML = '';
-    }
-
     #close() {
       this.#refs.input.value = '';
       this.#refs.input.blur();
       this.#refs.dialog.close();
-      this.#clearSuggestions();
+      this.#refs.suggestions.innerHTML = '';
     }
 
     #execute(query) {
@@ -551,17 +549,17 @@
 
     #focusNextSuggestion(previous = false) {
       const active = this.shadowRoot.activeElement;
-      const activeIndex = this.#refs.suggestions.indexOf(active);
       let nextIndex;
 
-      if (activeIndex === -1) {
-        nextIndex = previous ? this.#refs.suggestions.length - 1 : 0;
-      } else {
+      if (active.dataset.index) {
+        const activeIndex = Number(active.dataset.index);
         nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
+      } else {
+        nextIndex = previous ? this.#refs.suggestions.childElementCount - 1 : 0;
       }
 
-      const next = this.#refs.suggestions[nextIndex];
-      if (next) next.focus();
+      const next = this.#refs.suggestions.children[nextIndex];
+      if (next) next.querySelector('.suggestion').focus();
       else this.#refs.input.focus();
     }
 
@@ -621,16 +619,26 @@
       }
     };
 
+    #onSubmit = () => {
+      this.#execute(this.#refs.input.value);
+    };
+
+    #onSuggestionClick = (e) => {
+      const ref = e.target.closest('.suggestion');
+      if (!ref) return;
+      this.#execute(ref.dataset.suggestion);
+    };
+
     #renderSuggestions(suggestions, query) {
-      this.#clearSuggestions();
+      this.#refs.suggestions.innerHTML = '';
       const sliced = suggestions.slice(0, SearchComponent.#SUGGESTION_LIMIT);
 
-      for (const suggestion of sliced) {
+      for (const [index, suggestion] of sliced.entries()) {
         const template = document.getElementById('suggestion-template');
         const clone = template.content.cloneNode(true);
         const ref = clone.querySelector('.suggestion');
-        const onClick = this.#execute.bind(this, suggestion);
-        ref.addEventListener('click', onClick);
+        ref.dataset.index = index;
+        ref.dataset.suggestion = suggestion;
         const escapedQuery = SearchComponent.#escapeRegexCharacters(query);
         const matched = suggestion.match(new RegExp(escapedQuery, 'i'));
 
@@ -648,8 +656,7 @@
           ref.innerText = suggestion;
         }
 
-        this.#refs.suggestions.push(ref);
-        this.#refs.suggestionsContainer.append(clone);
+        this.#refs.suggestions.append(clone);
       }
     }
   }
