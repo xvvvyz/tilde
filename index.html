@@ -7,127 +7,107 @@
 
 <script>
   const CONFIG = {
-    commands: [
-      {
-        search: '/?q={}',
-        url: 'https://duckduckgo.com',
-      },
-      {
-        key: '0',
+    commands: {
+      0: {
         name: 'Local',
-        search: ':{}',
+        searchTemplate: ':{}',
         url: 'http://localhost:3000',
       },
-      {
-        key: 'a',
+      a: {
         name: 'AWS',
         url: 'https://us-west-2.console.aws.amazon.com/console/home',
       },
-      {
-        key: 'b',
+      b: {
         name: 'Dribbble',
-        search: '/search/{}',
+        searchTemplate: '/search/{}',
         url: 'https://dribbble.com/shots/popular',
       },
-      {
-        key: 'c',
+      c: {
         name: 'Calendar',
-        search: '/calendar/u/0/r/search?q={}',
+        searchTemplate: '/calendar/u/0/r/search?q={}',
         url: 'https://calendar.google.com/calendar/u/0/r',
       },
-      {
-        key: 'd',
+      d: {
         name: 'Drive',
-        search: '/drive/u/0/search?q={}',
+        searchTemplate: '/drive/u/0/search?q={}',
         url: 'https://drive.google.com/drive/u/0/my-drive',
       },
-      {
-        key: 'f',
+      f: {
         name: 'Figma',
         url: 'https://www.figma.com/files/recent',
       },
-      {
-        key: 'g',
+      g: {
         name: 'GitHub',
-        search: '/search?q={}',
+        searchTemplate: '/search?q={}',
         url: 'https://github.com',
       },
-      {
-        key: 'h',
+      h: {
         name: 'Hypem',
-        search: '/search/{}',
+        searchTemplate: '/search/{}',
         url: 'https://hypem.com/latest',
       },
-      {
-        key: 'i',
+      i: {
         name: 'Inbox',
         url: 'https://mail.proton.me/u/0/inbox',
       },
-      {
-        key: 'k',
+      k: {
         name: 'Keep',
-        search: '/u/0/#search/text={}',
+        searchTemplate: '/u/0/#search/text={}',
         url: 'https://keep.google.com/u/0',
       },
-      {
-        key: 'l',
+      l: {
         name: 'LinkedIn',
-        search: '/search/results/all/?keywords={}',
+        searchTemplate: '/search/results/all/?keywords={}',
         url: 'https://www.linkedin.com',
       },
-      {
-        key: 'm',
+      m: {
         name: 'Mail',
-        search: '/mail/u/0/#search/{}',
+        searchTemplate: '/mail/u/0/#search/{}',
         url: 'https://mail.google.com/mail/u/0/#inbox',
       },
-      {
-        key: 'n',
+      n: {
         name: 'Notion',
         url: 'https://www.notion.so',
       },
-      {
-        key: 'p',
+      p: {
         name: 'Hunt',
-        search: '/search?q={}',
+        searchTemplate: '/search?q={}',
         url: 'https://www.producthunt.com',
       },
-      {
-        key: 'r',
+      r: {
         name: 'Reddit',
-        search: '/search?q={}',
+        searchTemplate: '/search?q={}',
         url: 'https://www.reddit.com',
       },
-      {
-        key: 's',
+      s: {
         name: 'Spotify',
-        search: '/search/{}',
+        searchTemplate: '/search/{}',
         url: 'https://open.spotify.com',
       },
-      {
-        key: 't',
+      t: {
         name: 'Twitter',
-        search: '/search?q={}',
+        searchTemplate: '/search?q={}',
         url: 'https://twitter.com/home',
       },
-      {
-        key: 'v',
+      v: {
         name: 'Vercel',
         url: 'https://vercel.com',
       },
-      {
-        key: 'x',
+      x: {
         name: 'Netflix',
-        search: '/search?q={}',
+        searchTemplate: '/search?q={}',
         url: 'https://www.netflix.com/browse',
       },
-      {
-        key: 'y',
+      y: {
         name: 'YouTube',
-        search: '/results?search_query={}',
+        searchTemplate: '/results?search_query={}',
         url: 'https://youtube.com/feed/subscriptions',
       },
-    ],
+    },
+    defaultCommand: {
+      searchTemplate: '/?q={}',
+      url: 'https://duckduckgo.com',
+    },
     suggestions: {
       0: ["0'8000", "0'8080"],
       a: ['a/cognito/v2/idp/user-pools', 'a/dynamodbv2#item-explorer'],
@@ -256,7 +236,7 @@
 </template>
 
 <script type="module">
-  class CommandsComponent extends HTMLElement {
+  class Commands extends HTMLElement {
     #refs = {
       commands: null,
     };
@@ -272,8 +252,7 @@
     }
 
     #renderCommands() {
-      for (const { key, name, url } of CONFIG.commands) {
-        if (!name) continue;
+      for (const [key, { name, url }] of Object.entries(CONFIG.commands)) {
         const template = document.getElementById('command-template');
         const clone = template.content.cloneNode(true);
         clone.querySelector('.command').href = url;
@@ -284,7 +263,7 @@
     }
   }
 
-  customElements.define('commands-component', CommandsComponent);
+  customElements.define('commands-component', Commands);
 </script>
 
 <template id="search-template">
@@ -412,7 +391,7 @@
 </template>
 
 <script type="module">
-  class SearchComponent extends HTMLElement {
+  class Search extends HTMLElement {
     static #PATH_DELIMITER = '/';
     static #SEARCH_DELIMITER = "'";
     static #SUGGESTION_LIMIT = 4;
@@ -468,6 +447,14 @@
       });
     }
 
+    static #formatSearchUrl(url, searchPath, search) {
+      if (!searchPath) return url;
+      const baseUrl = Search.#stripUrlPath(url);
+      const urlQuery = encodeURIComponent(search);
+      searchPath = searchPath.replace(/{}/g, urlQuery);
+      return baseUrl + searchPath;
+    }
+
     static #hasProtocol(s) {
       return /^[a-zA-Z]+:\/\//i.test(s);
     }
@@ -484,49 +471,34 @@
         return { query, url };
       }
 
-      const searchSplit = query.split(SearchComponent.#SEARCH_DELIMITER);
-      const pathSplit = query.split(SearchComponent.#PATH_DELIMITER);
-      let defaultSearch = {};
-
-      for (const cmd of CONFIG.commands) {
-        if (query === cmd.key) {
-          return { key: cmd.key, query, url: cmd.url };
-        }
-
-        if (cmd.search && searchSplit[0] === cmd.key) {
-          const splitBy = SearchComponent.#SEARCH_DELIMITER;
-          const search = SearchComponent.#shiftAndTrim(searchSplit, splitBy);
-          const url = SearchComponent.#prepSearch(cmd.url, cmd.search, search);
-          return { key: cmd.key, query, search, splitBy, url };
-        }
-
-        if (pathSplit[0] === cmd.key) {
-          const splitBy = SearchComponent.#PATH_DELIMITER;
-          const path = SearchComponent.#shiftAndTrim(pathSplit, splitBy);
-          const url = `${SearchComponent.#stripUrlPath(cmd.url)}/${path}`;
-          return { key: cmd.key, path, query, splitBy, url };
-        }
-
-        if (!cmd.key) {
-          const url = SearchComponent.#prepSearch(cmd.url, cmd.search, query);
-          defaultSearch = { key: cmd.key, query, search: query, url };
-        }
+      if (CONFIG.commands[query]) {
+        const { key, url } = CONFIG.commands[query];
+        return { key, query, url };
       }
 
-      return defaultSearch;
+      let splitBy = Search.#SEARCH_DELIMITER;
+      const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
+
+      if (CONFIG.commands[searchKey]) {
+        const { searchTemplate, url: base } = CONFIG.commands[searchKey];
+        const search = rawSearch.trim();
+        const url = Search.#formatSearchUrl(base, searchTemplate, search);
+        return { key: searchKey, query, search, splitBy, url };
+      }
+
+      splitBy = Search.#PATH_DELIMITER;
+      const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
+
+      if (CONFIG.commands[pathKey]) {
+        const { url: base } = CONFIG.commands[pathKey];
+        const url = `${Search.#stripUrlPath(base)}/${path}`;
+        return { key: pathKey, path, query, splitBy, url };
+      }
+
+      const { searchTemplate, url: base } = CONFIG.defaultCommand;
+      const url = Search.#formatSearchUrl(base, searchTemplate, query);
+      return { query, search: query, url };
     };
-
-    static #prepSearch(url, searchPath, search) {
-      if (!searchPath) return url;
-      const baseUrl = SearchComponent.#stripUrlPath(url);
-      const urlQuery = encodeURIComponent(search);
-      searchPath = searchPath.replace(/{}/g, urlQuery);
-      return baseUrl + searchPath;
-    }
-
-    static #shiftAndTrim(array, delimiter) {
-      return array.slice(1).join(delimiter).trim();
-    }
 
     static #stripUrlPath(url) {
       const parser = document.createElement('a');
@@ -542,7 +514,7 @@
     }
 
     #execute(query) {
-      const { url } = SearchComponent.#parseQuery(query);
+      const { url } = Search.#parseQuery(query);
       window.open(url, '_blank', 'noopener noreferrer');
       this.#close();
     }
@@ -564,7 +536,7 @@
     }
 
     #onInput = async () => {
-      const q = SearchComponent.#parseQuery(this.#refs.input.value);
+      const q = Search.#parseQuery(this.#refs.input.value);
 
       if (!q.query) {
         this.#close();
@@ -573,9 +545,9 @@
 
       let suggestions = CONFIG.suggestions[q.query] ?? [];
 
-      if (q.search && suggestions.length < SearchComponent.#SUGGESTION_LIMIT) {
-        const res = await SearchComponent.#fetchDuckDuckGoSuggestions(q.search);
-        const formatted = SearchComponent.#attachSearchPrefix(res, q);
+      if (q.search && suggestions.length < Search.#SUGGESTION_LIMIT) {
+        const res = await Search.#fetchDuckDuckGoSuggestions(q.search);
+        const formatted = Search.#attachSearchPrefix(res, q);
         suggestions = suggestions.concat(formatted);
       }
 
@@ -631,7 +603,7 @@
 
     #renderSuggestions(suggestions, query) {
       this.#refs.suggestions.innerHTML = '';
-      const sliced = suggestions.slice(0, SearchComponent.#SUGGESTION_LIMIT);
+      const sliced = suggestions.slice(0, Search.#SUGGESTION_LIMIT);
 
       for (const [index, suggestion] of sliced.entries()) {
         const template = document.getElementById('suggestion-template');
@@ -639,7 +611,7 @@
         const ref = clone.querySelector('.suggestion');
         ref.dataset.index = index;
         ref.dataset.suggestion = suggestion;
-        const escapedQuery = SearchComponent.#escapeRegexCharacters(query);
+        const escapedQuery = Search.#escapeRegexCharacters(query);
         const matched = suggestion.match(new RegExp(escapedQuery, 'i'));
 
         if (matched) {
@@ -661,7 +633,7 @@
     }
   }
 
-  customElements.define('search-component', SearchComponent);
+  customElements.define('search-component', Search);
 </script>
 
 <style>
