@@ -252,8 +252,9 @@
     }
 
     #renderCommands() {
+      const template = document.getElementById('command-template');
+
       for (const [key, { name, url }] of Object.entries(CONFIG.commands)) {
-        const template = document.getElementById('command-template');
         const clone = template.content.cloneNode(true);
         clone.querySelector('.command').href = url;
         clone.querySelector('.key').innerText = key;
@@ -604,9 +605,9 @@
     #renderSuggestions(suggestions, query) {
       this.#refs.suggestions.innerHTML = '';
       const sliced = suggestions.slice(0, Search.#SUGGESTION_LIMIT);
+      const template = document.getElementById('suggestion-template');
 
       for (const [index, suggestion] of sliced.entries()) {
-        const template = document.getElementById('suggestion-template');
         const clone = template.content.cloneNode(true);
         const ref = clone.querySelector('.suggestion');
         ref.dataset.index = index;
