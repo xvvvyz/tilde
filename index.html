@@ -108,6 +108,9 @@
       searchTemplate: '/?q={}',
       url: 'https://duckduckgo.com',
     },
+    pathDelimiter: '/',
+    searchDelimiter: "'",
+    suggestionLimit: 4,
     suggestions: {
       0: ["0'8000", "0'8080"],
       a: ['a/cognito/v2/idp/user-pools', 'a/dynamodbv2#item-explorer'],
@@ -393,10 +396,6 @@
 
 <script type="module">
   class Search extends HTMLElement {
-    static #PATH_DELIMITER = '/';
-    static #SEARCH_DELIMITER = "'";
-    static #SUGGESTION_LIMIT = 4;
-
     #refs = {
       dialog: null,
       form: null,
@@ -477,7 +476,7 @@
         return { key, query, url };
       }
 
-      let splitBy = Search.#SEARCH_DELIMITER;
+      let splitBy = CONFIG.searchDelimiter;
       const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
 
       if (CONFIG.commands[searchKey]) {
@@ -487,7 +486,7 @@
         return { key: searchKey, query, search, splitBy, url };
       }
 
-      splitBy = Search.#PATH_DELIMITER;
+      splitBy = CONFIG.pathDelimiter;
       const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
 
       if (CONFIG.commands[pathKey]) {
@@ -546,7 +545,7 @@
 
       let suggestions = CONFIG.suggestions[q.query] ?? [];
 
-      if (q.search && suggestions.length < Search.#SUGGESTION_LIMIT) {
+      if (q.search && suggestions.length < CONFIG.suggestionLimit) {
         const res = await Search.#fetchDuckDuckGoSuggestions(q.search);
         const formatted = Search.#attachSearchPrefix(res, q);
         suggestions = suggestions.concat(formatted);
@@ -604,7 +603,7 @@
 
     #renderSuggestions(suggestions, query) {
       this.#refs.suggestions.innerHTML = '';
-      const sliced = suggestions.slice(0, Search.#SUGGESTION_LIMIT);
+      const sliced = suggestions.slice(0, CONFIG.suggestionLimit);
       const template = document.getElementById('suggestion-template');
 
       for (const [index, suggestion] of sliced.entries()) {
