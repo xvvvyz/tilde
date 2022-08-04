@@ -108,6 +108,7 @@
       searchTemplate: '/?q={}',
       url: 'https://duckduckgo.com',
     },
+    openLinksInNewTab: true,
     pathDelimiter: '/',
     searchDelimiter: "'",
     suggestionLimit: 4,
@@ -231,7 +232,7 @@
 
 <template id="command-template">
   <li>
-    <a class="command" rel="noopener noreferrer" target="_blank">
+    <a class="command" rel="noopener noreferrer">
       <span class="key"></span>
       <span class="name"></span>
     </a>
@@ -259,7 +260,9 @@
 
       for (const [key, { name, url }] of Object.entries(CONFIG.commands)) {
         const clone = template.content.cloneNode(true);
-        clone.querySelector('.command').href = url;
+        const command = clone.querySelector('.command');
+        command.href = url;
+        if (CONFIG.openLinksInNewTab) command.target = '_blank';
         clone.querySelector('.key').innerText = key;
         clone.querySelector('.name').innerText = name;
         this.#refs.commands.append(clone);
@@ -515,7 +518,8 @@
 
     #execute(query) {
       const { url } = Search.#parseQuery(query);
-      window.open(url, '_blank', 'noopener noreferrer');
+      const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
+      window.open(url, target, 'noopener noreferrer');
       this.#close();
     }
 
