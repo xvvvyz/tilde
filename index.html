@@ -7,125 +7,129 @@
 
 <script>
   const CONFIG = {
-    commands: {
-      0: {
-        name: 'Local',
-        searchTemplate: ':{}',
-        url: 'http://localhost:3000',
-      },
-      a: {
-        name: 'AWS',
-        url: 'https://us-west-2.console.aws.amazon.com/console/home',
-      },
-      b: {
-        name: 'Dribbble',
-        searchTemplate: '/search/{}',
-        url: 'https://dribbble.com/shots/popular',
-      },
-      c: {
-        name: 'Calendar',
-        searchTemplate: '/calendar/u/0/r/search?q={}',
-        url: 'https://calendar.google.com/calendar/u/0/r',
-      },
-      d: {
-        name: 'Drive',
-        searchTemplate: '/drive/u/0/search?q={}',
-        url: 'https://drive.google.com/drive/u/0/my-drive',
-      },
-      f: {
-        name: 'Figma',
-        url: 'https://www.figma.com/files/recent',
-      },
-      g: {
-        name: 'GitHub',
-        searchTemplate: '/search?q={}',
-        url: 'https://github.com',
-      },
-      h: {
-        name: 'Hypem',
-        searchTemplate: '/search/{}',
-        url: 'https://hypem.com/latest',
-      },
-      i: {
-        name: 'Inbox',
-        url: 'https://mail.proton.me/u/0/inbox',
-      },
-      k: {
-        name: 'Keep',
-        searchTemplate: '/u/0/#search/text={}',
-        url: 'https://keep.google.com/u/0',
-      },
-      l: {
-        name: 'LinkedIn',
-        searchTemplate: '/search/results/all/?keywords={}',
-        url: 'https://www.linkedin.com',
-      },
-      m: {
-        name: 'Mail',
-        searchTemplate: '/mail/u/0/#search/{}',
-        url: 'https://mail.google.com/mail/u/0/#inbox',
-      },
-      n: {
-        name: 'Notion',
-        url: 'https://www.notion.so',
-      },
-      o: {
-        name: 'Discord',
-        url: 'https://discord.com/channels/@me',
-      },
-      r: {
-        name: 'Reddit',
-        searchTemplate: '/search?q={}',
-        url: 'https://www.reddit.com',
-      },
-      s: {
-        name: 'Spotify',
-        searchTemplate: '/search/{}',
-        url: 'https://open.spotify.com',
-      },
-      t: {
-        name: 'Twitter',
-        searchTemplate: '/search?q={}',
-        url: 'https://twitter.com/home',
-      },
-      u: {
-        name: 'Supabase',
-        url: 'https://app.supabase.com',
-      },
-      v: {
-        name: 'Vercel',
-        url: 'https://vercel.com/dashboard',
-      },
-      y: {
-        name: 'YouTube',
-        searchTemplate: '/results?search_query={}',
-        url: 'https://youtube.com/feed/subscriptions',
-      },
-    },
-    defaultCommand: {
-      searchTemplate: '/?q={}',
-      url: 'https://duckduckgo.com',
-    },
+    commandPathDelimiter: '/',
+    commandSearchDelimiter: ' ',
+    defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
     openLinksInNewTab: true,
-    pathDelimiter: '/',
-    searchDelimiter: "'",
     suggestionLimit: 4,
-    suggestions: {
-      0: ["0'8000", "0'8080"],
-      a: ['a/cognito/v2/idp/user-pools', 'a/dynamodbv2#item-explorer'],
-      c: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
-      d: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
-      g: ['g/trending', 'g/ossu', 'g/xvvvyz/tilde', 'gist.github.com'],
-      h: ['h/popular', 'h/popular/lastweek', 'h/tags'],
-      i: ['i/u/1/inbox', 'i/u/2/inbox'],
-      k: ['k/u/1', 'k/u/2'],
-      m: ['m/mail/u/1/#inbox', 'm/mail/u/2/#inbox'],
-      o: ['o/channels/830183651022471199'],
-      r: ['r/r/startpages', 'r/r/webdev', 'r/r/onebag', 'r/r/fujix'],
-      s: ['s/collection/tracks', 's/playlist/37i9dQZEVXcXr3r4FYT3J7'],
-      u: ['u/project/xrncrutshmuifkzkexwb/editor'],
-      v: ['v/xvvvyz/lliist/deployments'],
-      y: ['y/feed/trending'],
+  };
+
+  const COMMANDS = {
+    0: {
+      name: 'Local',
+      searchTemplate: ':{}',
+      suggestions: ['0 8000', '0 8080'],
+      url: 'http://localhost:3000',
+    },
+    a: {
+      name: 'AWS',
+      suggestions: [
+        'a/cognito/v2/idp/user-pools',
+        'a/dynamodbv2#item-explorer',
+      ],
+      url: 'https://us-west-2.console.aws.amazon.com/console/home',
+    },
+    b: {
+      name: 'Dribbble',
+      searchTemplate: '/search/{}',
+      url: 'https://dribbble.com/shots/popular',
+    },
+    c: {
+      name: 'Calendar',
+      searchTemplate: '/calendar/u/0/r/search?q={}',
+      suggestions: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
+      url: 'https://calendar.google.com/calendar/u/0/r',
+    },
+    d: {
+      name: 'Drive',
+      searchTemplate: '/drive/u/0/search?q={}',
+      suggestions: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
+      url: 'https://drive.google.com/drive/u/0/my-drive',
+    },
+    f: {
+      name: 'Figma',
+      url: 'https://www.figma.com/files/recent',
+    },
+    g: {
+      name: 'GitHub',
+      searchTemplate: '/search?q={}',
+      suggestions: [
+        'g/trending',
+        'g/ossu',
+        'g/xvvvyz/tilde',
+        'gist.github.com',
+      ],
+      url: 'https://github.com',
+    },
+    h: {
+      name: 'Hypem',
+      searchTemplate: '/search/{}',
+      suggestions: ['h/popular', 'h/popular/lastweek', 'h/tags'],
+      url: 'https://hypem.com/latest',
+    },
+    i: {
+      name: 'Inbox',
+      suggestions: ['i/u/1/inbox', 'i/u/2/inbox'],
+      url: 'https://mail.proton.me/u/0/inbox',
+    },
+    k: {
+      name: 'Keep',
+      searchTemplate: '/u/0/#search/text={}',
+      suggestions: ['k/u/1', 'k/u/2'],
+      url: 'https://keep.google.com/u/0',
+    },
+    l: {
+      name: 'LinkedIn',
+      searchTemplate: '/search/results/all/?keywords={}',
+      url: 'https://www.linkedin.com',
+    },
+    m: {
+      name: 'Mail',
+      searchTemplate: '/mail/u/0/#search/{}',
+      suggestions: ['m/mail/u/1/#inbox', 'm/mail/u/2/#inbox'],
+      url: 'https://mail.google.com/mail/u/0/#inbox',
+    },
+    n: {
+      name: 'Notion',
+      url: 'https://www.notion.so',
+    },
+    o: {
+      name: 'Discord',
+      suggestions: ['o/channels/830183651022471199'],
+      url: 'https://discord.com/channels/@me',
+    },
+    r: {
+      name: 'Reddit',
+      searchTemplate: '/search?q={}',
+      suggestions: ['r/r/startpages', 'r/r/webdev', 'r/r/onebag', 'r/r/fujix'],
+      url: 'https://www.reddit.com',
+    },
+    s: {
+      name: 'Spotify',
+      searchTemplate: '/search/{}',
+      suggestions: ['s/collection/tracks', 's/playlist/37i9dQZEVXcXr3r4FYT3J7'],
+      url: 'https://open.spotify.com',
+    },
+    t: {
+      name: 'Twitter',
+      searchTemplate: '/search?q={}',
+      url: 'https://twitter.com/home',
+    },
+    u: {
+      name: 'Supabase',
+      suggestions: ['u/project/xrncrutshmuifkzkexwb/editor'],
+      url: 'https://app.supabase.com',
+    },
+    v: {
+      name: 'Vercel',
+      suggestions: ['v/xvvvyz/lliist/deployments'],
+      url: 'https://vercel.com/dashboard',
+    },
+    y: {
+      name: 'YouTube',
+      searchTemplate: '/results?search_query={}',
+      suggestions: ['y/feed/trending'],
+      url: 'https://youtube.com/feed/subscriptions',
     },
   };
 </script>
@@ -259,7 +263,8 @@
     #renderCommands() {
       const template = document.getElementById('command-template');
 
-      for (const [key, { name, url }] of Object.entries(CONFIG.commands)) {
+      for (const [key, { name, url }] of Object.entries(COMMANDS)) {
+        if (!name || !url) continue;
         const clone = template.content.cloneNode(true);
         const command = clone.querySelector('.command');
         command.href = url;
@@ -453,7 +458,7 @@
 
     static #formatSearchUrl(url, searchPath, search) {
       if (!searchPath) return url;
-      const baseUrl = Search.#stripUrlPath(url);
+      const [baseUrl] = Search.#splitUrl(url);
       const urlQuery = encodeURIComponent(search);
       searchPath = searchPath.replace(/{}/g, urlQuery);
       return baseUrl + searchPath;
@@ -475,39 +480,42 @@
         return { query, url };
       }
 
-      if (CONFIG.commands[query]) {
-        const { key, url } = CONFIG.commands[query];
+      if (COMMANDS[query]) {
+        const { key, url } = COMMANDS[query];
         return { key, query, url };
       }
 
-      let splitBy = CONFIG.searchDelimiter;
+      let splitBy = CONFIG.commandSearchDelimiter;
       const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (CONFIG.commands[searchKey]) {
-        const { searchTemplate, url: base } = CONFIG.commands[searchKey];
+      if (COMMANDS[searchKey]) {
+        const { searchTemplate, url: base } = COMMANDS[searchKey];
         const search = rawSearch.trim();
         const url = Search.#formatSearchUrl(base, searchTemplate, search);
         return { key: searchKey, query, search, splitBy, url };
       }
 
-      splitBy = CONFIG.pathDelimiter;
+      splitBy = CONFIG.commandPathDelimiter;
       const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (CONFIG.commands[pathKey]) {
-        const { url: base } = CONFIG.commands[pathKey];
-        const url = `${Search.#stripUrlPath(base)}/${path}`;
+      if (COMMANDS[pathKey]) {
+        const { url: base } = COMMANDS[pathKey];
+        const [baseUrl] = Search.#splitUrl(base);
+        const url = `${baseUrl}/${path}`;
         return { key: pathKey, path, query, splitBy, url };
       }
 
-      const { searchTemplate, url: base } = CONFIG.defaultCommand;
-      const url = Search.#formatSearchUrl(base, searchTemplate, query);
+      const [baseUrl, rest] = Search.#splitUrl(CONFIG.defaultSearchTemplate);
+      const url = Search.#formatSearchUrl(baseUrl, rest, query);
       return { query, search: query, url };
     };
 
-    static #stripUrlPath(url) {
+    static #splitUrl(url) {
       const parser = document.createElement('a');
       parser.href = url;
-      return `${parser.protocol}//${parser.hostname}`;
+      const baseUrl = `${parser.protocol}//${parser.hostname}`;
+      const rest = `${parser.pathname}${parser.search}`;
+      return [baseUrl, rest];
     }
 
     #close() {
@@ -548,7 +556,7 @@
         return;
       }
 
-      let suggestions = CONFIG.suggestions[q.query] ?? [];
+      let suggestions = COMMANDS[q.query]?.suggestions ?? [];
 
       if (q.search && suggestions.length < CONFIG.suggestionLimit) {
         const res = await Search.#fetchDuckDuckGoSuggestions(q.search);
