@@ -144,7 +144,7 @@
       Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --font-size-1: 1rem;
     --font-size-2: 3rem;
-    --font-size-base: 90%;
+    --font-size-base: clamp(90%, 1.4vw, 120%);
     --font-weight-bold: 700;
     --font-weight-normal: 400;
     --line-height-base: 1.4;
@@ -158,24 +158,6 @@
       --color-background: #eee;
       --color-text-subtle: #777;
       --color-text: #111;
-    }
-  }
-
-  @media (min-width: 1000px) {
-    :root {
-      --font-size-base: 100%;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    :root {
-      --font-size-base: 110%;
-    }
-  }
-
-  @media (min-width: 1600px) {
-    :root {
-      --font-size-base: 120%;
     }
   }
 
