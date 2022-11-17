@@ -149,8 +149,7 @@
     --font-weight-normal: 400;
     --line-height-base: 1.4;
     --space-1: 1rem;
-    --space-2: 2rem;
-    --space-3: 4rem;
+    --space-2: 4rem;
     --transition-speed: 200ms;
   }
 
@@ -322,7 +321,7 @@
     .suggestion {
       cursor: pointer;
       font-size: var(--font-size-1);
-      padding: var(--space-1) var(--space-2);
+      padding: var(--space-1);
       position: relative;
       transition: color var(--transition-speed);
       white-space: nowrap;
@@ -339,10 +338,10 @@
       background-color: var(--color-text);
       bottom: var(--space-1);
       content: ' ';
-      left: var(--space-2);
+      left: var(--space-1);
       opacity: 0;
       position: absolute;
-      right: var(--space-2);
+      right: var(--space-1);
       top: var(--space-1);
       transform: translateY(0.5em);
       transition: all var(--transition-speed);
@@ -646,7 +645,7 @@
 
   commands-component {
     margin: auto;
-    padding: var(--space-3) 0;
+    padding: var(--space-2) var(--space-1);
   }
 </style>
 
