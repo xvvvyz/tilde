@@ -210,8 +210,7 @@
       transition: inherit;
     }
 
-    .command:hover .key,
-    .command:hover .name {
+    .command:hover :where(.key, .name) {
       color: var(--color-text);
     }
   </style>
@@ -328,12 +327,10 @@
       z-index: 1;
     }
 
-    .suggestion:focus,
-    .suggestion:hover {
+    .suggestion:where(:focus, :hover) {
       color: var(--color-background);
     }
 
-    .suggestion::before,
     .suggestion::before {
       background-color: var(--color-text);
       bottom: var(--space-1);
@@ -348,8 +345,7 @@
       z-index: -1;
     }
 
-    .suggestion:focus::before,
-    .suggestion:hover::before {
+    .suggestion:where(:focus, :hover)::before {
       opacity: 1;
       transform: translateY(0);
     }
@@ -359,8 +355,7 @@
       transition: color var(--transition-speed);
     }
 
-    .suggestion:focus .match,
-    .suggestion:hover .match {
+    .suggestion:where(:focus, :hover) .match {
       color: var(--color-background);
     }
 
@@ -637,15 +632,12 @@
 <style>
   main {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     height: 100vh;
     justify-content: center;
-    width: 100vw;
-  }
-
-  commands-component {
-    margin: auto;
     padding: var(--space-2) var(--space-1);
+    width: 100vw;
   }
 </style>
 
