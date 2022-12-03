@@ -32,6 +32,10 @@
     b: {
       name: 'Dribbble',
       searchTemplate: '/search/{}',
+      suggestions: [
+        'b/shots/popular/product-design',
+        'b/shots/popular/web-design',
+      ],
       url: 'https://dribbble.com/shots/popular',
     },
     c: {
@@ -48,24 +52,29 @@
     },
     f: {
       name: 'Figma',
+      suggestions: [
+        'f/file/new',
+        'f/file/new?editor_type=whiteboard',
+        'f/community',
+      ],
       url: 'https://www.figma.com/files/recent',
     },
     g: {
       name: 'GitHub',
       searchTemplate: '/search?q={}',
-      suggestions: ['g/trending', 'g/xvvvyz/tilde', 'gist.github.com'],
+      suggestions: [
+        'g/trending',
+        'g/topics',
+        'gist.github.com',
+        'g/xvvvyz/tilde',
+      ],
       url: 'https://github.com',
     },
     h: {
       name: 'Hypem',
       searchTemplate: '/search/{}',
-      suggestions: ['h/popular', 'h/popular/lastweek', 'h/tags'],
-      url: 'https://hypem.com/latest',
-    },
-    i: {
-      name: 'Inbox',
-      suggestions: ['i/u/1/inbox', 'i/u/2/inbox'],
-      url: 'https://mail.proton.me/u/0/inbox',
+      suggestions: ['h/stack', 'h/popular', 'h/popular/lastweek', 'h/tags'],
+      url: 'https://hypem.com/popular',
     },
     k: {
       name: 'Keep',
@@ -76,16 +85,20 @@
     l: {
       name: 'LinkedIn',
       searchTemplate: '/search/results/all/?keywords={}',
-      url: 'https://www.linkedin.com',
+      suggestions: ['l/in/me/', 'l/messaging', 'l/jobs'],
+      url: 'https://www.linkedin.com/feed',
     },
     m: {
       name: 'Mail',
-      searchTemplate: '/mail/u/0/#search/{}',
-      suggestions: ['m/mail/u/1/#inbox', 'm/mail/u/2/#inbox'],
-      url: 'https://mail.google.com/mail/u/0/#inbox',
+      suggestions: ['m/u/1/inbox', 'm/u/2/inbox'],
+      url: 'https://mail.proton.me/u/0/inbox',
     },
     n: {
       name: 'Notion',
+      suggestions: [
+        'n/03aac6c591aa435b90f5c9b007409af3',
+        'n/f47d92b8272442f5ad13e4eb3288778f',
+      ],
       url: 'https://www.notion.so',
     },
     o: {
@@ -95,6 +108,12 @@
         'o/channels/830183651022471199',
       ],
       url: 'https://discord.com/channels/@me',
+    },
+    p: {
+      name: 'Product Hunt',
+      searchTemplate: '/search?q={}',
+      suggestions: ['p/products', 'p/topics', 'p/time-travel'],
+      url: 'https://www.producthunt.com',
     },
     r: {
       name: 'Reddit',
@@ -110,22 +129,29 @@
     t: {
       name: 'Twitter',
       searchTemplate: '/search?q={}',
+      suggestions: [
+        't/explore/tabs/trending',
+        't/hashtag/buildinpublic?f=live',
+      ],
       url: 'https://twitter.com/home',
     },
     u: {
       name: 'Supabase',
-      suggestions: ['u/project/xrncrutshmuifkzkexwb/editor'],
-      url: 'https://app.supabase.com',
+      suggestions: [
+        'u/project/xrncrutshmuifkzkexwb/editor',
+        'u/project/mmriwtmfzzavgecpsykt/editor',
+      ],
+      url: 'https://app.supabase.com/projects',
     },
     v: {
       name: 'Vercel',
-      suggestions: ['v/xvvvyz/lliist/deployments'],
+      suggestions: ['v/dashboard/usage', 'v/xvvvyz/llist/deployments'],
       url: 'https://vercel.com/dashboard',
     },
     y: {
       name: 'YouTube',
       searchTemplate: '/results?search_query={}',
-      suggestions: ['y/feed/trending'],
+      suggestions: ['y/trending', 'y/music', 'y/gaming', 'y/sports'],
       url: 'https://youtube.com/feed/subscriptions',
     },
     '?': {
@@ -183,16 +209,12 @@
       justify-content: center;
       list-style: none;
       margin: 0 auto;
-      max-width: 53rem;
+      max-width: 55rem;
       padding: 0;
     }
 
-    .commands:hover {
-      color: var(--color-text-subtle);
-    }
-
     .command {
-      color: inherit;
+      color: var(--color-text-subtle);
       display: flex;
       outline: 0;
       padding: var(--space-1);
@@ -200,18 +222,17 @@
       transition: color var(--transition-speed);
     }
 
+    .command:hover {
+      color: var(--color-text);
+    }
+
     .key {
-      color: var(--color-text-subtle);
-      transition: inherit;
+      text-align: center;
+      width: 1ch;
     }
 
     .name {
       margin-left: var(--space-1);
-      transition: inherit;
-    }
-
-    .command:hover :where(.key, .name) {
-      color: var(--color-text);
     }
   </style>
   <nav>
