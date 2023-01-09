@@ -166,7 +166,7 @@
       Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --font-size-1: 1rem;
     --font-size-2: 3rem;
-    --font-size-base: clamp(90%, 1.4vw, 120%);
+    --font-size-base: clamp(15px, 1.4vw, 18px);
     --font-weight-bold: 700;
     --font-weight-normal: 400;
     --line-height-base: 1.4;
@@ -205,34 +205,29 @@
       justify-content: center;
       list-style: none;
       margin: 0 auto;
-      max-width: 55rem;
+      max-width: 54rem;
       padding: 0;
     }
 
     .command {
       color: var(--color-text-subtle);
       display: flex;
+      gap: var(--space-1);
       outline: 0;
       padding: var(--space-1);
       text-decoration: none;
-      transition: color var(--transition-speed);
-    }
-
-    li:last-of-type > .command {
-      color: var(--color-text);
-    }
-
-    .command:hover {
-      color: var(--color-text);
     }
 
     .key {
-      text-align: center;
-      width: 1ch;
+      transition: color var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover) .key {
+      color: var(--color-text);
     }
 
     .name {
-      margin-left: var(--space-1);
+      color: var(--color-text);
     }
   </style>
   <nav>
