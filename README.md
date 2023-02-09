@@ -1,7 +1,7 @@
 # Tilde
 
-Inspired by [r/startpages](https://www.reddit.com/r/startpages)&mdash;Tilde is a
-browser homepage that is functional and chic.
+Inspired by [r/startpages](https://www.reddit.com/r/startpages)&mdash;Tilde is
+the browser homepage for pro web surfers.
 
 ## Basic Usage
 
