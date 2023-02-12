@@ -647,22 +647,24 @@
     }
 
     #onInput = async () => {
-      const q = Search.#parseQuery(this.#refs.input.value);
+      const oq = Search.#parseQuery(this.#refs.input.value);
 
-      if (!q.query) {
+      if (!oq.query) {
         this.#close();
         return;
       }
 
-      let suggestions = COMMANDS.get(q.query)?.suggestions ?? [];
+      let suggestions = COMMANDS.get(oq.query)?.suggestions ?? [];
 
-      if (q.search && suggestions.length < CONFIG.suggestionLimit) {
-        const res = await Search.#fetchDuckDuckGoSuggestions(q.search);
-        const formatted = Search.#attachSearchPrefix(res, q);
+      if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
+        const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
+        const formatted = Search.#attachSearchPrefix(res, oq);
         suggestions = suggestions.concat(formatted);
       }
 
-      this.#renderSuggestions(suggestions, q.query);
+      const nq = Search.#parseQuery(this.#refs.input.value);
+      if (nq.query !== oq.query) return;
+      this.#renderSuggestions(suggestions, oq.query);
     };
 
     #onKeydown = (e) => {
