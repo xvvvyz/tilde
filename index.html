@@ -14,147 +14,218 @@
     suggestionLimit: 4,
   };
 
-  const COMMANDS = {
-    0: {
-      name: 'Local',
-      searchTemplate: ':{}',
-      suggestions: ['0 8000', '0 54323'],
-      url: 'http://localhost:3000',
-    },
-    a: {
-      name: 'AWS',
-      suggestions: [
-        'a/cognito/v2/idp/user-pools',
-        'a/dynamodbv2#item-explorer',
-      ],
-      url: 'https://us-west-2.console.aws.amazon.com/console/home',
-    },
-    b: {
-      name: 'Dribbble',
-      searchTemplate: '/search/{}',
-      suggestions: [
-        'b/shots/popular/product-design',
-        'b/shots/popular/web-design',
-      ],
-      url: 'https://dribbble.com/shots/popular',
-    },
-    c: {
-      name: 'Calendar',
-      searchTemplate: '/calendar/u/0/r/search?q={}',
-      suggestions: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
-      url: 'https://calendar.google.com/calendar/u/0/r',
-    },
-    d: {
-      name: 'Drive',
-      searchTemplate: '/drive/u/0/search?q={}',
-      suggestions: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
-      url: 'https://drive.google.com/drive/u/0/my-drive',
-    },
-    f: {
-      name: 'Figma',
-      suggestions: [
-        'f/file/new',
-        'f/file/new?editor_type=whiteboard',
-        'f/community',
-      ],
-      url: 'https://www.figma.com/files/recent',
-    },
-    g: {
-      name: 'GitHub',
-      searchTemplate: '/search?q={}',
-      suggestions: [
-        'g/trending',
-        'g/topics',
-        'gist.github.com',
-        'g/xvvvyz/tilde',
-      ],
-      url: 'https://github.com',
-    },
-    h: {
-      name: 'Hypem',
-      searchTemplate: '/search/{}',
-      suggestions: ['h/stack', 'h/mixes', 'h/popular/lastweek', 'h/tags'],
-      url: 'https://hypem.com/popular',
-    },
-    k: {
-      name: 'Keep',
-      searchTemplate: '/u/0/#search/text={}',
-      suggestions: ['k/u/1', 'k/u/2'],
-      url: 'https://keep.google.com/u/0',
-    },
-    l: {
-      name: 'LinkedIn',
-      searchTemplate: '/search/results/all/?keywords={}',
-      suggestions: ['l/in/me/', 'l/messaging', 'l/jobs'],
-      url: 'https://www.linkedin.com/feed',
-    },
-    m: {
-      name: 'Mail',
-      suggestions: ['m/u/1/inbox', 'm/u/2/inbox'],
-      url: 'https://mail.proton.me/u/0/inbox',
-    },
-    n: {
-      name: 'Notion',
-      suggestions: [
-        'n/03aac6c591aa435b90f5c9b007409af3',
-        'n/f47d92b8272442f5ad13e4eb3288778f',
-      ],
-      url: 'https://www.notion.so',
-    },
-    o: {
-      name: 'Discord',
-      suggestions: [
-        'o/channels/803833399684628520',
-        'o/channels/830183651022471199',
-      ],
-      url: 'https://discord.com/channels/@me',
-    },
-    p: {
-      name: 'Product Hunt',
-      searchTemplate: '/search?q={}',
-      suggestions: ['p/products', 'p/topics', 'p/time-travel'],
-      url: 'https://www.producthunt.com',
-    },
-    r: {
-      name: 'Reddit',
-      searchTemplate: '/search?q={}',
-      suggestions: ['r/r/startpages', 'r/r/webdev', 'r/r/onebag', 'r/r/fujix'],
-      url: 'https://www.reddit.com',
-    },
-    s: {
-      name: 'Slack',
-      suggestions: ['s/client/T09M5UWSV'],
-      url: 'https://app.slack.com',
-    },
-    t: {
-      name: 'Twitter',
-      searchTemplate: '/search?q={}',
-      suggestions: [
-        't/explore/tabs/trending',
-        't/hashtag/buildinpublic?f=live',
-      ],
-      url: 'https://twitter.com/home',
-    },
-    u: {
-      name: 'Supabase',
-      url: 'https://app.supabase.com/projects',
-    },
-    v: {
-      name: 'Vercel',
-      suggestions: ['v/dashboard/usage', 'v/xvvvyz/llist/deployments'],
-      url: 'https://vercel.com/dashboard',
-    },
-    y: {
-      name: 'YouTube',
-      searchTemplate: '/results?search_query={}',
-      suggestions: ['y/trending', 'y/music', 'y/gaming', 'y/sports'],
-      url: 'https://youtube.com/feed/subscriptions',
-    },
-    '?': {
-      name: 'README',
-      url: 'https://read.xvvvyz.xyz/xvvvyz/tilde/main/README.md',
-    },
-  };
+  const COMMANDS = new Map([
+    [
+      'a',
+      {
+        name: 'AWS',
+        suggestions: [
+          'a/cognito/v2/idp/user-pools',
+          'a/dynamodbv2#item-explorer',
+        ],
+        url: 'https://us-west-2.console.aws.amazon.com/console/home',
+      },
+    ],
+    [
+      'b',
+      {
+        name: 'Dribbble',
+        searchTemplate: '/search/{}',
+        suggestions: [
+          'b/shots/popular/product-design',
+          'b/shots/popular/web-design',
+        ],
+        url: 'https://dribbble.com/shots/popular',
+      },
+    ],
+    [
+      'c',
+      {
+        name: 'Calendar',
+        searchTemplate: '/calendar/u/0/r/search?q={}',
+        suggestions: ['c/calendar/u/1/r', 'c/calendar/u/2/r'],
+        url: 'https://calendar.google.com/calendar/u/0/r',
+      },
+    ],
+    [
+      'd',
+      {
+        name: 'Drive',
+        searchTemplate: '/drive/u/0/search?q={}',
+        suggestions: ['d/drive/u/1/my-drive', 'd/drive/u/2/my-drive'],
+        url: 'https://drive.google.com/drive/u/0/my-drive',
+      },
+    ],
+    [
+      'e',
+      {
+        name: 'DALL·E',
+        suggestions: ['e/history', 'e/collections'],
+        url: 'https://labs.openai.com/',
+      },
+    ],
+    [
+      'f',
+      {
+        name: 'Figma',
+        suggestions: [
+          'f/file/new',
+          'f/file/new?editor_type=whiteboard',
+          'f/community',
+        ],
+        url: 'https://www.figma.com/files/recent',
+      },
+    ],
+    [
+      'g',
+      {
+        name: 'GitHub',
+        searchTemplate: '/search?q={}',
+        suggestions: [
+          'g/topics',
+          'g/trending',
+          'g/collections',
+          'gist.github.com',
+        ],
+        url: 'https://github.com',
+      },
+    ],
+    [
+      'h',
+      {
+        name: 'Hypem',
+        searchTemplate: '/search/{}',
+        suggestions: ['h/stack', 'h/mixes', 'h/popular/lastweek', 'h/tags'],
+        url: 'https://hypem.com/popular',
+      },
+    ],
+    ['i', { name: 'ChatGPT', url: 'https://chat.openai.com/chat' }],
+    [
+      'k',
+      {
+        name: 'Keep',
+        searchTemplate: '/u/0/#search/text={}',
+        suggestions: ['k/u/1', 'k/u/2'],
+        url: 'https://keep.google.com/u/0',
+      },
+    ],
+    [
+      'l',
+      {
+        name: 'LinkedIn',
+        searchTemplate: '/search/results/all/?keywords={}',
+        suggestions: ['l/in/me/', 'l/messaging', 'l/jobs'],
+        url: 'https://www.linkedin.com/feed/',
+      },
+    ],
+    [
+      'm',
+      {
+        name: 'Mail',
+        suggestions: ['m/u/1/inbox', 'm/u/2/inbox'],
+        url: 'https://mail.proton.me/u/0/inbox',
+      },
+    ],
+    [
+      'n',
+      {
+        name: 'Notion',
+        suggestions: [
+          'n/7c11e98c9c504ec2aa106dae83c6b803#todo',
+          'n/03aac6c591aa435b90f5c9b007409af3#study',
+        ],
+        url: 'https://www.notion.so',
+      },
+    ],
+    [
+      'o',
+      {
+        name: 'Discord',
+        suggestions: ['o/channels/803833399684628520#friends'],
+        url: 'https://discord.com/channels/@me',
+      },
+    ],
+    [
+      'p',
+      {
+        name: 'Products',
+        searchTemplate: '/search?q={}',
+        suggestions: ['p/products', 'p/topics', 'p/time-travel'],
+        url: 'https://www.producthunt.com',
+      },
+    ],
+    [
+      'r',
+      {
+        name: 'Reddit',
+        searchTemplate: '/search?q={}',
+        suggestions: [
+          'r/r/webdev',
+          'r/r/startpages',
+          'r/r/onebag',
+          'r/r/fujix',
+        ],
+        url: 'https://www.reddit.com',
+      },
+    ],
+    [
+      's',
+      {
+        name: 'Slack',
+        suggestions: ['s/client/T09M5UWSV#shiftnudge'],
+        url: 'https://app.slack.com',
+      },
+    ],
+    [
+      't',
+      {
+        name: 'Twitter',
+        searchTemplate: '/search?q={}',
+        suggestions: [
+          't/explore/tabs/trending',
+          't/hashtag/buildinpublic?f=live',
+        ],
+        url: 'https://twitter.com/home',
+      },
+    ],
+    ['u', { name: 'Supabase', url: 'https://app.supabase.com/projects' }],
+    [
+      'v',
+      {
+        name: 'Vercel',
+        suggestions: ['v/dashboard/activity', 'v/dashboard/usage'],
+        url: 'https://vercel.com/dashboard',
+      },
+    ],
+    [
+      'w',
+      {
+        name: 'Wikipedia',
+        searchTemplate: '/w/index.php?search={}',
+        suggestions: ['w/wiki/Portal:Current_events', 'w/wiki/Special:Random'],
+        url: 'https://en.wikipedia.org/wiki/Main_Page',
+      },
+    ],
+    [
+      'y',
+      {
+        name: 'YouTube',
+        searchTemplate: '/results?search_query={}',
+        suggestions: ['y/trending', 'y/music', 'y/gaming', 'y/sports'],
+        url: 'https://youtube.com/feed/subscriptions',
+      },
+    ],
+    [
+      '0',
+      {
+        name: 'localhost',
+        searchTemplate: ':{}',
+        suggestions: ['0 54323', '0 8000'],
+        url: 'http://localhost:3000',
+      },
+    ],
+    ['?', { name: 'README', url: 'https://github.com/xvvvyz/tilde' }],
+  ]);
 </script>
 
 <style>
@@ -166,12 +237,13 @@
       Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
     --font-size-1: 1rem;
     --font-size-2: 3rem;
-    --font-size-base: clamp(15px, 1.4vw, 18px);
+    --font-size-base: clamp(16px, 1.2vw, 18px);
     --font-weight-bold: 700;
     --font-weight-normal: 400;
     --line-height-base: 1.4;
-    --space-1: 1rem;
-    --space-2: 4rem;
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 4rem;
     --transition-speed: 200ms;
   }
 
@@ -199,41 +271,63 @@
 <template id="commands-template">
   <style>
     .commands {
-      display: flex;
-      flex-direction: column;
+      columns: 1;
       list-style: none;
       margin: 0 auto;
-      max-width: 54rem;
-      padding: 0;
+      max-width: 10rem;
+      padding: 0 0 0 var(--space-1);
       width: 100vw;
     }
 
     .command {
-      color: var(--color-text-subtle);
       display: flex;
-      gap: var(--space-1);
+      gap: var(--space-2);
       outline: 0;
       padding: var(--space-1);
       text-decoration: none;
     }
 
     .key {
-      transition: color var(--transition-speed);
-    }
-
-    .command:where(:focus, :hover) .key {
       color: var(--color-text);
+      display: inline-block;
+      text-align: center;
+      width: 3ch;
     }
 
     .name {
+      color: var(--color-text-subtle);
+      transition: color var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover) .name {
       color: var(--color-text);
     }
 
-    @media (min-width: 54rem) {
+    @media (min-width: 500px) {
       .commands {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+        columns: 2;
+        max-width: 20rem;
+      }
+    }
+
+    @media (min-width: 700px) {
+      .commands {
+        columns: 3;
+        max-width: 30rem;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .commands {
+        columns: 4;
+        max-width: 40rem;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .commands {
+        columns: 6;
+        max-width: 60rem;
       }
     }
   </style>
@@ -270,7 +364,7 @@
     #renderCommands() {
       const template = document.getElementById('command-template');
 
-      for (const [key, { name, url }] of Object.entries(COMMANDS)) {
+      for (const [key, { name, url }] of COMMANDS.entries()) {
         if (!name || !url) continue;
         const clone = template.content.cloneNode(true);
         const command = clone.querySelector('.command');
@@ -335,7 +429,7 @@
       flex-wrap: wrap;
       justify-content: center;
       list-style: none;
-      margin: var(--space-1) 0 0;
+      margin: var(--space-2) 0 0;
       overflow: hidden;
       padding: 0;
     }
@@ -343,7 +437,7 @@
     .suggestion {
       cursor: pointer;
       font-size: var(--font-size-1);
-      padding: var(--space-1);
+      padding: var(--space-2);
       position: relative;
       transition: color var(--transition-speed);
       white-space: nowrap;
@@ -356,13 +450,13 @@
 
     .suggestion::before {
       background-color: var(--color-text);
-      bottom: var(--space-1);
+      bottom: var(--space-2);
       content: ' ';
-      left: var(--space-1);
+      left: var(--space-2);
       opacity: 0;
       position: absolute;
-      right: var(--space-1);
-      top: var(--space-1);
+      right: var(--space-2);
+      top: var(--space-2);
       transform: translateY(0.5em);
       transition: all var(--transition-speed);
       z-index: -1;
@@ -483,16 +577,16 @@
         return { query, url };
       }
 
-      if (COMMANDS[query]) {
-        const { key, url } = COMMANDS[query];
+      if (COMMANDS.has(query)) {
+        const { key, url } = COMMANDS.get(query);
         return { key, query, url };
       }
 
       let splitBy = CONFIG.commandSearchDelimiter;
       const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (COMMANDS[searchKey]) {
-        const { searchTemplate, url: base } = COMMANDS[searchKey];
+      if (COMMANDS.has(searchKey)) {
+        const { searchTemplate, url: base } = COMMANDS.get(searchKey);
         const search = rawSearch.trim();
         const url = Search.#formatSearchUrl(base, searchTemplate, search);
         return { key: searchKey, query, search, splitBy, url };
@@ -501,8 +595,8 @@
       splitBy = CONFIG.commandPathDelimiter;
       const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (COMMANDS[pathKey]) {
-        const { url: base } = COMMANDS[pathKey];
+      if (COMMANDS.has(pathKey)) {
+        const { url: base } = COMMANDS.get(pathKey);
         const [baseUrl] = Search.#splitUrl(base);
         const url = `${baseUrl}/${path}`;
         return { key: pathKey, path, query, splitBy, url };
@@ -559,7 +653,7 @@
         return;
       }
 
-      let suggestions = COMMANDS[q.query]?.suggestions ?? [];
+      let suggestions = COMMANDS.get(q.query)?.suggestions ?? [];
 
       if (q.search && suggestions.length < CONFIG.suggestionLimit) {
         const res = await Search.#fetchDuckDuckGoSuggestions(q.search);
@@ -659,7 +753,7 @@
     display: flex;
     justify-content: center;
     min-height: 100vh;
-    padding: var(--space-2) var(--space-1);
+    padding: var(--space-3) var(--space-2);
     width: 100vw;
   }
 </style>
