@@ -550,6 +550,7 @@
         const script = document.createElement('script');
         document.querySelector('head').appendChild(script);
         script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
+        script.onload = script.remove;
       });
     }
 
