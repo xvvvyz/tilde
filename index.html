@@ -256,7 +256,6 @@
 
   html {
     background-color: var(--color-background);
-    color: var(--color-text);
     font-family: var(--font-family);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
@@ -346,33 +345,26 @@
 
 <script type="module">
   class Commands extends HTMLElement {
-    #refs = {
-      commands: null,
-    };
-
     constructor() {
       super();
       this.attachShadow({ mode: 'open' });
       const template = document.getElementById('commands-template');
       const clone = template.content.cloneNode(true);
-      this.#refs.commands = clone.querySelector('.commands');
-      this.#renderCommands();
-      this.shadowRoot.append(clone);
-    }
-
-    #renderCommands() {
-      const template = document.getElementById('command-template');
+      const commands = clone.querySelector('.commands');
+      const commandTemplate = document.getElementById('command-template');
 
       for (const [key, { name, url }] of COMMANDS.entries()) {
         if (!name || !url) continue;
-        const clone = template.content.cloneNode(true);
+        const clone = commandTemplate.content.cloneNode(true);
         const command = clone.querySelector('.command');
         command.href = url;
         if (CONFIG.openLinksInNewTab) command.target = '_blank';
         clone.querySelector('.key').innerText = key;
         clone.querySelector('.name').innerText = name;
-        this.#refs.commands.append(clone);
+        commands.append(clone);
       }
+
+      this.shadowRoot.append(clone);
     }
   }
 
@@ -414,6 +406,7 @@
     }
 
     .input {
+      color: var(--color-text);
       font-size: var(--font-size-2);
       font-weight: var(--font-weight-bold);
       padding: 0;
@@ -434,6 +427,7 @@
     }
 
     .suggestion {
+      color: var(--color-text);
       cursor: pointer;
       font-size: var(--font-size-1);
       padding: var(--space-2);
@@ -501,25 +495,23 @@
 
 <script type="module">
   class Search extends HTMLElement {
-    #refs = {
-      dialog: null,
-      form: null,
-      input: null,
-      suggestions: null,
-    };
+    #dialog;
+    #form;
+    #input;
+    #suggestions;
 
     constructor() {
       super();
       this.attachShadow({ mode: 'open' });
       const template = document.getElementById('search-template');
       const clone = template.content.cloneNode(true);
-      this.#refs.dialog = clone.querySelector('.dialog');
-      this.#refs.form = clone.querySelector('.form');
-      this.#refs.input = clone.querySelector('.input');
-      this.#refs.suggestions = clone.querySelector('.suggestions');
-      this.#refs.form.addEventListener('submit', this.#onSubmit, false);
-      this.#refs.input.addEventListener('input', this.#onInput);
-      this.#refs.suggestions.addEventListener('click', this.#onSuggestionClick);
+      this.#dialog = clone.querySelector('.dialog');
+      this.#form = clone.querySelector('.form');
+      this.#input = clone.querySelector('.input');
+      this.#suggestions = clone.querySelector('.suggestions');
+      this.#form.addEventListener('submit', this.#onSubmit, false);
+      this.#input.addEventListener('input', this.#onInput);
+      this.#suggestions.addEventListener('click', this.#onSuggestionClick);
       document.addEventListener('keydown', this.#onKeydown);
       this.shadowRoot.append(clone);
     }
@@ -616,10 +608,10 @@
     }
 
     #close() {
-      this.#refs.input.value = '';
-      this.#refs.input.blur();
-      this.#refs.dialog.close();
-      this.#refs.suggestions.innerHTML = '';
+      this.#input.value = '';
+      this.#input.blur();
+      this.#dialog.close();
+      this.#suggestions.innerHTML = '';
     }
 
     #execute(query) {
@@ -637,16 +629,16 @@
         const activeIndex = Number(active.dataset.index);
         nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
       } else {
-        nextIndex = previous ? this.#refs.suggestions.childElementCount - 1 : 0;
+        nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
       }
 
-      const next = this.#refs.suggestions.children[nextIndex];
+      const next = this.#suggestions.children[nextIndex];
       if (next) next.querySelector('.suggestion').focus();
-      else this.#refs.input.focus();
+      else this.#input.focus();
     }
 
     #onInput = async () => {
-      const oq = Search.#parseQuery(this.#refs.input.value);
+      const oq = Search.#parseQuery(this.#input.value);
 
       if (!oq.query) {
         this.#close();
@@ -661,20 +653,20 @@
         suggestions = suggestions.concat(formatted);
       }
 
-      const nq = Search.#parseQuery(this.#refs.input.value);
+      const nq = Search.#parseQuery(this.#input.value);
       if (nq.query !== oq.query) return;
       this.#renderSuggestions(suggestions, oq.query);
     };
 
     #onKeydown = (e) => {
-      if (!this.#refs.dialog.open) {
-        this.#refs.dialog.show();
-        this.#refs.input.focus();
+      if (!this.#dialog.open) {
+        this.#dialog.show();
+        this.#input.focus();
 
         requestAnimationFrame(() => {
           // close the search dialog before the next repaint if a character is
           // not produced (e.g. if you type shift, control, alt etc.)
-          if (!this.#refs.input.value) this.#close();
+          if (!this.#input.value) this.#close();
         });
 
         return;
@@ -704,7 +696,7 @@
     };
 
     #onSubmit = () => {
-      this.#execute(this.#refs.input.value);
+      this.#execute(this.#input.value);
     };
 
     #onSuggestionClick = (e) => {
@@ -714,7 +706,7 @@
     };
 
     #renderSuggestions(suggestions, query) {
-      this.#refs.suggestions.innerHTML = '';
+      this.#suggestions.innerHTML = '';
       const sliced = suggestions.slice(0, CONFIG.suggestionLimit);
       const template = document.getElementById('suggestion-template');
 
@@ -740,7 +732,7 @@
           ref.innerText = suggestion;
         }
 
-        this.#refs.suggestions.append(clone);
+        this.#suggestions.append(clone);
       }
     }
   }
