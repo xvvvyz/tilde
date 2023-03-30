@@ -61,7 +61,7 @@
       {
         name: 'DALL·E',
         suggestions: ['e/history', 'e/collections'],
-        url: 'https://labs.openai.com/',
+        url: 'https://labs.openai.com',
       },
     ],
     [
@@ -112,39 +112,36 @@
     [
       'l',
       {
-        name: 'LinkedIn',
-        searchTemplate: '/search/results/all/?keywords={}',
-        suggestions: ['l/in/me/', 'l/messaging', 'l/jobs'],
-        url: 'https://www.linkedin.com/feed/',
+        name: 'Translate',
+        searchTemplate: '/?sl=en&tl=es&text={}',
+        suggestions: ['l/english → spanish', 'l/spanish → english'],
+        url: 'https://translate.google.com',
       },
     ],
-    [
-      'm',
-      {
-        name: 'Mail',
-        suggestions: ['m/u/1/inbox', 'm/u/2/inbox'],
-        url: 'https://mail.proton.me/u/0/inbox',
-      },
-    ],
+    ['l/english → spanish', { command: 'l/?sl=en&tl=es' }],
+    ['l/spanish → english', { command: 'l/?sl=es&tl=en' }],
+    ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
     [
       'n',
       {
         name: 'Notion',
-        suggestions: [
-          'n/7c11e98c9c504ec2aa106dae83c6b803#todo',
-          'n/03aac6c591aa435b90f5c9b007409af3#study',
-        ],
+        suggestions: ['n/todo', 'n/study', 'n/story', 'n/notes'],
         url: 'https://www.notion.so',
       },
     ],
+    ['n/todo', { command: 'n/7c11e98c9c504ec2aa106dae83c6b803' }],
+    ['n/study', { command: 'n/03aac6c591aa435b90f5c9b007409af3' }],
+    ['n/story', { command: 'n/0e30a11736734779983a3e17906dde8b' }],
+    ['n/notes', { command: 'n/bda021cd6b7249daaf076f9a1929aa1d' }],
     [
       'o',
       {
         name: 'Discord',
-        suggestions: ['o/channels/803833399684628520#friends'],
+        suggestions: ['o/friends'],
         url: 'https://discord.com/channels/@me',
       },
     ],
+    ['o/friends', { command: 'o/channels/803833399684628520' }],
     [
       'p',
       {
@@ -172,13 +169,12 @@
       's',
       {
         name: 'Slack',
-        suggestions: [
-          's/client/T09M5UWSV#shiftnudge',
-          's/client/T03VB9LJ0AF#ayp',
-        ],
+        suggestions: ['s/shiftnudge', 's/ayp'],
         url: 'https://app.slack.com',
       },
     ],
+    ['s/shiftnudge', { command: 's/client/T09M5UWSV' }],
+    ['s/ayp', { command: 's/client/T03VB9LJ0AF' }],
     [
       't',
       {
@@ -582,8 +578,8 @@
       }
 
       if (COMMANDS.has(query)) {
-        const { key, url } = COMMANDS.get(query);
-        return { key, query, url };
+        const { command, key, url } = COMMANDS.get(query);
+        return command ? Search.#parseQuery(command) : { key, query, url };
       }
 
       let splitBy = CONFIG.commandSearchDelimiter;
