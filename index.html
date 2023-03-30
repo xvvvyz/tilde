@@ -5,12 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>~</title>
 
+<style>
+  :root {
+    --color-background: #111;
+    --color-rain: #333;
+    --color-text-subtle: #999;
+    --color-text: #eee;
+    --font-family: -apple-system, Helvetica, sans-serif;
+    --font-size-1: 1rem;
+    --font-size-2: 3rem;
+    --font-size-base: clamp(16px, 1.2vw, 18px);
+    --font-weight-bold: 700;
+    --font-weight-normal: 400;
+    --line-height-base: 1.4;
+    --rain-columns: 150;
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 4rem;
+    --transition-speed: 200ms;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --color-background: #eee;
+      --color-rain: #ddd;
+      --color-text-subtle: #777;
+      --color-text: #111;
+    }
+  }
+</style>
+
 <script>
   const CONFIG = {
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
     openLinksInNewTab: true,
+    rainColumns: 200,
+    rainFade: 0.2,
+    rainFrameRate: 1000 / 20,
+    rainFrameTotal: Infinity,
+    rainOverlap: 0.2,
+    rainResilience: 0.8,
     suggestionLimit: 4,
   };
 
@@ -226,45 +262,6 @@
     ['?', { name: 'README', url: 'https://github.com/xvvvyz/tilde' }],
   ]);
 </script>
-
-<style>
-  :root {
-    --color-background: #111;
-    --color-text-subtle: #999;
-    --color-text: #eee;
-    --font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica,
-      Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
-    --font-size-1: 1rem;
-    --font-size-2: 3rem;
-    --font-size-base: clamp(16px, 1.2vw, 18px);
-    --font-weight-bold: 700;
-    --font-weight-normal: 400;
-    --line-height-base: 1.4;
-    --space-1: 0.5rem;
-    --space-2: 1rem;
-    --space-3: 4rem;
-    --transition-speed: 200ms;
-  }
-
-  @media (prefers-color-scheme: light) {
-    :root {
-      --color-background: #eee;
-      --color-text-subtle: #777;
-      --color-text: #111;
-    }
-  }
-
-  html {
-    background-color: var(--color-background);
-    font-family: var(--font-family);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-base);
-  }
-
-  body {
-    margin: 0;
-  }
-</style>
 
 <template id="commands-template">
   <style>
@@ -740,19 +737,124 @@
   customElements.define('search-component', Search);
 </script>
 
+<template id="rain-template">
+  <style>
+    canvas {
+      left: 0;
+      position: absolute;
+      top: 0;
+      z-index: -1;
+    }
+  </style>
+  <canvas class="rain"></canvas>
+</template>
+
+<script type="module">
+  class Rain extends HTMLElement {
+    #backgroundColor;
+    #canvas;
+    #ctx;
+    #drops;
+    #frameCount;
+    #interval;
+    #rainColor;
+    #size;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const template = document.getElementById('rain-template');
+      const clone = template.content.cloneNode(true);
+      this.#canvas = clone.querySelector('.rain');
+      this.#ctx = this.#canvas.getContext('2d');
+      this.#renderCanvas();
+      const rerender = Rain.debounce(this.#renderCanvas, CONFIG.rainFrameRate);
+      const mq = '(prefers-color-scheme: light)';
+      window.matchMedia(mq).addEventListener('change', rerender);
+      window.addEventListener('resize', rerender);
+      this.shadowRoot.append(clone);
+    }
+
+    static cssVar(name) {
+      return getComputedStyle(document.body).getPropertyValue(name);
+    }
+
+    static debounce(fn, delay) {
+      let timeout;
+
+      return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, arguments), delay);
+      };
+    }
+
+    #renderCanvas = () => {
+      if (this.#interval) clearInterval(this.#interval);
+      this.#canvas.height = window.innerHeight;
+      this.#canvas.width = window.innerWidth;
+      this.#size = this.#canvas.width / CONFIG.rainColumns;
+      this.#backgroundColor = Rain.cssVar('--color-background');
+      this.#rainColor = Rain.cssVar('--color-rain');
+      this.#drops = new Array(CONFIG.rainColumns).fill(0);
+      this.#frameCount = 0;
+      this.#interval = setInterval(this.#renderRain, CONFIG.rainFrameRate);
+    };
+
+    #renderRain = () => {
+      if (this.#frameCount >= CONFIG.rainFrameTotal) {
+        clearInterval(this.#interval);
+        return;
+      }
+
+      this.#ctx.fillStyle = this.#backgroundColor;
+      this.#ctx.globalAlpha = CONFIG.rainFade;
+      this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
+
+      for (let i = 0; i < this.#drops.length; i++) {
+        this.#ctx.fillStyle = this.#rainColor;
+        this.#ctx.globalAlpha = 1;
+        const y = this.#drops[i] * this.#size - CONFIG.rainOverlap;
+        const size = this.#size + CONFIG.rainOverlap * 2;
+        this.#ctx.fillRect(i * this.#size - CONFIG.rainOverlap, y, size, size);
+        const reset = Math.random() > CONFIG.rainResilience;
+        if (reset || y > this.#canvas.height) this.#drops[i] = 0;
+        else this.#drops[i]++;
+      }
+
+      this.#frameCount++;
+    };
+  }
+
+  customElements.define('rain-component', Rain);
+</script>
+
 <style>
+  html {
+    background-color: var(--color-background);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+
+  body {
+    margin: 0;
+  }
+
   main {
     align-items: center;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    overflow: hidden;
     padding: var(--space-3) var(--space-2);
+    position: relative;
     width: 100vw;
   }
 </style>
 
 <main>
+  <rain-component></rain-component>
   <commands-component></commands-component>
   <search-component></search-component>
 </main>
