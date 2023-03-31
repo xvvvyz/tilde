@@ -43,7 +43,6 @@
     rainColumns: 200,
     rainFade: 0.2,
     rainFrameRate: 1000 / 18,
-    rainFrameTotal: Infinity,
     rainResilience: 0.8,
     suggestionLimit: 4,
   };
@@ -753,7 +752,6 @@
     #canvas;
     #ctx;
     #drops;
-    #frameCount;
     #lastRender;
     #rainColor;
     #size;
@@ -792,20 +790,14 @@
       this.#size = Math.ceil(this.#canvas.width / CONFIG.rainColumns);
       this.#backgroundColor = Rain.cssVar('--color-background');
       this.#rainColor = Rain.cssVar('--color-rain');
-      this.#ctx.fillStyle = this.#rainColor;
-      this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
       this.#ctx.fillStyle = this.#backgroundColor;
-      this.#ctx.globalAlpha = 0.9;
       this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
       this.#drops = new Array(CONFIG.rainColumns).fill(0);
-      this.#frameCount = 0;
       this.#lastRender = performance.now();
       requestAnimationFrame(this.#renderRain);
     };
 
     #renderRain = (timestamp) => {
-      if (this.#frameCount >= CONFIG.rainFrameTotal) return;
-
       if (timestamp - this.#lastRender >= CONFIG.rainFrameRate) {
         this.#ctx.fillStyle = this.#backgroundColor;
         this.#ctx.globalAlpha = CONFIG.rainFade;
@@ -821,7 +813,6 @@
           else this.#drops[i]++;
         }
 
-        this.#frameCount++;
         this.#lastRender = timestamp;
       }
 
