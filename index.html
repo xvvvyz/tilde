@@ -44,6 +44,7 @@
     rainFade: 0.2,
     rainFrameRate: 1000 / 18,
     rainResilience: 0.8,
+    rainSpeed: 1,
     suggestionLimit: 4,
   };
 
@@ -754,7 +755,8 @@
     #drops;
     #lastRender;
     #rainColor;
-    #size;
+    #rainHeight;
+    #rainWidth;
 
     constructor() {
       super();
@@ -787,7 +789,8 @@
     #renderCanvas = () => {
       this.#canvas.height = window.innerHeight;
       this.#canvas.width = window.innerWidth;
-      this.#size = Math.ceil(this.#canvas.width / CONFIG.rainColumns);
+      this.#rainWidth = Math.ceil(this.#canvas.width / CONFIG.rainColumns);
+      this.#rainHeight = this.#rainWidth * CONFIG.rainSpeed;
       this.#backgroundColor = Rain.cssVar('--color-background');
       this.#rainColor = Rain.cssVar('--color-rain');
       this.#ctx.fillStyle = this.#backgroundColor;
@@ -806,8 +809,9 @@
         for (let i = 0; i < this.#drops.length; i++) {
           this.#ctx.fillStyle = this.#rainColor;
           this.#ctx.globalAlpha = 1;
-          const y = this.#drops[i] * this.#size;
-          this.#ctx.fillRect(i * this.#size, y, this.#size, this.#size);
+          const x = i * this.#rainWidth;
+          const y = this.#drops[i] * this.#rainHeight;
+          this.#ctx.fillRect(x, y, this.#rainWidth, this.#rainHeight);
           const reset = Math.random() > CONFIG.rainResilience;
           if (reset || y > this.#canvas.height) this.#drops[i] = 0;
           else this.#drops[i]++;
