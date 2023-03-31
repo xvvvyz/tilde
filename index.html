@@ -18,7 +18,6 @@
     --font-weight-bold: 700;
     --font-weight-normal: 400;
     --line-height-base: 1.4;
-    --rain-columns: 150;
     --space-1: 0.5rem;
     --space-2: 1rem;
     --space-3: 4rem;
@@ -793,6 +792,11 @@
       this.#size = Math.ceil(this.#canvas.width / CONFIG.rainColumns);
       this.#backgroundColor = Rain.cssVar('--color-background');
       this.#rainColor = Rain.cssVar('--color-rain');
+      this.#ctx.fillStyle = this.#rainColor;
+      this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
+      this.#ctx.fillStyle = this.#backgroundColor;
+      this.#ctx.globalAlpha = 0.9;
+      this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
       this.#drops = new Array(CONFIG.rainColumns).fill(0);
       this.#frameCount = 0;
       this.#lastRender = performance.now();
