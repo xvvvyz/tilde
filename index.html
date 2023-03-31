@@ -812,6 +812,16 @@
           const x = i * this.#rainWidth;
           const y = this.#drops[i] * this.#rainHeight;
           this.#ctx.fillRect(x, y, this.#rainWidth, this.#rainHeight);
+
+          if (this.#drops[i] <= 4) {
+            // fully fade out previous rain drop streak
+            this.#ctx.fillStyle = this.#backgroundColor;
+            this.#ctx.globalAlpha = this.#drops[i] === 4 ? 1 : 0.4;
+            const eraseY = y + this.#rainHeight;
+            const eraseHeight = this.#canvas.height - eraseY;
+            this.#ctx.fillRect(x, eraseY, this.#rainWidth, eraseHeight);
+          }
+
           const reset = Math.random() > CONFIG.rainResilience;
           if (reset || y > this.#canvas.height) this.#drops[i] = 0;
           else this.#drops[i]++;
