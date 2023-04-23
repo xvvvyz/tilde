@@ -126,7 +126,10 @@
         url: 'https://hypem.com/popular',
       },
     ],
-    ['i', { name: 'ChatGPT', url: 'https://chat.openai.com/chat' }],
+    [
+      'i',
+      { name: 'ChatGPT', url: 'https://chat.openai.com/chat/?model=gpt-4' },
+    ],
     [
       'k',
       {
@@ -186,12 +189,14 @@
         name: 'Twitter',
         searchTemplate: '/search?q={}',
         suggestions: [
+          't/sidebird',
           't/explore/tabs/trending',
           't/hashtag/buildinpublic?f=live',
         ],
         url: 'https://twitter.com/home',
       },
     ],
+    ['t/sidebird', { url: 'https://www.sidebird.io/write' }],
     ['u', { name: 'Supabase', url: 'https://app.supabase.com/projects' }],
     [
       'v',
