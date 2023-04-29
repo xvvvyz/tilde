@@ -7,7 +7,7 @@ the browser homepage for pro web surfers.
 
 To go to a site, type the corresponding key and press return. e.g:
 
-- `t` will redirect you to [twitter.com](https://twitter.com/home)
+- `g` will redirect you to [github.com](https://github.com)
 
 To search a site, type a space after the site&rsquo;s key followed by your
 query. e.g:
