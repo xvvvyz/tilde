@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <meta charset="utf-8" />
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="noindex" />
@@ -42,114 +42,32 @@
   };
 
   const COMMANDS = new Map([
-    [
-      'b',
-      {
-        name: 'Dribbble',
-        url: 'https://dribbble.com/shots/popular',
-      },
-    ],
-    [
-      'c',
-      {
-        name: 'Calendar',
-        url: 'https://calendar.google.com',
-      },
-    ],
-    [
-      'd',
-      {
-        name: 'Drive',
-        url: 'https://drive.google.com',
-      },
-    ],
-    [
-      'f',
-      {
-        name: 'Figma',
-        url: 'https://www.figma.com/files/recent',
-      },
-    ],
-    [
-      'g',
-      {
-        name: 'GitHub',
-        url: 'https://github.com',
-      },
-    ],
-    [
-      'i',
-      {
-        name: 'Discord',
-        url: 'https://discord.com/channels/@me',
-      },
-    ],
-    [
-      'k',
-      {
-        name: 'Keep',
-        url: 'https://keep.google.com',
-      },
-    ],
-    [
-      'm',
-      {
-        name: 'Mail',
-        url: 'https://mail.proton.me/u/0/inbox',
-      },
-    ],
-    [
-      'n',
-      {
-        name: 'Notion',
-        url: 'https://www.notion.so',
-      },
-    ],
+    ['a', { name: 'GPT', url: 'https://sdk.vercel.ai' }],
+    ['b', { name: 'Dribbble', url: 'https://dribbble.com/shots/popular' }],
+    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
+    ['d', { name: 'Drive', url: 'https://drive.google.com' }],
+    ['f', { name: 'Figma', url: 'https://www.figma.com/files/recent' }],
+    ['g', { name: 'GitHub', url: 'https://github.com' }],
+    ['h', { name: 'Hypem', url: 'https://hypem.com/popular' }],
+    ['i', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
+    ['k', { name: 'Keep', url: 'https://keep.google.com' }],
+    ['l', { name: 'LinkedIn', url: 'https://www.linkedin.com/feed' }],
+    ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
+    ['n', { name: 'Notion', url: 'https://www.notion.so' }],
     [
       'r',
       {
         name: 'Reddit',
         searchTemplate: '/search?q={}',
-        suggestions: [
-          'r/r/startpages',
-          'r/r/webdev',
-          'r/r/onebag',
-          'r/r/fujix',
-        ],
+        suggestions: ['r/r/onebag', 'r/r/fujix'],
         url: 'https://www.reddit.com',
       },
     ],
-    [
-      't',
-      {
-        name: 'DeepL',
-        searchTemplate: '/en/translator#en/es/{}',
-        suggestions: ['t/en/translator#es/en/'],
-        url: 'https://www.deepl.com/en/translator',
-      },
-    ],
-    [
-      'u',
-      {
-        name: 'Supabase',
-        url: 'https://app.supabase.com/projects',
-      },
-    ],
-    [
-      'v',
-      {
-        name: 'Vercel',
-        suggestions: ['sdk.vercel.ai'],
-        url: 'https://vercel.com/dashboard',
-      },
-    ],
-    [
-      'w',
-      {
-        name: 'Twitter',
-        url: 'https://twitter.com/home',
-      },
-    ],
+    ['s', { name: 'Supabase', url: 'https://app.supabase.com/projects' }],
+    ['t', { name: 'DeepL', url: 'https://www.deepl.com/en/translator' }],
+    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
+    ['w', { name: 'WhatsApp', url: 'https://web.whatsapp.com' }],
+    ['x', { name: 'X', url: 'https://x.com' }],
     [
       'y',
       {
@@ -216,6 +134,13 @@
       .commands {
         columns: 4;
         max-width: 40rem;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .commands {
+        columns: 5;
+        max-width: 50rem;
       }
     }
   </style>
