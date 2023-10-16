@@ -42,38 +42,19 @@
   };
 
   const COMMANDS = new Map([
-    ['a', { name: 'GPT', url: 'https://sdk.vercel.ai' }],
-    ['b', { name: 'Dribbble', url: 'https://dribbble.com/shots/popular' }],
+    ['a', { name: 'AI', url: 'https://sdk.vercel.ai' }],
     ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com/files/recent' }],
     ['g', { name: 'GitHub', url: 'https://github.com' }],
-    ['h', { name: 'Hypem', url: 'https://hypem.com/popular' }],
     ['i', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
     ['k', { name: 'Keep', url: 'https://keep.google.com' }],
-    ['l', { name: 'LeetCode', url: 'https://leetcode.com/problemset/all/' }],
     ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
     ['n', { name: 'Notion', url: 'https://www.notion.so' }],
-    [
-      'r',
-      {
-        name: 'Reddit',
-        searchTemplate: '/search?q={}',
-        suggestions: ['r/r/onebag', 'r/r/fujix'],
-        url: 'https://www.reddit.com',
-      },
-    ],
+    ['o', { name: 'Coursera', url: 'https://www.coursera.org' }],
     ['s', { name: 'Supabase', url: 'https://app.supabase.com/projects' }],
     ['t', { name: 'DeepL', url: 'https://www.deepl.com/en/translator' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    [
-      'w',
-      {
-        name: 'Wikipedia',
-        searchTemplate: '/w/index.php?search={}',
-        url: 'https://en.wikipedia.org',
-      },
-    ],
     ['x', { name: '𝕏', url: 'https://x.com' }],
     [
       'y',
@@ -141,13 +122,6 @@
       .commands {
         columns: 4;
         max-width: 40rem;
-      }
-    }
-
-    @media (min-width: 1100px) {
-      .commands {
-        columns: 5;
-        max-width: 50rem;
       }
     }
   </style>
