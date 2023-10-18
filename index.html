@@ -42,20 +42,14 @@
   };
 
   const COMMANDS = new Map([
-    ['a', { name: 'AI', url: 'https://sdk.vercel.ai' }],
-    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com' }],
-    ['f', { name: 'Figma', url: 'https://www.figma.com/files/recent' }],
-    ['g', { name: 'GitHub', url: 'https://github.com' }],
-    ['i', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
+    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
     ['k', { name: 'Keep', url: 'https://keep.google.com' }],
-    ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
     ['n', { name: 'Notion', url: 'https://www.notion.so' }],
+    ['m', { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox' }],
+    ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['o', { name: 'Coursera', url: 'https://www.coursera.org' }],
-    ['s', { name: 'Supabase', url: 'https://app.supabase.com/projects' }],
-    ['t', { name: 'DeepL', url: 'https://www.deepl.com/en/translator' }],
-    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['x', { name: '𝕏', url: 'https://x.com' }],
+    ['p', { name: 'Pomodoro', url: 'https://pomodoro.xvvvyz.xyz' }],
     [
       'y',
       {
@@ -64,6 +58,15 @@
         url: 'https://youtube.com/feed/subscriptions',
       },
     ],
+    [
+      'v',
+      {
+        name: 'Vercel',
+        suggestions: ['sdk.vercel.ai'],
+        url: 'https://vercel.com/dashboard',
+      },
+    ],
+    ['g', { name: 'GitHub', url: 'https://github.com' }],
     [
       '0',
       {
@@ -111,7 +114,7 @@
       color: var(--color-text);
     }
 
-    @media (min-width: 500px) {
+    @media (min-width: 400px) {
       .commands {
         columns: 2;
         max-width: 20rem;
