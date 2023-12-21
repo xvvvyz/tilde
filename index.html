@@ -42,34 +42,37 @@
   };
 
   const COMMANDS = new Map([
-    ['d', { name: 'Drive', url: 'https://drive.google.com' }],
-    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
-    ['k', { name: 'Keep', url: 'https://keep.google.com' }],
-    ['a', { name: 'Chat', url: 'https://chat.openai.com' }],
-    ['n', { name: 'Notion', url: 'https://www.notion.so' }],
-    ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
-    ['f', { name: 'Figma', url: 'https://www.figma.com' }],
+    ['a', { name: 'chat', url: 'https://chat.openai.com' }],
+    ['b', { name: 'drbl', url: 'https://dribbble.com/shots/recent' }],
+    ['c', { name: 'date', url: 'https://calendar.google.com' }],
+    ['d', { name: 'driv', url: 'https://drive.google.com' }],
+    ['f', { name: 'fgma', url: 'https://www.figma.com' }],
+    ['g', { name: 'code', url: 'https://github.com' }],
+    ['k', { name: 'keep', url: 'https://keep.google.com' }],
+    ['m', { name: 'mail', url: 'https://mail.proton.me/u/0/inbox' }],
+    ['n', { name: 'note', url: 'https://www.notion.so' }],
+    ['p', { name: 'pomo', url: 'https://pomodoro.xvvvyz.xyz/' }],
+    ['r', { name: 'rddt', url: 'https://reddit.com' }],
+    ['s', { name: 'supa', url: 'https://supabase.com/dashboard/projects' }],
+    ['t', { name: 'deep', url: 'https://www.deepl.com/translator' }],
+    ['v', { name: 'vrcl', url: 'https://vercel.com/dashboard' }],
     [
       'y',
       {
-        name: 'YouTube',
+        name: 'tube',
         searchTemplate: '/results?search_query={}',
         url: 'https://youtube.com/feed/subscriptions',
       },
     ],
-    ['r', { name: 'Reddit', url: 'https://reddit.com' }],
-    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['g', { name: 'GitHub', url: 'https://github.com' }],
     [
       '0',
       {
-        name: 'local',
+        name: 'host',
         searchTemplate: ':{}',
         suggestions: ['0 54323', '0 54324'],
         url: 'http://localhost:3000',
       },
     ],
-    ['p', { url: 'https://pomodoro.xvvvyz.xyz/' }],
   ]);
 </script>
 
@@ -79,7 +82,7 @@
       columns: 1;
       list-style: none;
       margin: 0 auto;
-      max-width: 10rem;
+      max-width: 7rem;
       padding: 0 0 0 var(--space-1);
       width: 100vw;
     }
@@ -111,14 +114,21 @@
     @media (min-width: 400px) {
       .commands {
         columns: 2;
-        max-width: 20rem;
+        max-width: 15rem;
       }
     }
 
     @media (min-width: 800px) {
       .commands {
         columns: 4;
-        max-width: 40rem;
+        max-width: 30rem;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .commands {
+        columns: 8;
+        max-width: 60rem;
       }
     }
   </style>
