@@ -9,7 +9,7 @@
   :root {
     --color-background: #111;
     --color-text-subtle: #999;
-    --color-text: #eee;
+    --color-text: #fff;
     --font-family: -apple-system, Helvetica, sans-serif;
     --font-size-1: 1rem;
     --font-size-2: 3rem;
@@ -27,7 +27,7 @@
     :root {
       --color-background: #eee;
       --color-text-subtle: #777;
-      --color-text: #111;
+      --color-text: #000;
     }
   }
 </style>
@@ -42,24 +42,24 @@
   };
 
   const COMMANDS = new Map([
-    ['a', { name: 'chat', url: 'https://chat.openai.com' }],
-    ['b', { name: 'drbl', url: 'https://dribbble.com/shots/recent' }],
-    ['c', { name: 'date', url: 'https://calendar.google.com' }],
-    ['d', { name: 'driv', url: 'https://drive.google.com' }],
-    ['f', { name: 'fgma', url: 'https://www.figma.com' }],
-    ['g', { name: 'code', url: 'https://github.com' }],
-    ['k', { name: 'keep', url: 'https://keep.google.com' }],
-    ['m', { name: 'mail', url: 'https://mail.proton.me/u/0/inbox' }],
-    ['n', { name: 'note', url: 'https://www.notion.so' }],
-    ['p', { name: 'pomo', url: 'https://pomodoro.xvvvyz.xyz/' }],
-    ['r', { name: 'rddt', url: 'https://reddit.com' }],
-    ['s', { name: 'supa', url: 'https://supabase.com/dashboard/projects' }],
-    ['t', { name: 'deep', url: 'https://www.deepl.com/translator' }],
-    ['v', { name: 'vrcl', url: 'https://vercel.com/dashboard' }],
+    ['a', { name: 'Chat', url: 'https://chat.openai.com' }],
+    ['b', { name: 'Dribbble', url: 'https://dribbble.com/shots/recent' }],
+    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
+    ['d', { name: 'Drive', url: 'https://drive.google.com' }],
+    ['f', { name: 'Figma', url: 'https://www.figma.com' }],
+    ['g', { name: 'GitHub', url: 'https://github.com' }],
+    ['k', { name: 'Keep', url: 'https://keep.google.com' }],
+    ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
+    ['n', { name: 'Notion', url: 'https://www.notion.so' }],
+    ['p', { name: 'Pomodoro', url: 'https://pomodoro.xvvvyz.xyz/' }],
+    ['r', { name: 'Reddit', url: 'https://reddit.com' }],
+    ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
+    ['t', { name: 'Translate', url: 'https://www.deepl.com/translator' }],
+    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
     [
       'y',
       {
-        name: 'tube',
+        name: 'YouTube',
         searchTemplate: '/results?search_query={}',
         url: 'https://youtube.com/feed/subscriptions',
       },
@@ -67,7 +67,7 @@
     [
       '0',
       {
-        name: 'host',
+        name: 'localhost',
         searchTemplate: ':{}',
         suggestions: ['0 54323', '0 54324'],
         url: 'http://localhost:3000',
@@ -79,11 +79,12 @@
 <template id="commands-template">
   <style>
     .commands {
+      column-gap: 0;
       columns: 1;
       list-style: none;
       margin: 0 auto;
-      max-width: 7rem;
-      padding: 0 0 0 var(--space-1);
+      max-width: 10rem;
+      padding: 0;
       width: 100vw;
     }
 
@@ -91,8 +92,22 @@
       display: flex;
       gap: var(--space-2);
       outline: 0;
-      padding: var(--space-1);
+      padding: var(--space-2);
+      position: relative;
       text-decoration: none;
+    }
+
+    .command::after {
+      background: var(--color-text-subtle);
+      content: ' ';
+      inset: 1px;
+      opacity: 0.05;
+      position: absolute;
+      transition: opacity var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover)::after {
+      opacity: 0.1;
     }
 
     .key {
@@ -111,24 +126,17 @@
       color: var(--color-text);
     }
 
-    @media (min-width: 400px) {
+    @media (min-width: 500px) {
       .commands {
         columns: 2;
-        max-width: 15rem;
+        max-width: 25rem;
       }
     }
 
-    @media (min-width: 800px) {
+    @media (min-width: 900px) {
       .commands {
         columns: 4;
-        max-width: 30rem;
-      }
-    }
-
-    @media (min-width: 1400px) {
-      .commands {
-        columns: 8;
-        max-width: 60rem;
+        max-width: 45rem;
       }
     }
   </style>
