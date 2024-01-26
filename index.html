@@ -7,9 +7,11 @@
 
 <style>
   :root {
+    --border-radius-1: 0.2rem;
+    --border-radius-2: 1rem;
     --color-background: #111;
-    --color-text-subtle: #999;
-    --color-text: #fff;
+    --color-text-subtle: #888;
+    --color-text: #eee;
     --font-family: -apple-system, Helvetica, sans-serif;
     --font-size-1: 1rem;
     --font-size-2: 3rem;
@@ -25,9 +27,9 @@
 
   @media (prefers-color-scheme: light) {
     :root {
-      --color-background: #eee;
-      --color-text-subtle: #777;
-      --color-text: #000;
+      --color-background: #e8e8e8;
+      --color-text-subtle: #606060;
+      --color-text: #111;
     }
   }
 </style>
@@ -79,11 +81,13 @@
 <template id="commands-template">
   <style>
     .commands {
+      border-radius: var(--border-radius-2);
       column-gap: 0;
       columns: 1;
       list-style: none;
       margin: 0 auto;
       max-width: 10rem;
+      overflow: hidden;
       padding: 0;
       width: 100vw;
     }
@@ -254,13 +258,12 @@
 
     .suggestion::before {
       background-color: var(--color-text);
-      bottom: var(--space-2);
+      border-radius: var(--border-radius-1);
       content: ' ';
-      left: var(--space-2);
+      inset: calc(var(--space-2) - var(--space-1) / 2)
+        calc(var(--space-2) - var(--space-1));
       opacity: 0;
       position: absolute;
-      right: var(--space-2);
-      top: var(--space-2);
       transform: translateY(0.5em);
       transition: all var(--transition-speed);
       z-index: -1;
