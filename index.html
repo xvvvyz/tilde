@@ -7,21 +7,15 @@
 
 <style>
   :root {
-    --border-radius-1: 0.2rem;
-    --border-radius-2: 1rem;
+    --border-radius: 1rem;
     --color-background: #111;
     --color-text-subtle: #888;
     --color-text: #eee;
     --font-family: -apple-system, Helvetica, sans-serif;
-    --font-size-1: 1rem;
-    --font-size-2: 3rem;
-    --font-size-base: clamp(16px, 1.6vw, 18px);
+    --font-size: clamp(16px, 1.6vw, 18px);
     --font-weight-bold: 700;
     --font-weight-normal: 400;
-    --line-height-base: 1.4;
-    --space-1: 0.5rem;
-    --space-2: 1rem;
-    --space-3: 4rem;
+    --space: 1rem;
     --transition-speed: 200ms;
   }
 
@@ -53,7 +47,7 @@
     ['k', { name: 'Keep', url: 'https://keep.google.com' }],
     ['m', { name: 'Mail', url: 'https://mail.proton.me/u/0/inbox' }],
     ['n', { name: 'Notion', url: 'https://www.notion.so' }],
-    ['p', { name: 'Pomodoro', url: 'https://pomodoro.xvvvyz.xyz/' }],
+    ['p', { name: 'Pomodoro', url: 'https://pomodoro.xvvvyz.xyz' }],
     ['r', { name: 'Reddit', url: 'https://reddit.com' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
     ['t', { name: 'Translate', url: 'https://www.deepl.com/translator' }],
@@ -81,7 +75,7 @@
 <template id="commands-template">
   <style>
     .commands {
-      border-radius: var(--border-radius-2);
+      border-radius: var(--border-radius);
       column-gap: 0;
       columns: 1;
       list-style: none;
@@ -94,9 +88,9 @@
 
     .command {
       display: flex;
-      gap: var(--space-2);
+      gap: var(--space);
       outline: 0;
-      padding: var(--space-2);
+      padding: var(--space);
       position: relative;
       text-decoration: none;
     }
@@ -222,7 +216,7 @@
 
     .input {
       color: var(--color-text);
-      font-size: var(--font-size-2);
+      font-size: 3rem;
       font-weight: var(--font-weight-bold);
       padding: 0;
       text-align: center;
@@ -236,7 +230,7 @@
       flex-wrap: wrap;
       justify-content: center;
       list-style: none;
-      margin: var(--space-2) 0 0;
+      margin: var(--space) 0 0;
       overflow: hidden;
       padding: 0;
     }
@@ -244,8 +238,8 @@
     .suggestion {
       color: var(--color-text);
       cursor: pointer;
-      font-size: var(--font-size-1);
-      padding: var(--space-2);
+      font-size: 1rem;
+      padding: var(--space);
       position: relative;
       transition: color var(--transition-speed);
       white-space: nowrap;
@@ -258,10 +252,9 @@
 
     .suggestion::before {
       background-color: var(--color-text);
-      border-radius: var(--border-radius-1);
+      border-radius: calc(var(--border-radius) / 5);
       content: ' ';
-      inset: calc(var(--space-2) - var(--space-1) / 2)
-        calc(var(--space-2) - var(--space-1));
+      inset: calc(var(--space) / 1.5) calc(var(--space) / 3);
       opacity: 0;
       position: absolute;
       transform: translateY(0.5em);
@@ -558,8 +551,8 @@
   html {
     background-color: var(--color-background);
     font-family: var(--font-family);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-base);
+    font-size: var(--font-size);
+    line-height: 1.4;
   }
 
   body {
@@ -573,7 +566,7 @@
     justify-content: center;
     min-height: 100vh;
     overflow: hidden;
-    padding: var(--space-3) var(--space-2);
+    padding: calc(var(--space) * 4) var(--space);
     position: relative;
     width: 100vw;
   }
