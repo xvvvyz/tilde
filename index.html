@@ -335,11 +335,6 @@
       this.shadowRoot.append(clone);
     }
 
-    static #attachSearchPrefix(array, { key, splitBy }) {
-      if (!splitBy) return array;
-      return array.map((search) => `${key}${splitBy}${search}`);
-    }
-
     static #escapeRegexCharacters(s) {
       return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     }
@@ -468,8 +463,12 @@
 
       if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
         const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
-        const formatted = Search.#attachSearchPrefix(res, oq);
-        suggestions = suggestions.concat(formatted);
+
+        suggestions = suggestions.concat(
+          oq.splitBy
+            ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
+            : res
+        );
       }
 
       const nq = Search.#parseQuery(this.#input.value);
