@@ -1,34 +1,36 @@
 # Tilde
 
-Inspired by [r/startpages](https://www.reddit.com/r/startpages)&mdash;Tilde is
-the browser homepage for pro web surfers.
+Tilde is a minimal browser homepage for pro web surfers.
 
-## Basic Usage
+## Usage
 
-To go to a site, type the corresponding key and press return. e.g:
+**To go to a site**, type the corresponding key and press <kbd>Enter</kbd>.
 
-- `g` will redirect you to [github.com](https://github.com)
+e.g. `g` <kbd>Enter</kbd> will redirect you to
+[github.com](https://github.com)
 
-To search a site, type a space after the site&rsquo;s key followed by your
-query. e.g:
+**To search a site**, type a space after the site&rsquo;s key followed by your
+query.
 
-- `y kittens` will
-  [search YouTube for kittens](https://www.youtube.com/results?search_query=kittens)
+e.g. `y kittens` <kbd>Enter</kbd> will
+[search YouTube for kittens](https://www.youtube.com/results?search_query=kittens)
 
-A DuckDuckGo search will be triggered if your input doesn&rsquo;t match a key.
-e.g:
+**If your input doesn&rsquo;t match a key**, a DuckDuckGo search will be
+triggered.
 
-- `google` will [search DuckDuckGo for google](https://duckduckgo.com/?q=google)
+e.g. `google` <kbd>Enter</kbd> will
+[search DuckDuckGo for google](https://duckduckgo.com/?q=google)
 
-To go to a specific path on a site, type the path after the site&rsquo;s key.
-e.g:
+**To go to a specific path on a site**, type the path after the site&rsquo;s
+key.
 
-- `r/r/startpages` will redirect you to
-  [reddit.com/r/startpages](https://www.reddit.com/r/startpages)
+e.g. `r/r/startpages` <kbd>Enter</kbd> will redirect you to
+[reddit.com/r/startpages](https://www.reddit.com/r/startpages)
 
-To access any other site, enter the URL directly. e.g:
+**To access any other site**, enter the URL directly.
 
-- `example.com` will redirect you to [example.com](https://example.com)
+e.g. `example.com` <kbd>Enter</kbd> will redirect you to
+[example.com](https://example.com)
 
 ## Beyond
 
