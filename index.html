@@ -111,12 +111,11 @@
 <template id="commands-template">
   <style>
     .commands {
-      border-radius: var(--border-radius);
       column-gap: 0;
-      columns: 1;
+      columns: 2;
       list-style: none;
       margin: 0 auto;
-      max-width: 10rem;
+      max-width: 20rem;
       overflow: hidden;
       padding: 0;
       width: 100vw;
@@ -160,10 +159,9 @@
       color: var(--color-text);
     }
 
-    @media (min-width: 500px) {
+    @media (min-width: 320px) {
       .commands {
-        columns: 2;
-        max-width: 25rem;
+        border-radius: var(--border-radius);
       }
     }
 
