@@ -56,8 +56,8 @@
       'p',
       {
         name: 'Proton',
-        suggestions: ['drive.proton.me/u/0/'],
-        url: 'https://mail.proton.me/u/0/inbox',
+        suggestions: ['drive.proton.me/u/1/'],
+        url: 'https://mail.proton.me/u/1/inbox',
       },
     ],
     [
@@ -74,18 +74,22 @@
       },
     ],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
-    ['t', { name: 'Translate', url: 'https://www.deepl.com/translator' }],
+    [
+      'u',
+      {
+        name: 'Unsplash',
+        searchTemplate: '/s/photos/{}',
+        url: 'https://unsplash.com',
+      },
+    ],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
     [
       'x',
       {
         name: 'xvvvyz',
-        suggestions: [
-          'jelly.xvvvyz.xyz',
-          'torrent.xvvvyz.xyz',
-          'proxy.xvvvyz.xyz',
-        ],
-        url: 'https://pomodoro.xvvvyz.xyz',
+        searchTemplate: 'https://{}.xvvvyz.xyz',
+        suggestions: ['x pomodoro', 'x jelly', 'x torrent', 'x proxy'],
+        url: 'https://xvvvyz.xyz',
       },
     ],
     [
