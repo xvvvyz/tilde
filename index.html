@@ -381,12 +381,12 @@
       });
     }
 
-    static #formatSearchUrl(url, searchPath, search) {
-      if (!searchPath) return url;
-      const [baseUrl] = Search.#splitUrl(url);
-      const urlQuery = encodeURIComponent(search);
-      searchPath = searchPath.replace(/{}/g, urlQuery);
-      return baseUrl + searchPath;
+    static #formatSearchUrl(commandUrl, searchTemplate, query) {
+      if (!searchTemplate) return commandUrl;
+      const [commandBase] = Search.#splitUrl(commandUrl);
+      const [searchBase, path] = Search.#splitUrl(searchTemplate);
+      const base = searchBase ?? commandBase;
+      return `${base}${path}`.replace(/{}/g, encodeURIComponent(query));
     }
 
     static #hasProtocol(s) {
@@ -436,11 +436,11 @@
     };
 
     static #splitUrl(url) {
-      const parser = document.createElement('a');
-      parser.href = url;
-      const baseUrl = `${parser.protocol}//${parser.hostname}`;
-      const rest = `${parser.pathname}${parser.search}`;
-      return [baseUrl, rest];
+      const a = document.createElement('a');
+      a.href = url;
+      const baseUrl = a.hostname ? `${a.protocol}//${a.hostname}` : null;
+      const rest = `${a.pathname}${a.search}`;
+      return [baseUrl, decodeURIComponent(rest)];
     }
 
     #close() {
