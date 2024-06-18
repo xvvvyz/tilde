@@ -37,78 +37,24 @@
     suggestionLimit: 4,
   };
 
+  // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Chat', url: 'https://chat.openai.com' }],
+    ['a', { name: 'Chat', url: 'https://gemini.google.com/app' }],
     ['b', { name: 'Dribbble', url: 'https://dribbble.com/shots/recent' }],
     ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
-    [
-      'd',
-      {
-        name: 'Drive',
-        url: 'https://drive.google.com/drive/u/0/my-drive',
-      },
-    ],
+    ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', url: 'https://github.com' }],
     ['k', { name: 'Keep', url: 'https://keep.google.com' }],
     ['n', { name: 'Notion', url: 'https://www.notion.so' }],
-    [
-      'p',
-      {
-        name: 'Proton',
-        suggestions: ['drive.proton.me/u/1/'],
-        url: 'https://mail.proton.me/u/1/inbox',
-      },
-    ],
-    [
-      'r',
-      {
-        name: 'Reddit',
-        suggestions: [
-          'r/r/selfhosted',
-          'r/r/dataisbeautiful',
-          'r/r/fujix',
-          'r/r/leetcode',
-        ],
-        url: 'https://reddit.com',
-      },
-    ],
+    ['p', { name: 'Proton', suggestions: ['drive.proton.me/u/1/'], url: 'https://mail.proton.me/u/1/inbox' }],
+    ['r', { name: 'Reddit', suggestions: ['r/r/selfhosted', 'r/r/dataisbeautiful', 'r/r/fujix', 'r/r/leetcode'], url: 'https://reddit.com' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
-    [
-      'u',
-      {
-        name: 'Unsplash',
-        searchTemplate: '/s/photos/{}',
-        url: 'https://unsplash.com',
-      },
-    ],
+    ['u', { name: 'Unsplash', searchTemplate: '/s/photos/{}', url: 'https://unsplash.com' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    [
-      'x',
-      {
-        name: 'xvvvyz',
-        searchTemplate: 'https://{}.xvvvyz.xyz',
-        suggestions: ['x pomodoro', 'x jelly', 'x torrent', 'x proxy'],
-        url: 'https://xvvvyz.xyz',
-      },
-    ],
-    [
-      'y',
-      {
-        name: 'YouTube',
-        searchTemplate: '/results?search_query={}',
-        url: 'https://youtube.com/feed/subscriptions',
-      },
-    ],
-    [
-      '0',
-      {
-        name: 'localhost',
-        searchTemplate: ':{}',
-        suggestions: ['0 54323', '0 54324'],
-        url: 'http://localhost:3000',
-      },
-    ],
+    ['x', { name: 'xvvvyz', searchTemplate: 'https://{}.xvvvyz.xyz', suggestions: ['x pomodoro', 'x jelly', 'x torrent', 'x proxy'], url: 'https://xvvvyz.xyz' }],
+    ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://youtube.com/feed/subscriptions' }],
+    ['0', { name: 'localhost', searchTemplate: ':{}', suggestions: ['0 54323', '0 54324'], url: 'http://localhost:3000' }],
   ]);
 </script>
 
