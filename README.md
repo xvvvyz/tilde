@@ -24,8 +24,8 @@ e.g. `google` <kbd>Enter</kbd> will
 **To go to a specific path on a site**, type the path after the site&rsquo;s
 key.
 
-e.g. `r/r/startpages` <kbd>Enter</kbd> will redirect you to
-[reddit.com/r/startpages](https://www.reddit.com/r/startpages)
+e.g. `r/r/selfhosted` <kbd>Enter</kbd> will redirect you to
+[reddit.com/r/selfhosted](https://www.reddit.com/r/selfhosted)
 
 **To access any other site**, enter the URL directly.
 
