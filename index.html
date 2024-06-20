@@ -333,10 +333,9 @@
 
     static #formatSearchUrl(searchTemplate, query, commandUrl) {
       if (!searchTemplate) return commandUrl;
-      const [commandBase] = Search.#splitUrl(commandUrl);
-      const [searchBase, path] = Search.#splitUrl(searchTemplate);
-      const base = searchBase ?? commandBase;
-      return `${base}${path}`.replace(/{}/g, encodeURIComponent(query));
+      const { origin: commandOrigin } = new URL(searchTemplate, commandUrl);
+      const { href } = new URL(searchTemplate, commandOrigin);
+      return href.replace(/{}/g, encodeURIComponent(query));
     }
 
     static #hasProtocol(s) {
@@ -375,25 +374,13 @@
 
       if (COMMANDS.has(pathKey)) {
         const { url: base } = COMMANDS.get(pathKey);
-        const [baseUrl] = Search.#splitUrl(base);
-        const url = `${baseUrl}/${path}`;
-        return { key: pathKey, path, query, splitBy, url };
+        const { origin } = new URL(base);
+        return { key: pathKey, path, query, splitBy, url: `${origin}/${path}` };
       }
 
       const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
       return { query, search: query, url };
     };
-
-    static #splitUrl(url) {
-      try {
-        const u = new URL(url);
-        const base = `${u.protocol}//${u.hostname}`;
-        const rest = decodeURIComponent(`${u.pathname}${u.search}${u.hash}`);
-        return [base, rest];
-      } catch (e) {
-        return [null, url];
-      }
-    }
 
     #close() {
       this.#input.value = '';
