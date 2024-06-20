@@ -331,7 +331,7 @@
       });
     }
 
-    static #formatSearchUrl(commandUrl, searchTemplate, query) {
+    static #formatSearchUrl(searchTemplate, query, commandUrl) {
       if (!searchTemplate) return commandUrl;
       const [commandBase] = Search.#splitUrl(commandUrl);
       const [searchBase, path] = Search.#splitUrl(searchTemplate);
@@ -366,7 +366,7 @@
       if (COMMANDS.has(searchKey)) {
         const { searchTemplate, url: base } = COMMANDS.get(searchKey);
         const search = rawSearch.trim();
-        const url = Search.#formatSearchUrl(base, searchTemplate, search);
+        const url = Search.#formatSearchUrl(searchTemplate, search, base);
         return { key: searchKey, query, search, splitBy, url };
       }
 
@@ -380,17 +380,19 @@
         return { key: pathKey, path, query, splitBy, url };
       }
 
-      const [baseUrl, rest] = Search.#splitUrl(CONFIG.defaultSearchTemplate);
-      const url = Search.#formatSearchUrl(baseUrl, rest, query);
+      const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
       return { query, search: query, url };
     };
 
     static #splitUrl(url) {
-      const a = document.createElement('a');
-      a.href = url;
-      const baseUrl = a.hostname ? `${a.protocol}//${a.hostname}` : null;
-      const rest = `${a.pathname}${a.search}`;
-      return [baseUrl, decodeURIComponent(rest)];
+      try {
+        const u = new URL(url);
+        const base = `${u.protocol}//${u.hostname}`;
+        const rest = decodeURIComponent(`${u.pathname}${u.search}${u.hash}`);
+        return [base, rest];
+      } catch (e) {
+        return [null, url];
+      }
     }
 
     #close() {
