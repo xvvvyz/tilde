@@ -54,7 +54,9 @@
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
     ['x', { name: 'xvvvyz', searchTemplate: 'https://{}.xvvvyz.xyz', suggestions: ['x pomodoro', 'x jelly', 'x torrent', 'x proxy'], url: 'https://xvvvyz.xyz' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://youtube.com/feed/subscriptions' }],
-    ['0', { name: 'localhost', searchTemplate: ':{}', suggestions: ['0 54323', '0 54324'], url: 'http://localhost:3000' }],
+    ['0', { name: 'localhost', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
+    ['0:54323', { url: 'http://localhost:54323' }],
+    ['0:54324', { url: 'http://localhost:54324' }],
   ]);
 </script>
 
@@ -331,11 +333,8 @@
       });
     }
 
-    static #formatSearchUrl(searchTemplate, query, commandUrl) {
-      if (!searchTemplate) return commandUrl;
-      const { origin: commandOrigin } = new URL(searchTemplate, commandUrl);
-      const { href } = new URL(searchTemplate, commandOrigin);
-      return href.replace(/{}/g, encodeURIComponent(query));
+    static #formatSearchUrl(template, search) {
+      return template.replace(/{}/g, encodeURIComponent(search));
     }
 
     static #hasProtocol(s) {
@@ -355,17 +354,18 @@
       }
 
       if (COMMANDS.has(query)) {
-        const { command, key, url } = COMMANDS.get(query);
-        return command ? Search.#parseQuery(command) : { key, query, url };
+        const { key, url } = COMMANDS.get(query);
+        return { key, query, url };
       }
 
       let splitBy = CONFIG.commandSearchDelimiter;
       const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
 
       if (COMMANDS.has(searchKey)) {
-        const { searchTemplate, url: base } = COMMANDS.get(searchKey);
+        const command = COMMANDS.get(searchKey);
+        const template = new URL(command.searchTemplate ?? '', command.url);
         const search = rawSearch.trim();
-        const url = Search.#formatSearchUrl(searchTemplate, search, base);
+        const url = Search.#formatSearchUrl(decodeURI(template.href), search);
         return { key: searchKey, query, search, splitBy, url };
       }
 
@@ -373,9 +373,9 @@
       const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
 
       if (COMMANDS.has(pathKey)) {
-        const { url: base } = COMMANDS.get(pathKey);
-        const { origin } = new URL(base);
-        return { key: pathKey, path, query, splitBy, url: `${origin}/${path}` };
+        const command = COMMANDS.get(pathKey);
+        const url = `${new URL(command.url).origin}/${path}`;
+        return { key: pathKey, path, query, splitBy, url };
       }
 
       const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
@@ -390,9 +390,8 @@
     }
 
     #execute(query) {
-      const { url } = Search.#parseQuery(query);
       const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
-      window.open(url, target, 'noopener noreferrer');
+      window.open(Search.#parseQuery(query).url, target, 'noopener noreferrer');
       this.#close();
     }
 
