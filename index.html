@@ -39,7 +39,7 @@
 
     // prettier-ignore
     const COMMANDS = new Map([
-        ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', url: 'https://mail.proton.me/u/0/inbox' }],
+        ['p', { name: 'Proton', suggestions: ['p/pass'], searchTemplate: '/u/0/all-mail#keyword={}', url: 'https://mail.proton.me/u/0/inbox' }],
         ['p/pass', { url: 'https://pass.proton.me/' }],
         ['g', { name: 'GitHub', searchTemplate: '/search?q={}', url: 'https://github.com' }],
         ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
@@ -52,12 +52,12 @@
         ['n', { name: 'Hacker News', url: 'https://news.ycombinator.com' }],
         ['d', { name: 'DeepL', url: 'https://www.deepl.com/es/translator' }],
         ['f', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
-        ['i', { name: 'Pico.sh', url: 'https://pico.sh/' }],
-        ['s/local', { url: 'http://localhost:1337/' }],
+        ['i', { name: 'Pico.sh', suggestions: ['i/local'], url: 'https://pico.sh/' }],
+        ['i/local', { url: 'http://localhost:1337/' }],
         ['c', { name: 'ChatGPT', url: 'https://chat.openai.com/' }],
         ['m', { name: 'Morphic', url: 'https://www.morphic.sh/' }],
         ['s', { name: 'Server', url: 'http://192.168.1.139/#' }],
-        ['0', { name: 'Local', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
+        ['0', { name: 'Local', url: 'http://localhost:3000' }],
         // ['0:54323', { url: 'http://localhost:54323' }],
         // ['0:54324', { url: 'http://localhost:54324' }],
     ]);
