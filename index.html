@@ -39,7 +39,9 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Gemini', url: 'https://gemini.google.com/app' }],
+    ['a', { name: 'Chat', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
+    ['a/claude', { url: 'https://claude.ai/new' }],
+    ['a/gemini', { url: 'https://gemini.google.com/app' }],
     ['b', { name: 'Dribbble', searchTemplate: '/search/{}', url: 'https://dribbble.com/shots/recent' }],
     ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
