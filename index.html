@@ -39,6 +39,7 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
+    ['t', { name: 'test', suggestions: [{name: 'Claude', url: 'https://claude.ai/new'}], url: 'https://chatgpt.com' }],
     ['a', { name: 'Chat', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
     ['a/claude', { url: 'https://claude.ai/new' }],
     ['a/gemini', { url: 'https://gemini.google.com/app' }],
@@ -78,6 +79,8 @@
         ],
       },
     ],
+
+    // Add more command entries as needed
   ]); */
 </script>
 
@@ -169,17 +172,15 @@
       const commands = clone.querySelector('.commands');
       const commandTemplate = document.getElementById('command-template');
 
-      for (const [key, { suggestions }] of COMMANDS.entries()) {
-        if (!suggestions) continue;
-        for (const { name, url } of suggestions) {
-          const clone = commandTemplate.content.cloneNode(true);
-          const command = clone.querySelector('.command');
-          command.href = url;
-          if (CONFIG.openLinksInNewTab) command.target = '_blank';
-          clone.querySelector('.key').innerText = key;
-          clone.querySelector('.name').innerText = name;
-          commands.append(clone);
-        }
+      for (const [key, { name, url }] of COMMANDS.entries()) {
+        if (!name || !url) continue;
+        const clone = commandTemplate.content.cloneNode(true);
+        const command = clone.querySelector('.command');
+        command.href = url;
+        if (CONFIG.openLinksInNewTab) command.target = '_blank';
+        clone.querySelector('.key').innerText = key;
+        clone.querySelector('.name').innerText = name ? name : url;
+        commands.append(clone);
       }
 
       this.shadowRoot.append(clone);
@@ -522,7 +523,7 @@
         const ref = clone.querySelector('.suggestion');
         ref.dataset.index = index;
         ref.dataset.url = suggestion.url;
-        ref.innerText = suggestion.name;
+        ref.innerText = suggestion.name ? suggestion.name : suggestion;
         this.#suggestions.append(clone);
       }
     }
