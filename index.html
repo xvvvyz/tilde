@@ -32,7 +32,7 @@
   const CONFIG = {
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
-    commandCaseSensitive: false,
+    commandCaseSensitive: true,
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
     openLinksInNewTab: true,
     suggestionLimit: 4,
@@ -355,7 +355,17 @@
     }
 
     static #getCommand(key) {
-      return COMMANDS.get(this.#compareKey(key));
+      if (CONFIG.commandCaseSensitive) {
+        return COMMANDS.get(key);
+      } else {
+        const lowerKey = key.toLowerCase();
+        for (const [cmdKey, value] of COMMANDS) {
+          if (cmdKey.toLowerCase() === lowerKey) {
+            return value;
+          }
+        }
+        return undefined;
+      }
     }
 
     static #parseQuery = (raw) => {
@@ -367,20 +377,22 @@
         return { query, url };
       }
 
-      if (COMMANDS.has(compareQuery)) {
-        const { url } = this.#getCommand(query);
-        return { key: query, query, url };
+      const command = this.#getCommand(query);
+      if (command) {
+        return { key: query, query, url: command.url };
       }
 
       const [commandPart, searchPart] = query.split(
         new RegExp(`${CONFIG.commandSearchDelimiter}(.*)`)
       );
-      const compareCommandPart = this.#compareKey(commandPart);
 
-      if (COMMANDS.has(compareCommandPart)) {
-        const command = this.#getCommand(commandPart);
+      const commandPartCommand = this.#getCommand(commandPart);
+      if (commandPartCommand) {
         const search = searchPart ? searchPart.trim() : '';
-        const template = new URL(command.searchTemplate ?? '', command.url);
+        const template = new URL(
+          commandPartCommand.searchTemplate ?? '',
+          commandPartCommand.url
+        );
         const url = this.#formatSearchUrl(decodeURI(template.href), search);
         return { key: commandPart, query, search, url };
       }
@@ -388,11 +400,10 @@
       const [pathKey, path] = query.split(
         new RegExp(`${CONFIG.commandPathDelimiter}(.*)`)
       );
-      const comparePathKey = this.#compareKey(pathKey);
 
-      if (COMMANDS.has(comparePathKey)) {
-        const command = this.#getCommand(pathKey);
-        const url = `${new URL(command.url).origin}/${path || ''}`;
+      const pathKeyCommand = this.#getCommand(pathKey);
+      if (pathKeyCommand) {
+        const url = `${new URL(pathKeyCommand.url).origin}/${path || ''}`;
         return { key: pathKey, path, query, url };
       }
 
