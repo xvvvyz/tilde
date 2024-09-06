@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <meta charset="utf-8" />
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="noindex" />
@@ -32,6 +32,7 @@
   const CONFIG = {
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
+    commandCaseSensitive: false,
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
     openLinksInNewTab: true,
     suggestionLimit: 4,
@@ -349,40 +350,53 @@
       return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i.test(s);
     }
 
+    static #compareKey(key) {
+      return CONFIG.commandCaseSensitive ? key : key.toLowerCase();
+    }
+
+    static #getCommand(key) {
+      return COMMANDS.get(this.#compareKey(key));
+    }
+
     static #parseQuery = (raw) => {
       const query = raw.trim();
+      const compareQuery = this.#compareKey(query);
 
       if (this.#isUrl(query)) {
         const url = this.#hasProtocol(query) ? query : `https://${query}`;
         return { query, url };
       }
 
-      if (COMMANDS.has(query)) {
-        const { key, url } = COMMANDS.get(query);
-        return { key, query, url };
+      if (COMMANDS.has(compareQuery)) {
+        const { url } = this.#getCommand(query);
+        return { key: query, query, url };
       }
 
-      let splitBy = CONFIG.commandSearchDelimiter;
-      const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
+      const [commandPart, searchPart] = query.split(
+        new RegExp(`${CONFIG.commandSearchDelimiter}(.*)`)
+      );
+      const compareCommandPart = this.#compareKey(commandPart);
 
-      if (COMMANDS.has(searchKey)) {
-        const command = COMMANDS.get(searchKey);
+      if (COMMANDS.has(compareCommandPart)) {
+        const command = this.#getCommand(commandPart);
+        const search = searchPart ? searchPart.trim() : '';
         const template = new URL(command.searchTemplate ?? '', command.url);
-        const search = rawSearch.trim();
-        const url = Search.#formatSearchUrl(decodeURI(template.href), search);
-        return { key: searchKey, query, search, splitBy, url };
+        const url = this.#formatSearchUrl(decodeURI(template.href), search);
+        return { key: commandPart, query, search, url };
       }
 
-      splitBy = CONFIG.commandPathDelimiter;
-      const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
+      const [pathKey, path] = query.split(
+        new RegExp(`${CONFIG.commandPathDelimiter}(.*)`)
+      );
+      const comparePathKey = this.#compareKey(pathKey);
 
-      if (COMMANDS.has(pathKey)) {
-        const command = COMMANDS.get(pathKey);
-        const url = `${new URL(command.url).origin}/${path}`;
-        return { key: pathKey, path, query, splitBy, url };
+      if (COMMANDS.has(comparePathKey)) {
+        const command = this.#getCommand(pathKey);
+        const url = `${new URL(command.url).origin}/${path || ''}`;
+        return { key: pathKey, path, query, url };
       }
 
-      const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
+      const url = this.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
       return { query, search: query, url };
     };
 
@@ -416,28 +430,45 @@
     }
 
     #onInput = async () => {
-      const oq = Search.#parseQuery(this.#input.value);
+      const parsedQuery = Search.#parseQuery(this.#input.value);
 
-      if (!oq.query) {
+      if (!parsedQuery.query) {
         this.#close();
         return;
       }
 
-      let suggestions = COMMANDS.get(oq.query)?.suggestions ?? [];
+      const command = Search.#getCommand(parsedQuery.key || parsedQuery.query);
+      let suggestions = command?.suggestions ?? [];
 
-      if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
-        const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
-
+      if (parsedQuery.search && suggestions.length < CONFIG.suggestionLimit) {
+        const ddgSuggestions = await Search.#fetchDuckDuckGoSuggestions(
+          parsedQuery.search
+        );
         suggestions = suggestions.concat(
-          oq.splitBy
-            ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
-            : res
+          parsedQuery.key
+            ? ddgSuggestions.map(
+                (s) => `${parsedQuery.key}${CONFIG.commandSearchDelimiter}${s}`
+              )
+            : ddgSuggestions
         );
       }
 
-      const nq = Search.#parseQuery(this.#input.value);
-      if (nq.query !== oq.query) return;
-      this.#renderSuggestions(suggestions, oq.query);
+      const newParsedQuery = Search.#parseQuery(this.#input.value);
+      if (
+        Search.#compareKey(newParsedQuery.query) !==
+        Search.#compareKey(parsedQuery.query)
+      )
+        return;
+
+      const filteredSuggestions = CONFIG.commandCaseSensitive
+        ? suggestions
+        : suggestions.filter((s) =>
+            Search.#compareKey(s).startsWith(
+              Search.#compareKey(parsedQuery.query)
+            )
+          );
+
+      this.#renderSuggestions(filteredSuggestions, parsedQuery.query);
     };
 
     #onKeydown = (e) => {
@@ -489,33 +520,44 @@
 
     #renderSuggestions(suggestions, query) {
       this.#suggestions.innerHTML = '';
-      const sliced = suggestions.slice(0, CONFIG.suggestionLimit);
       const template = document.getElementById('suggestion-template');
+      const matchTemplate = document.getElementById('match-template');
 
-      for (const [index, suggestion] of sliced.entries()) {
-        const clone = template.content.cloneNode(true);
-        const ref = clone.querySelector('.suggestion');
-        ref.dataset.index = index;
-        ref.dataset.suggestion = suggestion;
-        const escapedQuery = Search.#escapeRegexCharacters(query);
-        const matched = suggestion.match(new RegExp(escapedQuery, 'i'));
-
-        if (matched) {
-          const template = document.getElementById('match-template');
+      suggestions
+        .slice(0, CONFIG.suggestionLimit)
+        .forEach((suggestion, index) => {
           const clone = template.content.cloneNode(true);
-          const matchRef = clone.querySelector('.match');
-          const pre = suggestion.slice(0, matched.index);
-          const post = suggestion.slice(matched.index + matched[0].length);
-          matchRef.innerText = matched[0];
-          matchRef.insertAdjacentHTML('beforebegin', pre);
-          matchRef.insertAdjacentHTML('afterend', post);
-          ref.append(clone);
-        } else {
-          ref.innerText = suggestion;
-        }
+          const ref = clone.querySelector('.suggestion');
+          ref.dataset.index = index;
+          ref.dataset.suggestion = suggestion;
 
-        this.#suggestions.append(clone);
-      }
+          const compareQuery = Search.#compareKey(query);
+          const compareSuggestion = Search.#compareKey(suggestion);
+          const matchIndex = compareSuggestion.indexOf(compareQuery);
+
+          if (matchIndex !== -1) {
+            const pre = suggestion.slice(0, matchIndex);
+            const match = suggestion.slice(
+              matchIndex,
+              matchIndex + query.length
+            );
+            const post = suggestion.slice(matchIndex + query.length);
+
+            const matchClone = matchTemplate.content.cloneNode(true);
+            const matchRef = matchClone.querySelector('.match');
+            matchRef.textContent = match;
+
+            ref.append(
+              document.createTextNode(pre),
+              matchClone,
+              document.createTextNode(post)
+            );
+          } else {
+            ref.textContent = suggestion;
+          }
+
+          this.#suggestions.appendChild(clone);
+        });
     }
   }
 
