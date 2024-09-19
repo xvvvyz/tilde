@@ -39,23 +39,23 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Chat', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
+    ['a', { name: 'Artificial', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
     ['a/claude', { url: 'https://claude.ai/new' }],
     ['a/gemini', { url: 'https://gemini.google.com/app' }],
-    ['b', { name: 'Dribbble', searchTemplate: '/search/{}', url: 'https://dribbble.com/shots/recent' }],
-    ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
-    ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
+    ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', url: 'https://github.com' }],
-    ['k', { name: 'Keep', url: 'https://keep.google.com' }],
-    ['n', { name: 'Notion', url: 'https://www.notion.so' }],
+    ['o', { name: 'Google', searchTemplate: '/search?q={}', suggestions: ['o/drive', 'o/cal'], url: 'https://google.com' }],
+    ['o/cal', { url: 'https://calendar.google.com' }],
+    ['o/drive', { url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0/' }],
-    ['r', { name: 'Reddit', searchTemplate: '/search/?q={}', suggestions: ['r/r/selfhosted', 'r/r/dataisbeautiful', 'r/r/fujix', 'r/r/leetcode'], url: 'https://reddit.com' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
+    ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['x', { name: 'xvvvyz', suggestions: ['x/pomo', 'x/torrent'], url: 'https://xvvvyz.xyz' }],
-    ['x/pomo', { url: 'https://pomodoro.xvvvyz.xyz' }],
+    ['x', { name: 'xvvvyz', suggestions: ['x/torrent', 'x/jelly', 'x/proxy'], url: 'https://xvvvyz.xyz' }],
+    ['x/jelly', { url: 'https://jelly.xvvvyz.xyz' }],
+    ['x/proxy', { url: 'https://proxy.xvvvyz.xyz' }],
     ['x/torrent', { url: 'https://torrent.xvvvyz.xyz' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://youtube.com/feed/subscriptions' }],
     ['0', { name: 'local', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
@@ -121,10 +121,17 @@
       }
     }
 
+    @media (min-width: 800px) {
+      .commands {
+        columns: 3;
+        max-width: 33rem;
+      }
+    }
+
     @media (min-width: 1000px) {
       .commands {
-        columns: 5;
-        max-width: 55rem;
+        columns: 4;
+        max-width: 44rem;
       }
     }
   </style>
