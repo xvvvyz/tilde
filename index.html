@@ -42,7 +42,9 @@
     ['a', { name: 'Artificial', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
     ['a/claude', { url: 'https://claude.ai/new' }],
     ['a/gemini', { url: 'https://gemini.google.com/app' }],
+    ['b', { name: 'Dribbble', url: 'https://dribbble.com/shots/popular' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
+    ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', url: 'https://github.com' }],
     ['o', { name: 'Google', searchTemplate: '/search?q={}', suggestions: ['o/drive', 'o/cal'], url: 'https://google.com' }],
@@ -51,11 +53,15 @@
     ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0/' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0/' }],
+    ['q', { name: 'QuickBooks', url: 'https://selfemployed.intuit.com/home' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
-    ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
+    ['t', { name: 'TickTick', suggestions: ['t/habits', 't/pomo'], url: 'https://ticktick.com/webapp/#q/today/tasks' }],
+    ['t/habits', { url: 'https://ticktick.com/webapp/#q/all/habit' }],
+    ['t/pomo', { url: 'https://ticktick.com/webapp/#focus' }],
+    ['u', { name: 'Unsplash', url: 'https://unsplash.com/' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['x', { name: 'xvvvyz', suggestions: ['x/torrent', 'x/jelly', 'x/proxy'], url: 'https://xvvvyz.xyz' }],
-    ['x/jelly', { url: 'https://jelly.xvvvyz.xyz' }],
+    ['x', { name: 'xvvvyz', suggestions: ['x/torrent', 'x/droplet', 'x/proxy'], url: 'https://xvvvyz.xyz' }],
+    ['x/droplet', { url: 'https://cloud.digitalocean.com/projects/50ffcff7-ad65-40e3-af88-3cbc5a38cf99/resources' }],
     ['x/proxy', { url: 'https://proxy.xvvvyz.xyz' }],
     ['x/torrent', { url: 'https://torrent.xvvvyz.xyz' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://youtube.com/feed/subscriptions' }],
@@ -72,7 +78,7 @@
       columns: 2;
       list-style: none;
       margin: 0 auto;
-      max-width: 20rem;
+      max-width: 23rem;
       overflow: hidden;
       padding: 0;
       width: 100vw;
@@ -116,23 +122,16 @@
       color: var(--color-text);
     }
 
-    @media (min-width: 320px) {
+    @media (min-width: 23rem) {
       .commands {
         border-radius: var(--border-radius);
       }
     }
 
-    @media (min-width: 800px) {
-      .commands {
-        columns: 3;
-        max-width: 33rem;
-      }
-    }
-
-    @media (min-width: 1000px) {
+    @media (min-width: 60rem) {
       .commands {
         columns: 4;
-        max-width: 44rem;
+        max-width: 50rem;
       }
     }
   </style>
