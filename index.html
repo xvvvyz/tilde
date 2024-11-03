@@ -39,15 +39,15 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Alphabet', searchTemplate: '/search?q={}', suggestions: ['a/cal', 'a/drive'], url: 'https://google.com' }],
+    ['a', { name: 'Alphabet', searchTemplate: '/search?q={}', suggestions: ['a/drive', 'a/cal'], url: 'https://google.com' }],
     ['a/cal', { url: 'https://calendar.google.com' }],
     ['a/drive', { url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
     ['i', { name: 'Intuit', url: 'https://selfemployed.intuit.com/home' }],
-    ['o', { name: 'OpenAI', url: 'https://chatgpt.com' }],
-    ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
+    ['o', { name: 'OpenAI', searchTemplate: '?q={}', url: 'https://chatgpt.com' }],
+    ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/pass', 'p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0/' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0/' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
