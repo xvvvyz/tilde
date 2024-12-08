@@ -39,16 +39,14 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Alphabet', suggestions: ['a/drive', 'a/contacts'], url: 'https://www.google.com' }],
-    ['a/drive', {  url: 'https://drive.google.com/drive/u/0/my-drive' }],
-    ['a/contacts', {  url: 'https://contacts.google.com' }],
+    ['a', { name: 'ChatGPT', searchTemplate: '?q={}', url: 'https://chatgpt.com' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
-    ['d', { name: 'Droplet', url: 'https://cloud.digitalocean.com/projects/50ffcff7-ad65-40e3-af88-3cbc5a38cf99/resources' }],
+    ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['e', { name: 'Resend', url: 'https://resend.com/emails?time=all&page=1' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
     ['i', { name: 'Intuit', url: 'https://selfemployed.intuit.com/home' }],
-    ['o', { name: 'ChatGPT', searchTemplate: '?q={}', url: 'https://chatgpt.com' }],
+    ['o', { name: 'Droplet', url: 'https://cloud.digitalocean.com/projects/50ffcff7-ad65-40e3-af88-3cbc5a38cf99/resources' }],
     ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
@@ -56,9 +54,6 @@
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
     ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
     ['v', { name: 'Vercel', suggestions: ['v0.dev'], url: 'https://vercel.com/dashboard' }],
-    ['x', { name: 'xvvvyz', suggestions: ['x/jelly', 'x/torrent'], url: 'https://xvvvyz.xyz' }],
-    ['x/jelly', { url: 'https://jelly.xvvvyz.xyz' }],
-    ['x/torrent', { url: 'https://torrent.xvvvyz.xyz' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
     ['0', { name: 'localhost', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
     ['0:54323', { url: 'http://localhost:54323' }],
@@ -118,10 +113,17 @@
       color: var(--color-text);
     }
 
-    @media (min-width: 55rem) {
+    @media (min-width: 45rem) {
       .commands {
-        columns: 4;
-        max-width: 45rem;
+        columns: 3;
+        max-width: 35rem;
+      }
+    }
+
+    @media (min-width: 65rem) {
+      .commands {
+        columns: 5;
+        max-width: 55rem;
       }
     }
   </style>
