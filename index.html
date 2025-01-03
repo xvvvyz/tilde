@@ -156,7 +156,7 @@
         const clone = commandTemplate.content.cloneNode(true);
         const command = clone.querySelector('.command');
         command.href = url;
-        if (CONFIG.openLinksInNewTab) command.target = '_blank';
+        if (CONFIG.openLinksInNewTab) command.target = '_self';
         clone.querySelector('.key').innerText = key;
         clone.querySelector('.name').innerText = name;
         commands.append(clone);
