@@ -39,14 +39,14 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'ChatGPT', searchTemplate: '?q={}', url: 'https://chatgpt.com' }],
+    ['a', { name: 'ChatGPT', searchTemplate: '?temporary-chat=true&q={}', url: 'https://chatgpt.com?temporary-chat=true' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['e', { name: 'Resend', url: 'https://resend.com/emails?time=all&page=1' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
+    ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
     ['i', { name: 'Intuit', url: 'https://selfemployed.intuit.com/home' }],
-    ['o', { name: 'Droplet', url: 'https://cloud.digitalocean.com/projects/50ffcff7-ad65-40e3-af88-3cbc5a38cf99/resources' }],
     ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
