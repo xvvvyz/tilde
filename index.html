@@ -393,7 +393,7 @@
     }
 
     #execute(query) {
-      const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
+      const target = CONFIG.openLinksInNewTab ? '_self' : '_blank';
       window.open(Search.#parseQuery(query).url, target, 'noopener noreferrer');
       this.#close();
     }
