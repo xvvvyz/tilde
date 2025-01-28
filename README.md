@@ -37,4 +37,6 @@ Tilde is meant to be customized&mdash;[make it yours!](index.html)
 
 ## License
 
+Space Grotesk is licensed under the [SIL Open Font License](OFL).
+
 Use and modify Tilde [as you see fit](UNLICENSE).

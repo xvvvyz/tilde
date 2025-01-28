@@ -6,15 +6,29 @@
 <title>~</title>
 
 <style>
+  @font-face {
+    font-family: 'SpaceGrotesk';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./SpaceGrotesk-Regular.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'SpaceGrotesk';
+    font-style: normal;
+    font-weight: bold;
+    src: url('./SpaceGrotesk-Bold.woff2') format('woff2');
+  }
+
   :root {
-    --border-radius: 1rem;
+    --border-radius: 0.5rem;
     --color-background: #111;
     --color-text-subtle: #888;
-    --color-text: #ddd;
-    --font-family: -apple-system, Helvetica, sans-serif;
+    --color-text: #ccc;
+    --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.3vw, 18px);
-    --font-weight-bold: 700;
-    --font-weight-normal: 400;
+    --font-weight-bold: bold;
+    --font-weight-normal: normal;
     --space: 1rem;
     --transition-speed: 200ms;
   }
@@ -65,30 +79,32 @@
 <template id="commands-template">
   <style>
     .commands {
-      border-radius: var(--border-radius);
-      column-gap: 0;
-      columns: 2;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      height: 100vh;
       list-style: none;
-      margin: 0 auto;
-      max-width: 23rem;
-      overflow: hidden;
-      padding: 0;
+      margin: 0;
+      padding: calc(var(--space) * 2);
       width: 100vw;
     }
 
     .command {
+      align-items: center;
+      color: var(--color-text);
       display: flex;
-      gap: var(--space);
+      height: 100%;
+      justify-content: center;
       outline: 0;
-      padding: var(--space);
       position: relative;
       text-decoration: none;
     }
 
     .command::after {
       background: var(--color-text-subtle);
+      border-radius: var(--border-radius);
       content: ' ';
-      inset: 1px;
+      inset: calc(var(--space) / 6);
       opacity: 0.05;
       position: absolute;
       transition: opacity var(--transition-speed);
@@ -99,32 +115,45 @@
     }
 
     .key {
-      color: var(--color-text);
-      display: inline-block;
-      text-align: center;
-      width: 3ch;
+      left: 50%;
+      position: absolute;
+      color: var(--color-text-subtle);
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: all var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover) .key {
+      opacity: 0;
+      transform: translate(-50%, calc(-50% - 2em));
     }
 
     .name {
-      color: var(--color-text-subtle);
-      transition: color var(--transition-speed);
+      opacity: 0;
+      transform: translateY(2em);
+      transition: all var(--transition-speed);
     }
 
     .command:where(:focus, :hover) .name {
-      color: var(--color-text);
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    @media (min-width: 45rem) {
+    @media (min-width: 40rem) {
       .commands {
-        columns: 3;
-        max-width: 35rem;
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    @media (min-width: 65rem) {
+    @media (min-width: 55rem) {
       .commands {
-        columns: 5;
-        max-width: 55rem;
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (min-width: 70rem) {
+      .commands {
+        grid-template-columns: repeat(5, 1fr);
       }
     }
   </style>
@@ -175,6 +204,7 @@
     input,
     button {
       -moz-appearance: none;
+      font-family: var(--font-family);
       -webkit-appearance: none;
       background: transparent;
       border: 0;
@@ -206,7 +236,7 @@
 
     .input {
       color: var(--color-text);
-      font-size: 3rem;
+      font-size: 2rem;
       font-weight: var(--font-weight-bold);
       padding: 0;
       text-align: center;
@@ -242,7 +272,7 @@
 
     .suggestion::before {
       background-color: var(--color-text);
-      border-radius: calc(var(--border-radius) / 5);
+      border-radius: var(--border-radius);
       content: ' ';
       inset: calc(var(--space) / 1.5) calc(var(--space) / 3);
       opacity: 0;
@@ -533,21 +563,7 @@
   body {
     margin: 0;
   }
-
-  main {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    min-height: 100dvh;
-    overflow: hidden;
-    padding: calc(var(--space) * 4) var(--space);
-    position: relative;
-    width: 100vw;
-  }
 </style>
 
-<main>
-  <commands-component></commands-component>
-  <search-component></search-component>
-</main>
+<commands-component></commands-component>
+<search-component></search-component>
