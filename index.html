@@ -21,7 +21,6 @@
   }
 
   :root {
-    --border-radius: 0.5rem;
     --color-background: #111;
     --color-text-subtle: #888;
     --color-text: #ccc;
@@ -79,58 +78,48 @@
 <template id="commands-template">
   <style>
     .commands {
+      align-items: center;
       box-sizing: border-box;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       list-style: none;
       margin: 0;
-      padding: calc(var(--space) * 2);
-      width: 100vw;
+      min-height: 100vh;
+      padding: calc(var(--space) * 4) 0;
+      width: 100%;
     }
 
     .command {
       align-items: center;
       color: var(--color-text);
       display: flex;
-      height: 100%;
+      height: 3em;
       justify-content: center;
       outline: 0;
       position: relative;
+      text-align: center;
       text-decoration: none;
-    }
-
-    .command::after {
-      background: var(--color-text-subtle);
-      border-radius: var(--border-radius);
-      content: ' ';
-      inset: calc(var(--space) / 6);
-      opacity: 0.05;
-      position: absolute;
-      transition: opacity var(--transition-speed);
-    }
-
-    .command:where(:focus, :hover)::after {
-      opacity: 0.1;
+      width: 4em;
     }
 
     .key {
-      left: 50%;
-      position: absolute;
       color: var(--color-text-subtle);
-      top: 50%;
-      transform: translate(-50%, -50%);
+      position: absolute;
+      transform: translateY(0);
       transition: all var(--transition-speed);
     }
 
     .command:where(:focus, :hover) .key {
       opacity: 0;
-      transform: translate(-50%, calc(-50% - 2em));
+      pointer-events: none;
+      transform: translateY(2em);
     }
 
     .name {
       opacity: 0;
-      transform: translateY(2em);
+      pointer-events: none;
+      transform: translateY(-2em);
       transition: all var(--transition-speed);
     }
 
@@ -139,21 +128,9 @@
       transform: translateY(0);
     }
 
-    @media (min-width: 40rem) {
-      .commands {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (min-width: 55rem) {
-      .commands {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
     @media (min-width: 70rem) {
       .commands {
-        grid-template-columns: repeat(5, 1fr);
+        flex-direction: row;
       }
     }
   </style>
@@ -272,9 +249,8 @@
 
     .suggestion::before {
       background-color: var(--color-text);
-      border-radius: var(--border-radius);
       content: ' ';
-      inset: calc(var(--space) / 1.5) calc(var(--space) / 3);
+      inset: calc(var(--space) / 1.1) calc(var(--space) / 2);
       opacity: 0;
       position: absolute;
       transform: translateY(0.5em);
@@ -558,6 +534,7 @@
     font-family: var(--font-family);
     font-size: var(--font-size);
     line-height: 1.4;
+    user-select: none;
   }
 
   body {
