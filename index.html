@@ -26,9 +26,6 @@
     --color-text: #ccc;
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.3vw, 18px);
-    --font-weight-bold: bold;
-    --font-weight-normal: normal;
-    --space: 1rem;
     --transition-speed: 200ms;
   }
 
@@ -86,7 +83,7 @@
       list-style: none;
       margin: 0;
       min-height: 100vh;
-      padding: calc(var(--space) * 4) 0;
+      padding: 4rem 0;
       width: 100%;
     }
 
@@ -94,7 +91,7 @@
       align-items: center;
       color: var(--color-text);
       display: flex;
-      height: 3em;
+      height: 4em;
       justify-content: center;
       outline: 0;
       position: relative;
@@ -106,20 +103,19 @@
     .key {
       color: var(--color-text-subtle);
       position: absolute;
-      transform: translateY(0);
       transition: all var(--transition-speed);
     }
 
     .command:where(:focus, :hover) .key {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(2em);
+      transform: translateY(1.5em) scale(0.9);
     }
 
     .name {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(-2em);
+      transform: translateY(-1.5em) scale(0.9);
       transition: all var(--transition-speed);
     }
 
@@ -214,7 +210,7 @@
     .input {
       color: var(--color-text);
       font-size: 2rem;
-      font-weight: var(--font-weight-bold);
+      font-weight: bold;
       padding: 0;
       text-align: center;
       width: 100%;
@@ -227,7 +223,7 @@
       flex-wrap: wrap;
       justify-content: center;
       list-style: none;
-      margin: var(--space) 0 0;
+      margin: 1rem 0 0;
       overflow: hidden;
       padding: 0;
     }
@@ -236,7 +232,7 @@
       color: var(--color-text);
       cursor: pointer;
       font-size: 1rem;
-      padding: var(--space);
+      padding: 1rem;
       position: relative;
       transition: color var(--transition-speed);
       white-space: nowrap;
@@ -249,11 +245,12 @@
 
     .suggestion::before {
       background-color: var(--color-text);
+      border-radius: 0.1em;
       content: ' ';
-      inset: calc(var(--space) / 1.1) calc(var(--space) / 2);
+      inset: 0.9em 0.5em;
       opacity: 0;
       position: absolute;
-      transform: translateY(0.5em);
+      transform: translateY(0.3em) scale(0.9);
       transition: all var(--transition-speed);
       z-index: -1;
     }
