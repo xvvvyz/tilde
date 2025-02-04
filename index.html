@@ -49,22 +49,28 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
+    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/deepseek', 'a/gemini'], url: 'https://chatgpt.com/?temporary-chat=true' }],
+    ['a/deepseek', { url: 'https://chat.deepseek.com' }],
+    ['a/gemini', { url: 'https://gemini.google.com' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
-    ['e', { name: 'Resend', url: 'https://resend.com/emails?time=all&page=1' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
     ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
-    ['i', { name: 'Intuit', url: 'https://selfemployed.intuit.com/home' }],
-    ['k', { name: 'cybertype', url: 'https://cybertype.app' }],
-    ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive', 'p/cal'], url: 'https://mail.proton.me/u/0/inbox' }],
+    ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive', 'p/cal', 'p/wallet'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/cal', { url: 'https://calendar.proton.me/u/0' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
-    ['r', { name: 'Reddit', searchTemplate: '/search/?q={}', url: 'https://www.reddit.com' }],
+    ['p/wallet', { url: 'https://wallet.proton.me/u/0' }],
+    ['r', { name: 'Resend', url: 'https://resend.com/emails?time=all&page=1' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
     ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
-    ['v', { name: 'Vercel', suggestions: ['v0.dev'], url: 'https://vercel.com/dashboard' }],
+    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
+    ['x', { name: 'xvvvyz', suggestions: ['x/seerr', 'x/radarr', 'x/sonarr', 'x/torrent'], url: 'https://xvvvyz.xyz' }],
+    ['x/seerr', { url: 'https://jellyseerr.xvvvyz.xyz' }],
+    ['x/radarr', { url: 'https://radarr.xvvvyz.xyz' }],
+    ['x/sonarr', { url: 'https://sonarr.xvvvyz.xyz' }],
+    ['x/torrent', { url: 'https://torrent.xvvvyz.xyz' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
     ['0', { name: 'localhost', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
     ['0:54323', { url: 'http://localhost:54323' }],
@@ -124,7 +130,7 @@
       transform: translateY(0);
     }
 
-    @media (min-width: 70rem) {
+    @media (min-width: 65rem) {
       .commands {
         flex-direction: row;
       }
