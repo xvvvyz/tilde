@@ -25,7 +25,7 @@
     --color-text-subtle: #888;
     --color-text: #ccc;
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
-    --font-size: clamp(16px, 1.3vw, 18px);
+    --font-size: clamp(16px, 1.5vw, 18px);
     --transition-speed: 200ms;
   }
 
@@ -80,17 +80,22 @@
 
 <template id="commands-template">
   <style>
-    .commands {
+    nav {
       align-items: center;
       box-sizing: border-box;
       display: flex;
-      flex-direction: column;
       justify-content: center;
-      list-style: none;
-      margin: 0;
-      min-height: 100vh;
+      min-height: 100dvh;
       padding: 4rem 0;
       width: 100%;
+    }
+
+    .commands {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .command {
@@ -130,9 +135,9 @@
       transform: translateY(0);
     }
 
-    @media (min-width: 65rem) {
+    @media (min-width: 35rem) {
       .commands {
-        flex-direction: row;
+        grid-template-columns: repeat(7, 1fr);
       }
     }
   </style>
