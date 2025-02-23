@@ -49,13 +49,14 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/deepseek', 'a/gemini'], url: 'https://chatgpt.com/?temporary-chat=true' }],
+    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/copilot', 'a/deepseek', 'a/gemini'], url: 'https://chatgpt.com/?temporary-chat=true' }],
+    ['a/copilot', { url: 'https://github.com/copilot' }],
     ['a/deepseek', { url: 'https://chat.deepseek.com' }],
     ['a/gemini', { url: 'https://gemini.google.com' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
     ['f', { name: 'Figma', url: 'https://www.figma.com' }],
-    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
+    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/trending'], url: 'https://github.com' }],
     ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
     ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive', 'p/cal', 'p/wallet'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/cal', { url: 'https://calendar.proton.me/u/0' }],
