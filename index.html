@@ -44,7 +44,7 @@
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
     openLinksInNewTab: true,
-    suggestionLimit: 5,
+    suggestionLimit: 4,
   };
 
   // prettier-ignore
@@ -441,14 +441,19 @@
 
       let suggestions = COMMANDS.get(oq.query)?.suggestions ?? [];
 
-      if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
+      if (
+        oq.search?.length > 1 &&
+        suggestions.length < CONFIG.suggestionLimit
+      ) {
         const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
 
-        suggestions = suggestions.concat(
-          oq.splitBy
-            ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
-            : res
-        );
+        suggestions = suggestions
+          .concat(
+            oq.splitBy
+              ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
+              : res
+          )
+          .slice(0, CONFIG.suggestionLimit);
       }
 
       const nq = Search.#parseQuery(this.#input.value);
@@ -505,10 +510,9 @@
 
     #renderSuggestions(suggestions, query) {
       this.#suggestions.innerHTML = '';
-      const sliced = suggestions.slice(0, CONFIG.suggestionLimit);
       const template = document.getElementById('suggestion-template');
 
-      for (const [index, suggestion] of sliced.entries()) {
+      for (const [index, suggestion] of suggestions.entries()) {
         const clone = template.content.cloneNode(true);
         const ref = clone.querySelector('.suggestion');
         ref.dataset.index = index;
