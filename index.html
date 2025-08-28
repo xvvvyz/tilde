@@ -49,9 +49,8 @@
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/claude', 'a/copilot', 'a/deepseek', 'a/gemini', 'a/grok', 'a/perplexity'], url: 'https://chatgpt.com/?temporary-chat=true' }],
+    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/claude', 'a/deepseek', 'a/gemini', 'a/grok', 'a/perplexity'], url: 'https://chatgpt.com/?temporary-chat=true' }],
     ['a/claude', { url: 'https://claude.ai/new' }],
-    ['a/copilot', { url: 'https://github.com/copilot' }],
     ['a/deepseek', { url: 'https://chat.deepseek.com' }],
     ['a/gemini', { url: 'https://gemini.google.com' }],
     ['a/grok', { url: 'https://grok.com' }],
@@ -59,11 +58,13 @@
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
     ['f', { name: 'Finances', url: 'https://docs.google.com/spreadsheets/d/1sjSOdlKaE-BcraiEDjqfakCXietLTSUY1ny6gQTj-oQ/edit' }],
-    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/trending'], url: 'https://github.com' }],
+    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
+    ['g/copilot', { url: 'https://github.com/copilot' }],
     ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
     ['i', { name: 'Intuit', url: 'https://qbo.intuit.com' }],
-    ['p', { name: 'Proton', suggestions: ['p/pass', 'p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
+    ['p', { name: 'Proton', suggestions: ['p/drive', 'p/lumo','p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
+    ['p/lumo', { url: 'https://pass.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
     ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
