@@ -62,6 +62,7 @@
     ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
     ['i', { name: 'InstantDB', url: 'https://instantdb.com/dash' }],
     ['l', { name: 'LinkedIn', url: 'https://www.linkedin.com/feed' }],
+    ['n', { name: 'Pinecone', url: 'https://app.pinecone.io' }],
     ['o', { name: 'OpenAI', url: 'https://platform.openai.com/usage' }],
     ['p', { name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
@@ -70,6 +71,7 @@
     ['r', { name: 'Reddit', url: 'https://reddit.com' }],
     ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/organizations' }],
     ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
+    ['u', { name: 'Duolingo', url: 'https://www.duolingo.com/learn' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
     ['x', { name: '𝕏', url: 'https://x.com/home' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
@@ -133,15 +135,9 @@
       transform: translateY(0);
     }
 
-    @media (min-width: 30rem) {
-      .commands {
-        grid-template-columns: repeat(6, 1fr);
-      }
-    }
-
     @media (min-width: 50rem) {
       .commands {
-        grid-template-columns: repeat(9, 1fr);
+        grid-template-columns: repeat(10, 1fr);
       }
     }
   </style>
