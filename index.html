@@ -352,6 +352,7 @@
       this.#input.addEventListener('input', this.#onInput);
       this.#suggestions.addEventListener('click', this.#onSuggestionClick);
       document.addEventListener('keydown', this.#onKeydown);
+      document.addEventListener('paste', this.#onPaste);
       this.shadowRoot.append(clone);
     }
 
@@ -491,7 +492,7 @@
         }
 
         suggestions = suggestions.filter(
-          (s) => s.startsWith(oq.query) || s.includes(oq.query),
+          (s) => s.startsWith(oq.query) || s.includes(oq.query)
         );
       }
 
@@ -504,13 +505,24 @@
 
         suggestions = [...suggestions, ...ddgSuggestions].slice(
           0,
-          CONFIG.suggestionLimit,
+          CONFIG.suggestionLimit
         );
       }
 
       const nq = Search.#parseQuery(this.#input.value);
       if (nq.query !== oq.query) return;
       this.#renderSuggestions(suggestions, oq.query);
+    };
+
+    #onPaste = (e) => {
+      if (this.#dialog.open) return;
+      const text = e.clipboardData?.getData('text');
+      if (!text) return;
+      e.preventDefault();
+      this.#dialog.show();
+      this.#input.focus();
+      this.#input.value = text;
+      this.#onInput();
     };
 
     #onKeydown = (e) => {
