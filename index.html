@@ -11,6 +11,7 @@
     font-style: normal;
     font-weight: normal;
     src: url('./fonts/SpaceGrotesk-Regular.woff2') format('woff2');
+    font-display: swap;
   }
 
   @font-face {
@@ -18,6 +19,7 @@
     font-style: normal;
     font-weight: bold;
     src: url('./fonts/SpaceGrotesk-Bold.woff2') format('woff2');
+    font-display: swap;
   }
 
   :root {
@@ -74,7 +76,7 @@
     ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
     ['u', { name: 'Duolingo', url: 'https://www.duolingo.com/learn' }],
     ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['x', { name: '𝕏', suggestions: ['x/dev', 'x/seerr', 'x/jellyfin', 'x/radarr', 'x/sonarr', 'x/prowlarr', 'x/bazarr', 'x/profilarr', 'x/nzbget', 'x/n8n', 'x/nginx', 'x/wg'], url: 'https://x.com/home' }],
+    ['x', { name: '𝕏', suggestions: ['x/dev', 'x/n8n', 'x/nginx', 'x/wg'], url: 'https://x.com/home' }],
     ['x/bazarr', { url: 'https://bazarr.xvyz.co' }],
     ['x/dev', { url: 'https://dev.xvyz.co' }],
     ['x/jellyfin', { url: 'https://jellyfin.xvyz.co' }],
@@ -151,7 +153,7 @@
 
     @media (min-width: 60rem) {
       .commands {
-        grid-template-columns: repeat(11, 1fr);h
+        grid-template-columns: repeat(11, 1fr);
       }
     }
   </style>
@@ -162,8 +164,8 @@
 
 <template id="command-template">
   <li>
-    <a class="command" rel="noopener noreferrer">
-      <span class="key"></span>
+    <a class="command" rel="noopener noreferrer" aria-label="">
+      <span class="key" aria-hidden="true"></span>
       <span class="name"></span>
     </a>
   </li>
@@ -184,6 +186,7 @@
         const clone = commandTemplate.content.cloneNode(true);
         const command = clone.querySelector('.command');
         command.href = url;
+        command.setAttribute('aria-label', name);
         if (CONFIG.openLinksInNewTab) command.target = '_blank';
         clone.querySelector('.key').innerText = key;
         clone.querySelector('.name').innerText = name;
@@ -230,6 +233,16 @@
 
     .form {
       width: 100%;
+    }
+
+    .sr-only {
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
     }
 
     .input {
@@ -300,9 +313,10 @@
       }
     }
   </style>
-  <dialog class="dialog">
+  <dialog class="dialog" aria-label="Search">
     <form autocomplete="off" class="form" method="dialog" spellcheck="false">
-      <input class="input" title="search" type="text" />
+      <label for="search-input" class="sr-only">Search</label>
+      <input class="input" id="search-input" type="text" />
       <menu class="suggestions"></menu>
     </form>
   </dialog>
@@ -362,6 +376,11 @@
         document.querySelector('head').appendChild(script);
         script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
         script.onload = script.remove;
+
+        script.onerror = () => {
+          script.remove();
+          resolve([]);
+        };
       });
     }
 
@@ -386,8 +405,8 @@
       }
 
       if (COMMANDS.has(query)) {
-        const { key, url } = COMMANDS.get(query);
-        return { key, query, url };
+        const { url } = COMMANDS.get(query);
+        return { key: query, query, url };
       }
 
       let splitBy = CONFIG.commandSearchDelimiter;
@@ -452,6 +471,7 @@
       }
 
       const parentKey = oq.query.split(CONFIG.commandPathDelimiter)[0];
+      const exactMatch = COMMANDS.has(oq.query);
 
       let suggestions = [
         ...(COMMANDS.get(oq.query)?.suggestions ??
@@ -459,26 +479,33 @@
           []),
       ];
 
-      for (const key of COMMANDS.keys()) {
-        if (
-          key.startsWith(oq.query) &&
-          key !== oq.query &&
-          !suggestions.includes(key)
-        ) {
-          suggestions.push(key);
+      if (exactMatch) {
+        suggestions = suggestions.filter((s) => s.startsWith(oq.query));
+      } else {
+        for (const key of COMMANDS.keys()) {
+          if (key !== oq.query && !suggestions.includes(key)) {
+            if (key.startsWith(oq.query) || key.includes(oq.query)) {
+              suggestions.push(key);
+            }
+          }
         }
+
+        suggestions = suggestions.filter(
+          (s) => s.startsWith(oq.query) || s.includes(oq.query),
+        );
       }
 
-      suggestions = suggestions.filter((s) => s.startsWith(oq.query));
-
-      if (oq.search?.length > 1 && suggestions.length === 0) {
+      if (oq.search?.length > 1 && !exactMatch) {
         const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
 
-        suggestions = oq.splitBy
+        const ddgSuggestions = oq.splitBy
           ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
           : res;
 
-        suggestions = suggestions.slice(0, CONFIG.suggestionLimit);
+        suggestions = [...suggestions, ...ddgSuggestions].slice(
+          0,
+          CONFIG.suggestionLimit,
+        );
       }
 
       const nq = Search.#parseQuery(this.#input.value);
@@ -552,8 +579,8 @@
           const pre = suggestion.slice(0, matched.index);
           const post = suggestion.slice(matched.index + matched[0].length);
           matchRef.innerText = matched[0];
-          matchRef.insertAdjacentHTML('beforebegin', pre);
-          matchRef.insertAdjacentHTML('afterend', post);
+          matchRef.insertAdjacentText('beforebegin', pre);
+          matchRef.insertAdjacentText('afterend', post);
           ref.append(clone);
         } else {
           ref.innerText = suggestion;
