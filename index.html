@@ -338,6 +338,7 @@
     #form;
     #input;
     #suggestions;
+    #lastSuggestions = [];
 
     constructor() {
       super();
@@ -482,36 +483,53 @@
 
       if (exactMatch) {
         suggestions = suggestions.filter((s) => s.startsWith(oq.query));
-      } else {
-        for (const key of COMMANDS.keys()) {
-          if (key !== oq.query && !suggestions.includes(key)) {
-            if (key.startsWith(oq.query) || key.includes(oq.query)) {
-              suggestions.push(key);
-            }
+      }
+
+      for (const [key, cmd] of COMMANDS.entries()) {
+        if (key !== oq.query && !suggestions.includes(key)) {
+          if (key.includes(oq.query)) {
+            suggestions.push(key);
           }
         }
 
-        suggestions = suggestions.filter(
-          (s) => s.startsWith(oq.query) || s.includes(oq.query)
-        );
+        for (const s of cmd.suggestions ?? []) {
+          if (s !== oq.query && !suggestions.includes(s)) {
+            if (s.includes(oq.query)) {
+              suggestions.push(s);
+            }
+          }
+        }
       }
 
-      if (oq.search?.length > 1 && !exactMatch) {
+      suggestions = suggestions.filter((s) => s.includes(oq.query));
+
+      const withStale = [...suggestions, ...this.#lastSuggestions].slice(
+        0,
+        CONFIG.suggestionLimit
+      );
+
+      this.#renderSuggestions(withStale, oq.query);
+
+      if (oq.search?.length > 1) {
         const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
+        const nq = Search.#parseQuery(this.#input.value);
+        if (nq.query !== oq.query) return;
 
         const ddgSuggestions = oq.splitBy
           ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
           : res;
 
+        this.#lastSuggestions = ddgSuggestions;
+
         suggestions = [...suggestions, ...ddgSuggestions].slice(
           0,
           CONFIG.suggestionLimit
         );
-      }
 
-      const nq = Search.#parseQuery(this.#input.value);
-      if (nq.query !== oq.query) return;
-      this.#renderSuggestions(suggestions, oq.query);
+        this.#renderSuggestions(suggestions, oq.query);
+      } else {
+        this.#lastSuggestions = [];
+      }
     };
 
     #onPaste = (e) => {
@@ -573,6 +591,7 @@
     };
 
     #renderSuggestions(suggestions, query) {
+      const focused = this.shadowRoot.activeElement?.dataset?.suggestion;
       this.#suggestions.innerHTML = '';
       const template = document.getElementById('suggestion-template');
 
@@ -599,6 +618,14 @@
         }
 
         this.#suggestions.append(clone);
+      }
+
+      if (focused) {
+        const toRefocus = this.#suggestions.querySelector(
+          `[data-suggestion="${CSS.escape(focused)}"]`
+        );
+
+        toRefocus?.focus();
       }
     }
   }
