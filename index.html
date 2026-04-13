@@ -28,6 +28,7 @@
     --color-text: #eee;
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.5vw, 18px);
+    --color-accent: #e34;
     --transition-speed: 200ms;
   }
 
@@ -102,29 +103,44 @@
       display: flex;
       justify-content: center;
       min-height: 100dvh;
-      padding: 4rem 0;
+      position: relative;
       width: 100%;
     }
 
     .commands {
-      display: inline-grid;
-      grid-template-columns: 1fr 1fr;
+      aspect-ratio: 1;
+      height: min(55vh, 55vw);
       list-style: none;
       margin: 0;
       padding: 0;
+      position: relative;
+    }
+
+    .commands li {
+      border-radius: 50%;
+      height: calc(var(--item-size) * 100%);
+      left: calc(var(--x) * 100%);
+      position: absolute;
+      top: calc(var(--y) * 100%);
+      transform: translate(-50%, -50%) scale(0.8);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
+      width: calc(var(--item-size) * 100%);
     }
 
     .command {
       align-items: center;
+      border-radius: 50%;
       color: var(--color-text);
       display: flex;
-      height: 4em;
+      height: 100%;
       justify-content: center;
       outline: 0;
       position: relative;
       text-align: center;
       text-decoration: none;
-      width: 4em;
+      width: 100%;
     }
 
     .key {
@@ -151,14 +167,63 @@
       transform: translateY(0);
     }
 
-    @media (min-width: 60rem) {
-      .commands {
-        grid-template-columns: repeat(11, 1fr);
-      }
+    .clock {
+      aspect-ratio: 1;
+      height: calc(min(55vh, 55vw) * 0.85);
+      left: 50%;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hand {
+      background: var(--color-text);
+      border-radius: 2px;
+      bottom: 50%;
+      left: 50%;
+      position: absolute;
+      transform-origin: bottom center;
+    }
+
+    .hand--hour {
+      height: 30%;
+      width: 3px;
+      margin-left: -1.5px;
+    }
+
+    .hand--minute {
+      height: 40%;
+      width: 2px;
+      margin-left: -1px;
+    }
+
+    .hand--second {
+      background: var(--color-accent);
+      height: 45%;
+      width: 1px;
+      margin-left: -0.5px;
+    }
+
+    .dot {
+      background: var(--color-text);
+      border-radius: 50%;
+      height: 6px;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
     }
   </style>
   <nav>
     <menu class="commands"></menu>
+    <div class="clock">
+      <div class="hand hand--hour"></div>
+      <div class="hand hand--minute"></div>
+      <div class="hand hand--second"></div>
+      <div class="dot"></div>
+    </div>
   </nav>
 </template>
 
@@ -181,9 +246,23 @@
       const commands = clone.querySelector('.commands');
       const commandTemplate = document.getElementById('command-template');
 
-      for (const [key, { name, url }] of COMMANDS.entries()) {
-        if (!name || !url) continue;
+      const entries = [...COMMANDS.entries()].filter(
+        ([, { name, url }]) => name && url
+      );
+
+      const total = entries.length;
+
+      commands.style.setProperty(
+        '--item-size',
+        Math.sin(Math.PI / total) / 0.8
+      );
+
+      for (const [index, [key, { name, url }]] of entries.entries()) {
         const clone = commandTemplate.content.cloneNode(true);
+        const li = clone.querySelector('li');
+        const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+        li.style.setProperty('--x', 0.5 + 0.5 * Math.cos(angle));
+        li.style.setProperty('--y', 0.5 + 0.5 * Math.sin(angle));
         const command = clone.querySelector('.command');
         command.href = url;
         command.setAttribute('aria-label', name);
@@ -194,6 +273,55 @@
       }
 
       this.shadowRoot.append(clone);
+      const items = commands.querySelectorAll('li');
+
+      for (const [i] of entries.entries()) {
+        const li = items[i];
+
+        li.addEventListener('mouseenter', () => {
+          for (const [j] of entries.entries()) {
+            const dist = Math.min(Math.abs(j - i), total - Math.abs(j - i));
+
+            if (dist === 0) {
+              items[j].style.transform = 'translate(-50%, -50%) scale(1)';
+            } else if (dist === 1) {
+              items[j].style.opacity = '0.25';
+            } else if (dist === 2) {
+              items[j].style.opacity = '0.5';
+            } else if (dist === 3) {
+              items[j].style.opacity = '0.75';
+            }
+          }
+        });
+
+        li.addEventListener('mouseleave', () => {
+          for (const item of items) {
+            item.style.opacity = '';
+            item.style.transform = '';
+          }
+        });
+      }
+
+      this.#startClock();
+    }
+
+    #startClock() {
+      const hour = this.shadowRoot.querySelector('.hand--hour');
+      const minute = this.shadowRoot.querySelector('.hand--minute');
+      const second = this.shadowRoot.querySelector('.hand--second');
+
+      const tick = () => {
+        const now = new Date();
+        const h = now.getHours() % 12;
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        second.style.transform = `rotate(${s * 6}deg)`;
+        minute.style.transform = `rotate(${(m + s / 60) * 6}deg)`;
+        hour.style.transform = `rotate(${(h + m / 60) * 30}deg)`;
+      };
+
+      tick();
+      setInterval(tick, 1000);
     }
   }
 
@@ -222,13 +350,23 @@
       height: 100%;
       justify-content: center;
       left: 0;
+      opacity: 0;
       padding: 0;
       top: 0;
+      transform: translateY(10px);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
       width: 100%;
     }
 
     .dialog[open] {
       display: flex;
+    }
+
+    .dialog.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .form {
@@ -281,11 +419,15 @@
       color: var(--color-background);
     }
 
+    .suggestions:hover .suggestion:focus:not(:hover) {
+      color: var(--color-text);
+    }
+
     .suggestion::before {
       background-color: var(--color-text);
-      border-radius: 0.1em;
+      border-radius: 1em;
       content: ' ';
-      inset: 0.9em 0.5em;
+      inset: 0.8em 0.4em;
       opacity: 0;
       position: absolute;
       transform: translateY(0.3em) scale(0.9);
@@ -298,6 +440,11 @@
       transform: translateY(0);
     }
 
+    .suggestions:hover .suggestion:focus:not(:hover)::before {
+      opacity: 0;
+      transform: translateY(0.3em) scale(0.9);
+    }
+
     .match {
       color: var(--color-text-subtle);
       transition: color var(--transition-speed);
@@ -305,6 +452,10 @@
 
     .suggestion:where(:focus, :hover) .match {
       color: var(--color-background);
+    }
+
+    .suggestions:hover .suggestion:focus:not(:hover) .match {
+      color: var(--color-text-subtle);
     }
 
     @media (min-width: 700px) {
@@ -435,11 +586,26 @@
       return { query, search: query, url };
     };
 
+    #open() {
+      this.#dialog.show();
+      requestAnimationFrame(() => this.#dialog.classList.add('visible'));
+    }
+
     #close() {
+      this.#dialog.classList.remove('visible');
       this.#input.value = '';
       this.#input.blur();
-      this.#dialog.close();
       this.#suggestions.innerHTML = '';
+
+      this.#dialog.addEventListener(
+        'transitionend',
+        () => {
+          if (!this.#dialog.classList.contains('visible')) {
+            this.#dialog.close();
+          }
+        },
+        { once: true }
+      );
     }
 
     #execute(query) {
@@ -503,12 +669,16 @@
 
       suggestions = suggestions.filter((s) => s.includes(oq.query));
 
-      const withStale = [...suggestions, ...this.#lastSuggestions].slice(
-        0,
-        CONFIG.suggestionLimit
-      );
+      const withStale = [
+        ...suggestions,
+        ...this.#lastSuggestions.filter((s) => s.includes(oq.query)),
+      ].slice(0, CONFIG.suggestionLimit);
 
-      this.#renderSuggestions(withStale, oq.query);
+      if (withStale.length) {
+        this.#renderSuggestions(withStale, oq.query);
+      } else if (!(oq.search?.length > 1)) {
+        this.#suggestions.innerHTML = '';
+      }
 
       if (oq.search?.length > 1) {
         const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
@@ -526,32 +696,41 @@
           CONFIG.suggestionLimit
         );
 
-        this.#renderSuggestions(suggestions, oq.query);
-      } else {
-        this.#lastSuggestions = [];
+        if (suggestions.length) {
+          this.#renderSuggestions(suggestions, oq.query);
+        } else {
+          this.#suggestions.innerHTML = '';
+        }
       }
     };
 
     #onPaste = (e) => {
-      if (this.#dialog.open) return;
+      if (this.#dialog.classList.contains('visible')) return;
       const text = e.clipboardData?.getData('text');
       if (!text) return;
       e.preventDefault();
-      this.#dialog.show();
+      this.#open();
       this.#input.focus();
       this.#input.value = text;
       this.#onInput();
     };
 
     #onKeydown = (e) => {
-      if (!this.#dialog.open) {
+      if (!this.#dialog.classList.contains('visible')) {
+        if (e.key === 'Escape') return;
         this.#dialog.show();
         this.#input.focus();
 
         requestAnimationFrame(() => {
           // close the search dialog before the next repaint if a character is
           // not produced (e.g. if you type shift, control, alt etc.)
-          if (!this.#input.value) this.#close();
+          if (!this.#input.value) {
+            this.#input.blur();
+            this.#dialog.close();
+            this.#suggestions.innerHTML = '';
+          } else {
+            this.#dialog.classList.add('visible');
+          }
         });
 
         return;
@@ -593,26 +772,26 @@
     #renderSuggestions(suggestions, query) {
       const focused = this.shadowRoot.activeElement?.dataset?.suggestion;
       this.#suggestions.innerHTML = '';
-      const template = document.getElementById('suggestion-template');
+      const suggestionTemplate = document.getElementById('suggestion-template');
+      const matchTemplate = document.getElementById('match-template');
+      const pattern = new RegExp(Search.#escapeRegexCharacters(query), 'i');
 
       for (const [index, suggestion] of suggestions.entries()) {
-        const clone = template.content.cloneNode(true);
+        const clone = suggestionTemplate.content.cloneNode(true);
         const ref = clone.querySelector('.suggestion');
         ref.dataset.index = index;
         ref.dataset.suggestion = suggestion;
-        const escapedQuery = Search.#escapeRegexCharacters(query);
-        const matched = suggestion.match(new RegExp(escapedQuery, 'i'));
+        const matched = suggestion.match(pattern);
 
         if (matched) {
-          const template = document.getElementById('match-template');
-          const clone = template.content.cloneNode(true);
-          const matchRef = clone.querySelector('.match');
+          const matchClone = matchTemplate.content.cloneNode(true);
+          const matchRef = matchClone.querySelector('.match');
           const pre = suggestion.slice(0, matched.index);
           const post = suggestion.slice(matched.index + matched[0].length);
           matchRef.innerText = matched[0];
           matchRef.insertAdjacentText('beforebegin', pre);
           matchRef.insertAdjacentText('afterend', post);
-          ref.append(clone);
+          ref.append(matchClone);
         } else {
           ref.innerText = suggestion;
         }
