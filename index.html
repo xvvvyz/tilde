@@ -490,6 +490,7 @@
     #input;
     #suggestions;
     #lastSuggestions = [];
+    #closeController = null;
 
     constructor() {
       super();
@@ -587,11 +588,15 @@
     };
 
     #open() {
+      this.#closeController?.abort();
+      this.#closeController = null;
       this.#dialog.show();
       requestAnimationFrame(() => this.#dialog.classList.add('visible'));
     }
 
     #close() {
+      this.#closeController?.abort();
+      this.#closeController = new AbortController();
       this.#dialog.classList.remove('visible');
       this.#input.value = '';
       this.#input.blur();
@@ -603,8 +608,10 @@
           if (!this.#dialog.classList.contains('visible')) {
             this.#dialog.close();
           }
+
+          this.#closeController = null;
         },
-        { once: true }
+        { once: true, signal: this.#closeController.signal }
       );
     }
 
@@ -717,7 +724,21 @@
 
     #onKeydown = (e) => {
       if (!this.#dialog.classList.contains('visible')) {
-        if (e.key === 'Escape') return;
+        if (e.key === 'Escape') {
+          if (this.#dialog.open) {
+            this.#closeController?.abort();
+            this.#closeController = null;
+            this.#input.value = '';
+            this.#input.blur();
+            this.#dialog.close();
+            this.#suggestions.innerHTML = '';
+          }
+
+          return;
+        }
+
+        this.#closeController?.abort();
+        this.#closeController = null;
         this.#dialog.show();
         this.#input.focus();
 
