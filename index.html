@@ -41,7 +41,8 @@
   }
 </style>
 
-<script>
+<script type="module">
+  /** @type {AppConfig} */
   const CONFIG = {
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
@@ -50,6 +51,8 @@
     suggestionLimit: 4,
   };
 
+  // named entries appear on the dial, in insertion order. suggestions are curated.
+  /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
     ['a', { name: 'AI', suggestions: ['a/chatgpt', 'a/gemini', 'a/grok', 'a/lumo'], url: 'https://claude.ai/new' }],
@@ -94,11 +97,603 @@
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
     ['0', { name: 'localhost', url: 'http://localhost:3000' }],
   ]);
+
+  /**
+   * @typedef {object} AppConfig
+   * @property {string} commandPathDelimiter
+   * @property {string} commandSearchDelimiter
+   * @property {string} defaultSearchTemplate
+   * @property {boolean} openLinksInNewTab
+   * @property {number} suggestionLimit
+   */
+
+  /**
+   * @typedef {object} Command
+   * @property {string} url
+   * @property {string=} name
+   * @property {string=} searchTemplate
+   * @property {string[]=} suggestions
+   */
+
+  /**
+   * @typedef {object} ParsedQuery
+   * @property {string} query
+   * @property {string} url
+   * @property {string=} key
+   * @property {string=} path
+   * @property {string=} search
+   * @property {string=} splitBy
+   */
+
+  /**
+   * @param {string} id
+   * @returns {HTMLTemplateElement}
+   */
+  function getTemplate(id) {
+    const template = document.getElementById(id);
+
+    if (!(template instanceof HTMLTemplateElement)) {
+      throw new Error(`Template #${id} not found`);
+    }
+
+    return template;
+  }
+
+  const TEMPLATES = {
+    command: getTemplate('command-template'),
+    commands: getTemplate('commands-template'),
+    match: getTemplate('match-template'),
+    search: getTemplate('search-template'),
+    suggestion: getTemplate('suggestion-template'),
+  };
+
+  /**
+   * @param {string} value
+   * @returns {string}
+   */
+  function escapeRegexCharacters(value) {
+    return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  }
+
+  /**
+   * @param {string} template
+   * @param {string} search
+   * @returns {string}
+   */
+  function formatSearchUrl(template, search) {
+    return template.replace(/{}/g, encodeURIComponent(search));
+  }
+
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
+  function hasProtocol(value) {
+    return /^[a-zA-Z]+:\/\//i.test(value);
+  }
+
+  /**
+   * @param {string} value
+   * @returns {boolean}
+   */
+  function isUrl(value) {
+    return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i.test(value);
+  }
+
+  /**
+   * @param {string} value
+   * @param {string} delimiter
+   * @returns {[string, string?]}
+   */
+  function splitOnce(value, delimiter) {
+    const delimiterIndex = value.indexOf(delimiter);
+
+    if (delimiterIndex === -1) return [value];
+
+    return [
+      value.slice(0, delimiterIndex),
+      value.slice(delimiterIndex + delimiter.length),
+    ];
+  }
+
+  /**
+   * @param {string} raw
+   * @param {Map<string, Command>} commands
+   * @param {AppConfig} config
+   * @returns {ParsedQuery}
+   */
+  function parseQuery(raw, commands, config) {
+    const query = raw.trim();
+
+    if (isUrl(query)) {
+      const url = hasProtocol(query) ? query : `https://${query}`;
+      return { query, url };
+    }
+
+    if (commands.has(query)) {
+      const { url } = commands.get(query);
+      return { key: query, query, url };
+    }
+
+    let splitBy = config.commandSearchDelimiter;
+    const [searchKey, rawSearch] = splitOnce(query, splitBy);
+
+    if (commands.has(searchKey)) {
+      const command = commands.get(searchKey);
+      const template = new URL(command.searchTemplate ?? '', command.url);
+      const search = rawSearch.trim();
+      const url = formatSearchUrl(decodeURI(template.href), search);
+      return { key: searchKey, query, search, splitBy, url };
+    }
+
+    splitBy = config.commandPathDelimiter;
+    const [pathKey, path] = splitOnce(query, splitBy);
+
+    if (commands.has(pathKey)) {
+      const command = commands.get(pathKey);
+      const url = `${new URL(command.url).origin}/${path}`;
+      return { key: pathKey, path, query, splitBy, url };
+    }
+
+    const url = formatSearchUrl(config.defaultSearchTemplate, query);
+    return { query, search: query, url };
+  }
+
+  /**
+   * @param {ParsedQuery} parsedQuery
+   * @param {Map<string, Command>} commands
+   * @param {AppConfig} config
+   * @returns {string[]}
+   */
+  function collectLocalSuggestions(parsedQuery, commands, config) {
+    const parentKey = parsedQuery.query.split(config.commandPathDelimiter)[0];
+    const exactMatch = commands.has(parsedQuery.query);
+    let suggestions = [
+      ...(commands.get(parsedQuery.query)?.suggestions ??
+        commands.get(parentKey)?.suggestions ??
+        []),
+    ];
+
+    if (exactMatch) {
+      suggestions = suggestions.filter((suggestion) =>
+        suggestion.startsWith(parsedQuery.query)
+      );
+    }
+
+    for (const [key, command] of commands.entries()) {
+      if (key !== parsedQuery.query && !suggestions.includes(key)) {
+        if (key.includes(parsedQuery.query)) {
+          suggestions.push(key);
+        }
+      }
+
+      for (const suggestion of command.suggestions ?? []) {
+        if (
+          suggestion !== parsedQuery.query &&
+          !suggestions.includes(suggestion)
+        ) {
+          if (suggestion.includes(parsedQuery.query)) {
+            suggestions.push(suggestion);
+          }
+        }
+      }
+    }
+
+    return suggestions.filter((suggestion) =>
+      suggestion.includes(parsedQuery.query)
+    );
+  }
+
+  /**
+   * @param {string} search
+   * @returns {Promise<string[]>}
+   */
+  function fetchDuckDuckGoSuggestions(search) {
+    return new Promise((resolve) => {
+      window.autocompleteCallback = (response) => {
+        const suggestions = [];
+
+        for (const item of response) {
+          if (item.phrase === search.toLowerCase()) continue;
+          suggestions.push(item.phrase);
+        }
+
+        resolve(suggestions);
+      };
+
+      const script = document.createElement('script');
+      document.querySelector('head').appendChild(script);
+      script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
+      script.onload = script.remove;
+
+      script.onerror = () => {
+        script.remove();
+        resolve([]);
+      };
+    });
+  }
+
+  class CommandRing extends HTMLElement {
+    #clockInterval = null;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const componentFragment = TEMPLATES.commands.content.cloneNode(true);
+      const commands = componentFragment.querySelector('.commands');
+
+      const entries = [...COMMANDS.entries()].filter(
+        ([, { name, url }]) => name && url
+      );
+
+      const total = entries.length;
+
+      commands.style.setProperty(
+        '--item-size',
+        Math.sin(Math.PI / total) / 0.8
+      );
+
+      for (const [index, [key, { name, url }]] of entries.entries()) {
+        const commandFragment = TEMPLATES.command.content.cloneNode(true);
+        const item = commandFragment.querySelector('li');
+        const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+        item.style.setProperty('--x', 0.5 + 0.5 * Math.cos(angle));
+        item.style.setProperty('--y', 0.5 + 0.5 * Math.sin(angle));
+
+        const commandLink = commandFragment.querySelector('.command');
+        commandLink.href = url;
+        commandLink.setAttribute('aria-label', name);
+        if (CONFIG.openLinksInNewTab) commandLink.target = '_blank';
+        commandFragment.querySelector('.key').textContent = key;
+        commandFragment.querySelector('.name').textContent = name;
+        commands.append(commandFragment);
+      }
+
+      this.shadowRoot.append(componentFragment);
+      const items = commands.querySelectorAll('li');
+
+      for (const [index] of entries.entries()) {
+        const item = items[index];
+
+        item.addEventListener('mouseenter', () => {
+          for (const [otherIndex] of entries.entries()) {
+            const distance = Math.min(
+              Math.abs(otherIndex - index),
+              total - Math.abs(otherIndex - index)
+            );
+
+            if (distance === 0) {
+              items[otherIndex].style.transform =
+                'translate(-50%, -50%) scale(1)';
+            } else if (distance === 1) {
+              items[otherIndex].style.opacity = '0.25';
+            } else if (distance === 2) {
+              items[otherIndex].style.opacity = '0.5';
+            } else if (distance === 3) {
+              items[otherIndex].style.opacity = '0.75';
+            }
+          }
+        });
+
+        item.addEventListener('mouseleave', () => {
+          for (const otherItem of items) {
+            otherItem.style.opacity = '';
+            otherItem.style.transform = '';
+          }
+        });
+      }
+    }
+
+    connectedCallback() {
+      this.#startClock();
+    }
+
+    disconnectedCallback() {
+      if (this.#clockInterval === null) return;
+
+      clearInterval(this.#clockInterval);
+      this.#clockInterval = null;
+    }
+
+    #startClock() {
+      if (this.#clockInterval !== null) return;
+
+      const hour = this.shadowRoot.querySelector('.hand--hour');
+      const minute = this.shadowRoot.querySelector('.hand--minute');
+      const second = this.shadowRoot.querySelector('.hand--second');
+
+      const tick = () => {
+        const now = new Date();
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        second.style.transform = `rotate(${seconds * 6}deg)`;
+        minute.style.transform = `rotate(${(minutes + seconds / 60) * 6}deg)`;
+        hour.style.transform = `rotate(${(hours + minutes / 60) * 30}deg)`;
+      };
+
+      tick();
+      this.#clockInterval = setInterval(tick, 1000);
+    }
+  }
+
+  class SearchOverlay extends HTMLElement {
+    #dialog;
+    #form;
+    #input;
+    #suggestions;
+    #lastSuggestions = [];
+    #closeController = null;
+    #documentController = null;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const componentFragment = TEMPLATES.search.content.cloneNode(true);
+      this.#dialog = componentFragment.querySelector('.dialog');
+      this.#form = componentFragment.querySelector('.form');
+      this.#input = componentFragment.querySelector('.input');
+      this.#suggestions = componentFragment.querySelector('.suggestions');
+      this.#form.addEventListener('submit', this.#onSubmit, false);
+      this.#input.addEventListener('input', this.#onInput);
+      this.#suggestions.addEventListener('click', this.#onSuggestionClick);
+      this.shadowRoot.append(componentFragment);
+    }
+
+    connectedCallback() {
+      if (this.#documentController) return;
+
+      this.#documentController = new AbortController();
+      const { signal } = this.#documentController;
+      document.addEventListener('keydown', this.#onKeydown, { signal });
+      document.addEventListener('paste', this.#onPaste, { signal });
+    }
+
+    disconnectedCallback() {
+      this.#documentController?.abort();
+      this.#documentController = null;
+      this.#cancelPendingClose();
+    }
+
+    #cancelPendingClose() {
+      this.#closeController?.abort();
+      this.#closeController = null;
+    }
+
+    #reset() {
+      this.#input.value = '';
+      this.#input.blur();
+      this.#suggestions.innerHTML = '';
+    }
+
+    #prepareOpen() {
+      this.#cancelPendingClose();
+      this.#dialog.show();
+      this.#input.focus();
+    }
+
+    #open() {
+      this.#prepareOpen();
+      requestAnimationFrame(() => this.#dialog.classList.add('visible'));
+    }
+
+    #close() {
+      this.#cancelPendingClose();
+      this.#closeController = new AbortController();
+      this.#dialog.classList.remove('visible');
+      this.#reset();
+
+      this.#dialog.addEventListener(
+        'transitionend',
+        () => {
+          if (!this.#dialog.classList.contains('visible')) {
+            this.#dialog.close();
+          }
+
+          this.#closeController = null;
+        },
+        { once: true, signal: this.#closeController.signal }
+      );
+    }
+
+    #hideImmediately() {
+      this.#cancelPendingClose();
+      this.#reset();
+      this.#dialog.close();
+    }
+
+    #execute(query) {
+      const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
+      const parsedQuery = parseQuery(query, COMMANDS, CONFIG);
+      window.open(parsedQuery.url, target, 'noopener noreferrer');
+      this.#close();
+    }
+
+    #focusNextSuggestion(previous = false) {
+      const activeElement = this.shadowRoot.activeElement;
+      let nextIndex;
+
+      if (activeElement.dataset.index) {
+        const activeIndex = Number(activeElement.dataset.index);
+        nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
+      } else {
+        nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
+      }
+
+      const nextItem = this.#suggestions.children[nextIndex];
+      if (nextItem) nextItem.querySelector('.suggestion').focus();
+      else this.#input.focus();
+    }
+
+    #onInput = async () => {
+      const parsedQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+
+      if (!parsedQuery.query) {
+        this.#close();
+        return;
+      }
+
+      let suggestions = collectLocalSuggestions(parsedQuery, COMMANDS, CONFIG);
+
+      const suggestionsWithStale = [
+        ...suggestions,
+        ...this.#lastSuggestions.filter((suggestion) =>
+          suggestion.includes(parsedQuery.query)
+        ),
+      ].slice(0, CONFIG.suggestionLimit);
+
+      if (suggestionsWithStale.length) {
+        this.#renderSuggestions(suggestionsWithStale, parsedQuery.query);
+      } else if (!(parsedQuery.search?.length > 1)) {
+        this.#suggestions.innerHTML = '';
+      }
+
+      if (parsedQuery.search?.length > 1) {
+        const results = await fetchDuckDuckGoSuggestions(parsedQuery.search);
+        const currentQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+        if (currentQuery.query !== parsedQuery.query) return;
+
+        const duckDuckGoSuggestions = parsedQuery.splitBy
+          ? results.map(
+              (search) => `${parsedQuery.key}${parsedQuery.splitBy}${search}`
+            )
+          : results;
+
+        this.#lastSuggestions = duckDuckGoSuggestions;
+
+        suggestions = [...suggestions, ...duckDuckGoSuggestions].slice(
+          0,
+          CONFIG.suggestionLimit
+        );
+
+        if (suggestions.length) {
+          this.#renderSuggestions(suggestions, parsedQuery.query);
+        } else {
+          this.#suggestions.innerHTML = '';
+        }
+      }
+    };
+
+    #onPaste = (event) => {
+      if (this.#dialog.classList.contains('visible')) return;
+      const text = event.clipboardData?.getData('text');
+      if (!text) return;
+      event.preventDefault();
+      this.#open();
+      this.#input.value = text;
+      this.#onInput();
+    };
+
+    #onKeydown = (event) => {
+      if (!this.#dialog.classList.contains('visible')) {
+        if (event.key === 'Escape') {
+          if (this.#dialog.open) {
+            this.#hideImmediately();
+          }
+
+          return;
+        }
+
+        this.#prepareOpen();
+
+        requestAnimationFrame(() => {
+          // close the search dialog before the next repaint if a character is
+          // not produced (e.g. if you type shift, control, alt etc.)
+          if (!this.#input.value) {
+            this.#hideImmediately();
+          } else {
+            this.#dialog.classList.add('visible');
+          }
+        });
+
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        this.#close();
+        return;
+      }
+
+      const alt = event.altKey ? 'alt-' : '';
+      const ctrl = event.ctrlKey ? 'ctrl-' : '';
+      const meta = event.metaKey ? 'meta-' : '';
+      const shift = event.shiftKey ? 'shift-' : '';
+      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${event.key}`;
+
+      if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
+        event.preventDefault();
+        this.#focusNextSuggestion();
+        return;
+      }
+
+      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
+        event.preventDefault();
+        this.#focusNextSuggestion(true);
+      }
+    };
+
+    #onSubmit = () => {
+      this.#execute(this.#input.value);
+    };
+
+    #onSuggestionClick = (event) => {
+      const button = event.target.closest('.suggestion');
+      if (!button) return;
+      this.#execute(button.dataset.suggestion);
+    };
+
+    #renderSuggestions(suggestions, query) {
+      const focusedSuggestion =
+        this.shadowRoot.activeElement?.dataset?.suggestion;
+
+      this.#suggestions.innerHTML = '';
+      const pattern = new RegExp(escapeRegexCharacters(query), 'i');
+
+      for (const [index, suggestion] of suggestions.entries()) {
+        const suggestionFragment = TEMPLATES.suggestion.content.cloneNode(true);
+        const button = suggestionFragment.querySelector('.suggestion');
+        button.dataset.index = index;
+        button.dataset.suggestion = suggestion;
+        const matched = suggestion.match(pattern);
+
+        if (matched) {
+          const matchFragment = TEMPLATES.match.content.cloneNode(true);
+          const match = matchFragment.querySelector('.match');
+          const beforeMatch = suggestion.slice(0, matched.index);
+
+          const afterMatch = suggestion.slice(
+            matched.index + matched[0].length
+          );
+
+          match.textContent = matched[0];
+          match.insertAdjacentText('beforebegin', beforeMatch);
+          match.insertAdjacentText('afterend', afterMatch);
+          button.append(matchFragment);
+        } else {
+          button.textContent = suggestion;
+        }
+
+        this.#suggestions.append(suggestionFragment);
+      }
+
+      if (focusedSuggestion) {
+        const buttonToRefocus = this.#suggestions.querySelector(
+          `[data-suggestion="${CSS.escape(focusedSuggestion)}"]`
+        );
+
+        buttonToRefocus?.focus();
+      }
+    }
+  }
+
+  customElements.define('commands-component', CommandRing);
+  customElements.define('search-component', SearchOverlay);
 </script>
 
 <template id="commands-template">
   <style>
     nav {
+      --dial-size: min(55vh, 55vw);
       align-items: center;
       box-sizing: border-box;
       display: flex;
@@ -110,7 +705,7 @@
 
     .commands {
       aspect-ratio: 1;
-      height: min(55vh, 55vw);
+      height: var(--dial-size);
       list-style: none;
       margin: 0;
       padding: 0;
@@ -147,7 +742,9 @@
     .key {
       color: var(--color-text-subtle);
       position: absolute;
-      transition: all var(--transition-speed);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
     }
 
     .command:where(:focus, :hover) .key {
@@ -160,7 +757,9 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(-1.5em) scale(0.9);
-      transition: all var(--transition-speed);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
     }
 
     .command:where(:focus, :hover) .name {
@@ -170,7 +769,7 @@
 
     .clock {
       aspect-ratio: 1;
-      height: calc(min(55vh, 55vw) * 0.85);
+      height: calc(var(--dial-size) * 0.85);
       left: 50%;
       pointer-events: none;
       position: absolute;
@@ -236,98 +835,6 @@
     </a>
   </li>
 </template>
-
-<script type="module">
-  class Commands extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      const template = document.getElementById('commands-template');
-      const clone = template.content.cloneNode(true);
-      const commands = clone.querySelector('.commands');
-      const commandTemplate = document.getElementById('command-template');
-
-      const entries = [...COMMANDS.entries()].filter(
-        ([, { name, url }]) => name && url
-      );
-
-      const total = entries.length;
-
-      commands.style.setProperty(
-        '--item-size',
-        Math.sin(Math.PI / total) / 0.8
-      );
-
-      for (const [index, [key, { name, url }]] of entries.entries()) {
-        const clone = commandTemplate.content.cloneNode(true);
-        const li = clone.querySelector('li');
-        const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
-        li.style.setProperty('--x', 0.5 + 0.5 * Math.cos(angle));
-        li.style.setProperty('--y', 0.5 + 0.5 * Math.sin(angle));
-        const command = clone.querySelector('.command');
-        command.href = url;
-        command.setAttribute('aria-label', name);
-        if (CONFIG.openLinksInNewTab) command.target = '_blank';
-        clone.querySelector('.key').innerText = key;
-        clone.querySelector('.name').innerText = name;
-        commands.append(clone);
-      }
-
-      this.shadowRoot.append(clone);
-      const items = commands.querySelectorAll('li');
-
-      for (const [i] of entries.entries()) {
-        const li = items[i];
-
-        li.addEventListener('mouseenter', () => {
-          for (const [j] of entries.entries()) {
-            const dist = Math.min(Math.abs(j - i), total - Math.abs(j - i));
-
-            if (dist === 0) {
-              items[j].style.transform = 'translate(-50%, -50%) scale(1)';
-            } else if (dist === 1) {
-              items[j].style.opacity = '0.25';
-            } else if (dist === 2) {
-              items[j].style.opacity = '0.5';
-            } else if (dist === 3) {
-              items[j].style.opacity = '0.75';
-            }
-          }
-        });
-
-        li.addEventListener('mouseleave', () => {
-          for (const item of items) {
-            item.style.opacity = '';
-            item.style.transform = '';
-          }
-        });
-      }
-
-      this.#startClock();
-    }
-
-    #startClock() {
-      const hour = this.shadowRoot.querySelector('.hand--hour');
-      const minute = this.shadowRoot.querySelector('.hand--minute');
-      const second = this.shadowRoot.querySelector('.hand--second');
-
-      const tick = () => {
-        const now = new Date();
-        const h = now.getHours() % 12;
-        const m = now.getMinutes();
-        const s = now.getSeconds();
-        second.style.transform = `rotate(${s * 6}deg)`;
-        minute.style.transform = `rotate(${(m + s / 60) * 6}deg)`;
-        hour.style.transform = `rotate(${(h + m / 60) * 30}deg)`;
-      };
-
-      tick();
-      setInterval(tick, 1000);
-    }
-  }
-
-  customElements.define('commands-component', Commands);
-</script>
 
 <template id="search-template">
   <style>
@@ -432,7 +939,9 @@
       opacity: 0;
       position: absolute;
       transform: translateY(0.3em) scale(0.9);
-      transition: all var(--transition-speed);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
       z-index: -1;
     }
 
@@ -483,356 +992,6 @@
 <template id="match-template">
   <span class="match"></span>
 </template>
-
-<script type="module">
-  class Search extends HTMLElement {
-    #dialog;
-    #form;
-    #input;
-    #suggestions;
-    #lastSuggestions = [];
-    #closeController = null;
-
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      const template = document.getElementById('search-template');
-      const clone = template.content.cloneNode(true);
-      this.#dialog = clone.querySelector('.dialog');
-      this.#form = clone.querySelector('.form');
-      this.#input = clone.querySelector('.input');
-      this.#suggestions = clone.querySelector('.suggestions');
-      this.#form.addEventListener('submit', this.#onSubmit, false);
-      this.#input.addEventListener('input', this.#onInput);
-      this.#suggestions.addEventListener('click', this.#onSuggestionClick);
-      document.addEventListener('keydown', this.#onKeydown);
-      document.addEventListener('paste', this.#onPaste);
-      this.shadowRoot.append(clone);
-    }
-
-    static #escapeRegexCharacters(s) {
-      return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    }
-
-    static #fetchDuckDuckGoSuggestions(search) {
-      return new Promise((resolve) => {
-        window.autocompleteCallback = (res) => {
-          const suggestions = [];
-
-          for (const item of res) {
-            if (item.phrase === search.toLowerCase()) continue;
-            suggestions.push(item.phrase);
-          }
-
-          resolve(suggestions);
-        };
-
-        const script = document.createElement('script');
-        document.querySelector('head').appendChild(script);
-        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
-        script.onload = script.remove;
-
-        script.onerror = () => {
-          script.remove();
-          resolve([]);
-        };
-      });
-    }
-
-    static #formatSearchUrl(template, search) {
-      return template.replace(/{}/g, encodeURIComponent(search));
-    }
-
-    static #hasProtocol(s) {
-      return /^[a-zA-Z]+:\/\//i.test(s);
-    }
-
-    static #isUrl(s) {
-      return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i.test(s);
-    }
-
-    static #parseQuery = (raw) => {
-      const query = raw.trim();
-
-      if (this.#isUrl(query)) {
-        const url = this.#hasProtocol(query) ? query : `https://${query}`;
-        return { query, url };
-      }
-
-      if (COMMANDS.has(query)) {
-        const { url } = COMMANDS.get(query);
-        return { key: query, query, url };
-      }
-
-      let splitBy = CONFIG.commandSearchDelimiter;
-      const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
-
-      if (COMMANDS.has(searchKey)) {
-        const command = COMMANDS.get(searchKey);
-        const template = new URL(command.searchTemplate ?? '', command.url);
-        const search = rawSearch.trim();
-        const url = Search.#formatSearchUrl(decodeURI(template.href), search);
-        return { key: searchKey, query, search, splitBy, url };
-      }
-
-      splitBy = CONFIG.commandPathDelimiter;
-      const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
-
-      if (COMMANDS.has(pathKey)) {
-        const command = COMMANDS.get(pathKey);
-        const url = `${new URL(command.url).origin}/${path}`;
-        return { key: pathKey, path, query, splitBy, url };
-      }
-
-      const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
-      return { query, search: query, url };
-    };
-
-    #open() {
-      this.#closeController?.abort();
-      this.#closeController = null;
-      this.#dialog.show();
-      requestAnimationFrame(() => this.#dialog.classList.add('visible'));
-    }
-
-    #close() {
-      this.#closeController?.abort();
-      this.#closeController = new AbortController();
-      this.#dialog.classList.remove('visible');
-      this.#input.value = '';
-      this.#input.blur();
-      this.#suggestions.innerHTML = '';
-
-      this.#dialog.addEventListener(
-        'transitionend',
-        () => {
-          if (!this.#dialog.classList.contains('visible')) {
-            this.#dialog.close();
-          }
-
-          this.#closeController = null;
-        },
-        { once: true, signal: this.#closeController.signal }
-      );
-    }
-
-    #execute(query) {
-      const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
-      window.open(Search.#parseQuery(query).url, target, 'noopener noreferrer');
-      this.#close();
-    }
-
-    #focusNextSuggestion(previous = false) {
-      const active = this.shadowRoot.activeElement;
-      let nextIndex;
-
-      if (active.dataset.index) {
-        const activeIndex = Number(active.dataset.index);
-        nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
-      } else {
-        nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
-      }
-
-      const next = this.#suggestions.children[nextIndex];
-      if (next) next.querySelector('.suggestion').focus();
-      else this.#input.focus();
-    }
-
-    #onInput = async () => {
-      const oq = Search.#parseQuery(this.#input.value);
-
-      if (!oq.query) {
-        this.#close();
-        return;
-      }
-
-      const parentKey = oq.query.split(CONFIG.commandPathDelimiter)[0];
-      const exactMatch = COMMANDS.has(oq.query);
-
-      let suggestions = [
-        ...(COMMANDS.get(oq.query)?.suggestions ??
-          COMMANDS.get(parentKey)?.suggestions ??
-          []),
-      ];
-
-      if (exactMatch) {
-        suggestions = suggestions.filter((s) => s.startsWith(oq.query));
-      }
-
-      for (const [key, cmd] of COMMANDS.entries()) {
-        if (key !== oq.query && !suggestions.includes(key)) {
-          if (key.includes(oq.query)) {
-            suggestions.push(key);
-          }
-        }
-
-        for (const s of cmd.suggestions ?? []) {
-          if (s !== oq.query && !suggestions.includes(s)) {
-            if (s.includes(oq.query)) {
-              suggestions.push(s);
-            }
-          }
-        }
-      }
-
-      suggestions = suggestions.filter((s) => s.includes(oq.query));
-
-      const withStale = [
-        ...suggestions,
-        ...this.#lastSuggestions.filter((s) => s.includes(oq.query)),
-      ].slice(0, CONFIG.suggestionLimit);
-
-      if (withStale.length) {
-        this.#renderSuggestions(withStale, oq.query);
-      } else if (!(oq.search?.length > 1)) {
-        this.#suggestions.innerHTML = '';
-      }
-
-      if (oq.search?.length > 1) {
-        const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
-        const nq = Search.#parseQuery(this.#input.value);
-        if (nq.query !== oq.query) return;
-
-        const ddgSuggestions = oq.splitBy
-          ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
-          : res;
-
-        this.#lastSuggestions = ddgSuggestions;
-
-        suggestions = [...suggestions, ...ddgSuggestions].slice(
-          0,
-          CONFIG.suggestionLimit
-        );
-
-        if (suggestions.length) {
-          this.#renderSuggestions(suggestions, oq.query);
-        } else {
-          this.#suggestions.innerHTML = '';
-        }
-      }
-    };
-
-    #onPaste = (e) => {
-      if (this.#dialog.classList.contains('visible')) return;
-      const text = e.clipboardData?.getData('text');
-      if (!text) return;
-      e.preventDefault();
-      this.#open();
-      this.#input.focus();
-      this.#input.value = text;
-      this.#onInput();
-    };
-
-    #onKeydown = (e) => {
-      if (!this.#dialog.classList.contains('visible')) {
-        if (e.key === 'Escape') {
-          if (this.#dialog.open) {
-            this.#closeController?.abort();
-            this.#closeController = null;
-            this.#input.value = '';
-            this.#input.blur();
-            this.#dialog.close();
-            this.#suggestions.innerHTML = '';
-          }
-
-          return;
-        }
-
-        this.#closeController?.abort();
-        this.#closeController = null;
-        this.#dialog.show();
-        this.#input.focus();
-
-        requestAnimationFrame(() => {
-          // close the search dialog before the next repaint if a character is
-          // not produced (e.g. if you type shift, control, alt etc.)
-          if (!this.#input.value) {
-            this.#input.blur();
-            this.#dialog.close();
-            this.#suggestions.innerHTML = '';
-          } else {
-            this.#dialog.classList.add('visible');
-          }
-        });
-
-        return;
-      }
-
-      if (e.key === 'Escape') {
-        this.#close();
-        return;
-      }
-
-      const alt = e.altKey ? 'alt-' : '';
-      const ctrl = e.ctrlKey ? 'ctrl-' : '';
-      const meta = e.metaKey ? 'meta-' : '';
-      const shift = e.shiftKey ? 'shift-' : '';
-      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${e.key}`;
-
-      if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
-        e.preventDefault();
-        this.#focusNextSuggestion();
-        return;
-      }
-
-      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
-        e.preventDefault();
-        this.#focusNextSuggestion(true);
-      }
-    };
-
-    #onSubmit = () => {
-      this.#execute(this.#input.value);
-    };
-
-    #onSuggestionClick = (e) => {
-      const ref = e.target.closest('.suggestion');
-      if (!ref) return;
-      this.#execute(ref.dataset.suggestion);
-    };
-
-    #renderSuggestions(suggestions, query) {
-      const focused = this.shadowRoot.activeElement?.dataset?.suggestion;
-      this.#suggestions.innerHTML = '';
-      const suggestionTemplate = document.getElementById('suggestion-template');
-      const matchTemplate = document.getElementById('match-template');
-      const pattern = new RegExp(Search.#escapeRegexCharacters(query), 'i');
-
-      for (const [index, suggestion] of suggestions.entries()) {
-        const clone = suggestionTemplate.content.cloneNode(true);
-        const ref = clone.querySelector('.suggestion');
-        ref.dataset.index = index;
-        ref.dataset.suggestion = suggestion;
-        const matched = suggestion.match(pattern);
-
-        if (matched) {
-          const matchClone = matchTemplate.content.cloneNode(true);
-          const matchRef = matchClone.querySelector('.match');
-          const pre = suggestion.slice(0, matched.index);
-          const post = suggestion.slice(matched.index + matched[0].length);
-          matchRef.innerText = matched[0];
-          matchRef.insertAdjacentText('beforebegin', pre);
-          matchRef.insertAdjacentText('afterend', post);
-          ref.append(matchClone);
-        } else {
-          ref.innerText = suggestion;
-        }
-
-        this.#suggestions.append(clone);
-      }
-
-      if (focused) {
-        const toRefocus = this.#suggestions.querySelector(
-          `[data-suggestion="${CSS.escape(focused)}"]`
-        );
-
-        toRefocus?.focus();
-      }
-    }
-  }
-
-  customElements.define('search-component', Search);
-</script>
 
 <style>
   html {
