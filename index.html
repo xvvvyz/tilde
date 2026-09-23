@@ -55,15 +55,15 @@
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'AI', suggestions: ['a/chatgpt', 'a/gemini', 'a/grok', 'a/lumo'], url: 'https://claude.ai/new' }],
+    ['a', { name: 'AI', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
     ['a/chatgpt', { url: 'https://chatgpt.com' }],
-    ['a/gemini', { url: 'https://gemini.google.com' }],
     ['a/grok', { url: 'https://grok.com' }],
+    ['a/gemini', { url: 'https://gemini.google.com' }],
     ['a/lumo', { url: 'https://lumo.proton.me/u/0' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
-    ['i', { name: 'InstantDB', url: 'https://instantdb.com/dash' }],
+    ['n', { name: 'Convex', url: 'https://dashboard.convex.dev' }],
     ['o', { name: 'OpenRouter', url: 'https://openrouter.ai/models' }],
     ['p', { name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { url: 'https://drive.proton.me/u/0' }],
@@ -85,7 +85,6 @@
     ['x/seerr', { url: 'https://seerr.xvyz.co' }],
     ['x/sonarr', { url: 'https://sonarr.xvyz.co' }],
     ['x/tracearr', { url: 'https://tracearr.xvyz.co' }],
-    ['x/wg', { url: 'https://wg.xvyz.co' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
   ]);
 
