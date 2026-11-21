@@ -26,9 +26,9 @@
     --color-background: #111;
     --color-text-subtle: #888;
     --color-text: #eee;
+    --color-text-faint: color-mix(in srgb, var(--color-text) 35%, transparent);
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.5vw, 18px);
-    --color-accent: #e34;
     --transition-speed: 200ms;
   }
 
@@ -47,41 +47,44 @@
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
+    iconTemplate: 'https://cdn.simpleicons.org/{}',
+    logoTemplate:
+      'https://cdn.jsdelivr.net/gh/pheralb/svgl@main/static/library/{}.svg',
     openLinksInNewTab: true,
     suggestionLimit: 4,
   };
 
-  // named entries appear on the dial, in insertion order. suggestions are curated.
+  // named entries appear in the list, in insertion order. an icon is an svg url
+  // or a slug, taken from the hostname unless set: the svgl logo if it has
+  // several colors, else the simple icons glyph. suggestions are curated.
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'AI', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
+    ['a', { name: 'Claude', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
     ['a/chatgpt', { url: 'https://chatgpt.com' }],
     ['a/grok', { url: 'https://grok.com' }],
-    ['a/gemini', { url: 'https://gemini.google.com' }],
+    ['a/gemini', { icon: 'gemini', url: 'https://gemini.google.com' }],
     ['a/lumo', { url: 'https://lumo.proton.me/u/0' }],
     ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
     ['n', { name: 'Convex', url: 'https://dashboard.convex.dev' }],
     ['o', { name: 'OpenRouter', url: 'https://openrouter.ai/models' }],
-    ['p', { name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
-    ['p/drive', { url: 'https://drive.proton.me/u/0' }],
+    ['p', { icon: 'protonmail', name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
+    ['p/drive', { icon: 'protondrive', url: 'https://drive.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
-    ['q', { name: 'QBO', url: 'https://qbo.intuit.com' }],
-    ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
-    ['x', { name: 'x', url: 'https://x.com' }],
+    ['q', { icon: 'quickbooks', name: 'QuickBooks', url: 'https://qbo.intuit.com' }],
+    ['r', { name: 'Reddit', searchTemplate: '/search?q={}', url: 'https://www.reddit.com' }],
+    ['t', { icon: 'https://cdn.jsdelivr.net/gh/selfhst/icons/svg/ticktick.svg', name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
+    ['x', { name: 'X', url: 'https://x.com' }],
     ['x/bazarr', { url: 'https://bazarr.xvyz.co' }],
     ['x/jellyfin', { url: 'https://jellyfin.xvyz.co' }],
-    ['x/n8n', { url: 'https://n8n.xvyz.co/home/workflows' }],
     ['x/nginx', { url: 'https://nginx.xvyz.co' }],
     ['x/nzbget', { url: 'https://nzbget.xvyz.co' }],
-    ['x/profilarr', { url: 'https://profilarr.xvyz.co' }],
     ['x/prowlarr', { url: 'https://prowlarr.xvyz.co' }],
     ['x/radarr', { url: 'https://radarr.xvyz.co' }],
     ['x/seerr', { url: 'https://seerr.xvyz.co' }],
     ['x/sonarr', { url: 'https://sonarr.xvyz.co' }],
-    ['x/tracearr', { url: 'https://tracearr.xvyz.co' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
   ]);
 
@@ -90,6 +93,8 @@
    * @property {string} commandPathDelimiter
    * @property {string} commandSearchDelimiter
    * @property {string} defaultSearchTemplate
+   * @property {string} iconTemplate
+   * @property {string} logoTemplate
    * @property {boolean} openLinksInNewTab
    * @property {number} suggestionLimit
    */
@@ -97,6 +102,7 @@
   /**
    * @typedef {object} Command
    * @property {string} url
+   * @property {string=} icon
    * @property {string=} name
    * @property {string=} searchTemplate
    * @property {string[]=} suggestions
@@ -129,6 +135,7 @@
   const TEMPLATES = {
     command: getTemplate('command-template'),
     commands: getTemplate('commands-template'),
+    icon: getTemplate('icon-template'),
     match: getTemplate('match-template'),
     search: getTemplate('search-template'),
     suggestion: getTemplate('suggestion-template'),
@@ -144,11 +151,11 @@
 
   /**
    * @param {string} template
-   * @param {string} search
+   * @param {string} value
    * @returns {string}
    */
-  function formatSearchUrl(template, search) {
-    return template.replace(/{}/g, encodeURIComponent(search));
+  function fillTemplate(template, value) {
+    return template.replace(/{}/g, encodeURIComponent(value));
   }
 
   /**
@@ -209,7 +216,7 @@
       const command = commands.get(searchKey);
       const template = new URL(command.searchTemplate ?? '', command.url);
       const search = rawSearch.trim();
-      const url = formatSearchUrl(decodeURI(template.href), search);
+      const url = fillTemplate(decodeURI(template.href), search);
       return { key: searchKey, query, search, splitBy, url };
     }
 
@@ -222,7 +229,7 @@
       return { key: pathKey, path, query, splitBy, url };
     }
 
-    const url = formatSearchUrl(config.defaultSearchTemplate, query);
+    const url = fillTemplate(config.defaultSearchTemplate, query);
     return { query, search: query, url };
   }
 
@@ -232,43 +239,27 @@
    * @param {AppConfig} config
    * @returns {string[]}
    */
-  function collectLocalSuggestions(parsedQuery, commands, config) {
-    const parentKey = parsedQuery.query.split(config.commandPathDelimiter)[0];
-    const exactMatch = commands.has(parsedQuery.query);
-    let suggestions = [
-      ...(commands.get(parsedQuery.query)?.suggestions ??
-        commands.get(parentKey)?.suggestions ??
-        []),
-    ];
+  function collectLocalSuggestions({ query }, commands, config) {
+    const parentKey = query.split(config.commandPathDelimiter)[0];
 
-    if (exactMatch) {
-      suggestions = suggestions.filter((suggestion) =>
-        suggestion.startsWith(parsedQuery.query)
-      );
-    }
+    const curated =
+      commands.get(query)?.suggestions ??
+      commands.get(parentKey)?.suggestions ??
+      [];
 
-    for (const [key, command] of commands.entries()) {
-      if (key !== parsedQuery.query && !suggestions.includes(key)) {
-        if (key.includes(parsedQuery.query)) {
-          suggestions.push(key);
-        }
-      }
+    const suggestions = commands.has(query)
+      ? curated.filter((suggestion) => suggestion.startsWith(query))
+      : [...curated];
 
-      for (const suggestion of command.suggestions ?? []) {
-        if (
-          suggestion !== parsedQuery.query &&
-          !suggestions.includes(suggestion)
-        ) {
-          if (suggestion.includes(parsedQuery.query)) {
-            suggestions.push(suggestion);
-          }
+    for (const [key, command] of commands) {
+      for (const candidate of [key, ...(command.suggestions ?? [])]) {
+        if (candidate !== query && !suggestions.includes(candidate)) {
+          suggestions.push(candidate);
         }
       }
     }
 
-    return suggestions.filter((suggestion) =>
-      suggestion.includes(parsedQuery.query)
-    );
+    return suggestions.filter((suggestion) => suggestion.includes(query));
   }
 
   /**
@@ -278,138 +269,183 @@
   function fetchDuckDuckGoSuggestions(search) {
     return new Promise((resolve) => {
       window.autocompleteCallback = (response) => {
-        const suggestions = [];
-
-        for (const item of response) {
-          if (item.phrase === search.toLowerCase()) continue;
-          suggestions.push(item.phrase);
-        }
-
-        resolve(suggestions);
+        resolve(
+          response
+            .map((item) => item.phrase)
+            .filter((phrase) => phrase !== search.toLowerCase())
+        );
       };
 
       const script = document.createElement('script');
-      document.querySelector('head').appendChild(script);
-      script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
-      script.onload = script.remove;
+      document.head.append(script);
+      script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${encodeURIComponent(search)}`;
 
-      script.onerror = () => {
+      const settle = () => {
         script.remove();
         resolve([]);
       };
+
+      script.onload = settle;
+      script.onerror = settle;
     });
   }
 
-  class CommandRing extends HTMLElement {
-    #clockInterval = null;
+  /** @type {Map<string, Promise<string>>} */
+  const ICONS = new Map();
 
+  /**
+   * @param {{ icon?: string, url: string }} target
+   * @returns {string}
+   */
+  function resolveIcon({ icon, url }) {
+    return icon ?? new URL(url).hostname.split('.').at(-2);
+  }
+
+  /**
+   * @param {string} icon
+   * @returns {Promise<string>}
+   */
+  function loadIcon(icon) {
+    if (!ICONS.has(icon)) ICONS.set(icon, fetchIcon(icon));
+    return ICONS.get(icon);
+  }
+
+  /**
+   * @param {string} icon
+   * @returns {Promise<string>}
+   */
+  async function fetchIcon(icon) {
+    const cacheKey = `logo:${icon}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) return cached;
+
+    const svg = await (URL.canParse(icon) ? fetchSvg(icon) : fetchSlug(icon));
+    if (!svg) throw new Error(`Icon not found: ${icon}`);
+    localStorage.setItem(cacheKey, svg);
+    return svg;
+  }
+
+  /**
+   * @param {string} slug
+   * @returns {Promise<string | null>}
+   */
+  async function fetchSlug(slug) {
+    const logo = await fetchSvg(fillTemplate(CONFIG.logoTemplate, slug));
+    if (logo && isMulticolor(logo)) return logo;
+    return (await fetchSvg(fillTemplate(CONFIG.iconTemplate, slug))) ?? logo;
+  }
+
+  /**
+   * @param {string} url
+   * @returns {Promise<string | null>}
+   */
+  async function fetchSvg(url) {
+    const response = await fetch(url);
+    const svg = await response.text();
+    return response.ok ? svg : null;
+  }
+
+  /**
+   * @param {string} svg
+   * @returns {boolean}
+   */
+  function isMulticolor(svg) {
+    const paints = svg.matchAll(/(?:fill|stroke|stop-color)[=:]\s*"?([#\w]+)/g);
+
+    const colors = [...paints]
+      .map(([, paint]) => paint.toLowerCase())
+      .filter((paint) => !['currentcolor', 'none', 'url'].includes(paint));
+
+    return new Set(colors).size > 1;
+  }
+
+  /**
+   * a brand color too dark or too light to show on both themes is dropped, so
+   * the icon takes the text color instead.
+   *
+   * @param {string} svg
+   * @returns {string | null}
+   */
+  function readBrandColor(svg) {
+    const hex = svg.match(/fill="#(\w{6})"/)?.[1];
+    if (!hex) return null;
+
+    const [red, green, blue] = hex.match(/\w\w/g).map((channel) => {
+      const value = parseInt(channel, 16) / 255;
+
+      return value <= 0.04045
+        ? value / 12.92
+        : ((value + 0.055) / 1.055) ** 2.4;
+    });
+
+    const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+    return luminance > 0.06 && luminance < 0.6 ? `#${hex}` : null;
+  }
+
+  class CommandIcon extends HTMLElement {
+    static observedAttributes = ['icon'];
+    #icon;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this.shadowRoot.append(TEMPLATES.icon.content.cloneNode(true));
+      this.#icon = this.shadowRoot.querySelector('.icon');
+    }
+
+    async attributeChangedCallback(attribute, previousIcon, icon) {
+      if (icon === previousIcon) return;
+
+      this.#icon.classList.remove('loaded');
+      const svg = await loadIcon(icon).catch(() => null);
+      if (this.getAttribute('icon') !== icon) return;
+      this.toggleAttribute('missing', !svg);
+      if (!svg) return;
+
+      const dataUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+      this.#icon.style.setProperty('--icon', `url("${dataUrl}")`);
+      this.#icon.style.setProperty('--icon-color', readBrandColor(svg));
+      this.#icon.classList.toggle('multicolor', isMulticolor(svg));
+      this.#icon.classList.add('loaded');
+    }
+  }
+
+  class CommandList extends HTMLElement {
     constructor() {
       super();
       this.attachShadow({ mode: 'open' });
       const componentFragment = TEMPLATES.commands.content.cloneNode(true);
       const commands = componentFragment.querySelector('.commands');
 
-      const entries = [...COMMANDS.entries()].filter(
-        ([, { name, url }]) => name && url
-      );
+      for (const [key, command] of COMMANDS) {
+        const { name, url } = command;
+        if (!name) continue;
 
-      const total = entries.length;
-
-      commands.style.setProperty(
-        '--item-size',
-        Math.sin(Math.PI / total) / 0.8
-      );
-
-      for (const [index, [key, { name, url }]] of entries.entries()) {
         const commandFragment = TEMPLATES.command.content.cloneNode(true);
-        const item = commandFragment.querySelector('li');
-        const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
-        item.style.setProperty('--x', 0.5 + 0.5 * Math.cos(angle));
-        item.style.setProperty('--y', 0.5 + 0.5 * Math.sin(angle));
-
-        const commandLink = commandFragment.querySelector('.command');
-        commandLink.href = url;
-        commandLink.setAttribute('aria-label', name);
-        if (CONFIG.openLinksInNewTab) commandLink.target = '_blank';
+        const link = commandFragment.querySelector('.command');
+        link.href = url;
+        if (CONFIG.openLinksInNewTab) link.target = '_blank';
+        const icon = commandFragment.querySelector('.icon');
+        icon.setAttribute('icon', resolveIcon(command));
+        icon.textContent = name[0];
         commandFragment.querySelector('.key').textContent = key;
         commandFragment.querySelector('.name').textContent = name;
         commands.append(commandFragment);
       }
 
       this.shadowRoot.append(componentFragment);
-      const items = commands.querySelectorAll('li');
-
-      for (const [index] of entries.entries()) {
-        const item = items[index];
-
-        item.addEventListener('mouseenter', () => {
-          for (const [otherIndex] of entries.entries()) {
-            const distance = Math.min(
-              Math.abs(otherIndex - index),
-              total - Math.abs(otherIndex - index)
-            );
-
-            if (distance === 0) {
-              items[otherIndex].style.transform =
-                'translate(-50%, -50%) scale(1)';
-            } else if (distance === 1) {
-              items[otherIndex].style.opacity = '0.25';
-            } else if (distance === 2) {
-              items[otherIndex].style.opacity = '0.5';
-            } else if (distance === 3) {
-              items[otherIndex].style.opacity = '0.75';
-            }
-          }
-        });
-
-        item.addEventListener('mouseleave', () => {
-          for (const otherItem of items) {
-            otherItem.style.opacity = '';
-            otherItem.style.transform = '';
-          }
-        });
-      }
-    }
-
-    connectedCallback() {
-      this.#startClock();
-    }
-
-    disconnectedCallback() {
-      if (this.#clockInterval === null) return;
-
-      clearInterval(this.#clockInterval);
-      this.#clockInterval = null;
-    }
-
-    #startClock() {
-      if (this.#clockInterval !== null) return;
-
-      const hour = this.shadowRoot.querySelector('.hand--hour');
-      const minute = this.shadowRoot.querySelector('.hand--minute');
-      const second = this.shadowRoot.querySelector('.hand--second');
-
-      const tick = () => {
-        const now = new Date();
-        const hours = now.getHours() % 12;
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        second.style.transform = `rotate(${seconds * 6}deg)`;
-        minute.style.transform = `rotate(${(minutes + seconds / 60) * 6}deg)`;
-        hour.style.transform = `rotate(${(hours + minutes / 60) * 30}deg)`;
-      };
-
-      tick();
-      this.#clockInterval = setInterval(tick, 1000);
     }
   }
 
   class SearchOverlay extends HTMLElement {
     #dialog;
-    #form;
     #input;
     #suggestions;
+    #targetIcon;
+    #targetLabel;
     #lastSuggestions = [];
+    #pendingSearch = null;
+    #suggestionRequest = Promise.resolve([]);
     #closeController = null;
     #documentController = null;
 
@@ -417,13 +453,18 @@
       super();
       this.attachShadow({ mode: 'open' });
       const componentFragment = TEMPLATES.search.content.cloneNode(true);
+      const form = componentFragment.querySelector('.form');
       this.#dialog = componentFragment.querySelector('.dialog');
-      this.#form = componentFragment.querySelector('.form');
       this.#input = componentFragment.querySelector('.input');
       this.#suggestions = componentFragment.querySelector('.suggestions');
-      this.#form.addEventListener('submit', this.#onSubmit, false);
+      this.#targetIcon = componentFragment.querySelector('.target-icon');
+      this.#targetLabel = componentFragment.querySelector('.target-label');
+      form.addEventListener('focusin', this.#renderTarget);
+      form.addEventListener('submit', this.#onSubmit);
       this.#input.addEventListener('input', this.#onInput);
       this.#suggestions.addEventListener('click', this.#onSuggestionClick);
+      this.#suggestions.addEventListener('pointerleave', this.#renderTarget);
+      this.#suggestions.addEventListener('pointermove', this.#onPointerMove);
       this.shadowRoot.append(componentFragment);
     }
 
@@ -432,6 +473,7 @@
 
       this.#documentController = new AbortController();
       const { signal } = this.#documentController;
+      document.addEventListener('click', this.#onClick, { signal });
       document.addEventListener('keydown', this.#onKeydown, { signal });
       document.addEventListener('paste', this.#onPaste, { signal });
     }
@@ -496,13 +538,40 @@
       this.#close();
     }
 
+    #setPointing(pointing) {
+      this.#suggestions.classList.toggle('pointing', pointing);
+      this.#renderTarget();
+    }
+
+    #completeSuggestion() {
+      const suggestion =
+        this.shadowRoot.activeElement?.dataset.suggestion ??
+        this.#suggestions.querySelector('.suggestion')?.dataset.suggestion;
+
+      if (!suggestion) return;
+      this.#input.value = suggestion;
+      this.#input.focus();
+      this.#onInput();
+    }
+
+    // duckduckgo answers every request through the same callback, so requests
+    // run one at a time and a search that has been superseded is skipped
+    #fetchSuggestions(search) {
+      this.#pendingSearch = search;
+
+      this.#suggestionRequest = this.#suggestionRequest.then(() =>
+        search === this.#pendingSearch ? fetchDuckDuckGoSuggestions(search) : []
+      );
+
+      return this.#suggestionRequest;
+    }
+
     #focusNextSuggestion(previous = false) {
-      const activeElement = this.shadowRoot.activeElement;
+      const activeIndex = this.shadowRoot.activeElement?.dataset.index;
       let nextIndex;
 
-      if (activeElement.dataset.index) {
-        const activeIndex = Number(activeElement.dataset.index);
-        nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
+      if (activeIndex) {
+        nextIndex = Number(activeIndex) + (previous ? -1 : 1);
       } else {
         nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
       }
@@ -512,14 +581,34 @@
       else this.#input.focus();
     }
 
-    #onInput = async () => {
-      const parsedQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+    #onClick = (event) => {
+      const path = event.composedPath();
 
-      if (!parsedQuery.query) {
-        this.#close();
+      if (!this.#dialog.classList.contains('visible')) {
+        if (!path.some((element) => element instanceof HTMLAnchorElement)) {
+          this.#open();
+        }
+
         return;
       }
 
+      if (!path.includes(this.#input) && !path.includes(this.#suggestions)) {
+        this.#close();
+      }
+    };
+
+    #onInput = async () => {
+      const parsedQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+      this.#renderTarget();
+
+      if (!parsedQuery.query) {
+        // closing on a touch screen would dismiss the keyboard mid-edit
+        if (matchMedia('(hover: hover)').matches) this.#close();
+        else this.#suggestions.innerHTML = '';
+        return;
+      }
+
+      const isSearch = parsedQuery.search?.length > 1;
       let suggestions = collectLocalSuggestions(parsedQuery, COMMANDS, CONFIG);
 
       const suggestionsWithStale = [
@@ -531,12 +620,12 @@
 
       if (suggestionsWithStale.length) {
         this.#renderSuggestions(suggestionsWithStale, parsedQuery.query);
-      } else if (!(parsedQuery.search?.length > 1)) {
+      } else if (!isSearch) {
         this.#suggestions.innerHTML = '';
       }
 
-      if (parsedQuery.search?.length > 1) {
-        const results = await fetchDuckDuckGoSuggestions(parsedQuery.search);
+      if (isSearch) {
+        const results = await this.#fetchSuggestions(parsedQuery.search);
         const currentQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
         if (currentQuery.query !== parsedQuery.query) return;
 
@@ -553,11 +642,7 @@
           CONFIG.suggestionLimit
         );
 
-        if (suggestions.length) {
-          this.#renderSuggestions(suggestions, parsedQuery.query);
-        } else {
-          this.#suggestions.innerHTML = '';
-        }
+        this.#renderSuggestions(suggestions, parsedQuery.query);
       }
     };
 
@@ -572,6 +657,8 @@
     };
 
     #onKeydown = (event) => {
+      this.#setPointing(false);
+
       if (!this.#dialog.classList.contains('visible')) {
         if (event.key === 'Escape') {
           if (this.#dialog.open) {
@@ -601,22 +688,37 @@
         return;
       }
 
-      const alt = event.altKey ? 'alt-' : '';
-      const ctrl = event.ctrlKey ? 'ctrl-' : '';
-      const meta = event.metaKey ? 'meta-' : '';
-      const shift = event.shiftKey ? 'shift-' : '';
-      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${event.key}`;
+      const { altKey, ctrlKey, key, metaKey, shiftKey } = event;
+      const alt = altKey ? 'alt-' : '';
+      const ctrl = ctrlKey ? 'ctrl-' : '';
+      const meta = metaKey ? 'meta-' : '';
+      const shift = shiftKey ? 'shift-' : '';
+      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${key}`;
 
-      if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
+      if (/^(ArrowDown|ctrl-n)$/.test(modifierPrefixedKey)) {
         event.preventDefault();
         this.#focusNextSuggestion();
         return;
       }
 
-      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
+      if (/^(ArrowUp|ctrl-p)$/.test(modifierPrefixedKey)) {
         event.preventDefault();
         this.#focusNextSuggestion(true);
+        return;
       }
+
+      if (key === 'Tab') {
+        event.preventDefault();
+        if (!shiftKey) this.#completeSuggestion();
+        return;
+      }
+
+      const isTyping = key.length === 1 || key === 'Backspace';
+      if (isTyping && !ctrlKey && !metaKey) this.#input.focus();
+    };
+
+    #onPointerMove = () => {
+      this.#setPointing(true);
     };
 
     #onSubmit = () => {
@@ -627,6 +729,31 @@
       const button = event.target.closest('.suggestion');
       if (!button) return;
       this.#execute(button.dataset.suggestion);
+    };
+
+    #renderTarget = () => {
+      const highlighted =
+        this.#suggestions.querySelector('.pointing .suggestion:hover') ??
+        this.shadowRoot.activeElement;
+
+      const { key, search, url } = parseQuery(
+        highlighted?.dataset.suggestion ?? this.#input.value,
+        COMMANDS,
+        CONFIG
+      );
+
+      const command = COMMANDS.get(key);
+
+      // a typed url gets no icon, so its hostname is never sent to the icon cdn
+      const isTypedUrl = !command && search === undefined;
+      this.#targetIcon.hidden = isTypedUrl;
+
+      if (!isTypedUrl) {
+        this.#targetIcon.setAttribute('icon', resolveIcon(command ?? { url }));
+      }
+
+      this.#targetLabel.textContent =
+        command?.name ?? (URL.canParse(url) ? new URL(url).hostname : '');
     };
 
     #renderSuggestions(suggestions, query) {
@@ -673,151 +800,162 @@
     }
   }
 
-  customElements.define('commands-component', CommandRing);
+  customElements.define('icon-component', CommandIcon);
+  customElements.define('commands-component', CommandList);
   customElements.define('search-component', SearchOverlay);
 </script>
+
+<template id="icon-template">
+  <style>
+    :host {
+      display: block;
+      flex: none;
+      height: 1.25rem;
+      transition: opacity var(--transition-speed);
+      width: 1.25rem;
+    }
+
+    .icon {
+      box-sizing: border-box;
+      color: var(--color-text);
+      display: grid;
+      font-weight: bold;
+      height: 100%;
+      opacity: 0;
+      padding: 1px;
+      place-items: center;
+      text-transform: uppercase;
+      transition: opacity var(--transition-speed);
+    }
+
+    .loaded,
+    :host([missing]) .icon {
+      opacity: 1;
+    }
+
+    .loaded {
+      background-color: var(--icon-color, currentColor);
+      mask: var(--icon) center / contain no-repeat content-box;
+    }
+
+    .multicolor {
+      background: var(--icon) center / contain no-repeat content-box;
+      mask: none;
+    }
+
+    :host(:not([missing])) slot {
+      display: none;
+    }
+  </style>
+  <div class="icon"><slot></slot></div>
+</template>
 
 <template id="commands-template">
   <style>
     nav {
-      --dial-size: min(55vh, 55vw);
       align-items: center;
       box-sizing: border-box;
       display: flex;
       justify-content: center;
       min-height: 100dvh;
-      position: relative;
-      width: 100%;
+      padding: 3rem 1rem;
     }
 
     .commands {
-      aspect-ratio: 1;
-      height: var(--dial-size);
+      display: grid;
       list-style: none;
       margin: 0;
       padding: 0;
-      position: relative;
-    }
-
-    .commands li {
-      border-radius: 50%;
-      height: calc(var(--item-size) * 100%);
-      left: calc(var(--x) * 100%);
-      position: absolute;
-      top: calc(var(--y) * 100%);
-      transform: translate(-50%, -50%) scale(0.8);
-      transition:
-        opacity var(--transition-speed),
-        transform var(--transition-speed);
-      width: calc(var(--item-size) * 100%);
     }
 
     .command {
       align-items: center;
-      border-radius: 50%;
       color: var(--color-text);
       display: flex;
-      height: 100%;
-      justify-content: center;
+      gap: 0.85rem;
       outline: 0;
-      position: relative;
-      text-align: center;
+      padding: 0.6rem 1.5rem;
       text-decoration: none;
-      width: 100%;
+      transition: color var(--transition-speed);
+      white-space: nowrap;
+    }
+
+    .glyph {
+      display: grid;
+      flex: none;
+      place-items: center;
+    }
+
+    .icon,
+    .key {
+      grid-area: 1 / 1;
     }
 
     .key {
-      color: var(--color-text-subtle);
-      position: absolute;
-      transition:
-        opacity var(--transition-speed),
-        transform var(--transition-speed);
-    }
-
-    .command:where(:focus, :hover) .key {
       opacity: 0;
-      pointer-events: none;
-      transform: translateY(1.5em) scale(0.9);
+      transition: opacity var(--transition-speed);
     }
 
-    .name {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-1.5em) scale(0.9);
-      transition:
-        opacity var(--transition-speed),
-        transform var(--transition-speed);
+    .command:focus-visible {
+      .icon {
+        opacity: 0;
+      }
+
+      .key {
+        opacity: 1;
+      }
     }
 
-    .command:where(:focus, :hover) .name {
-      opacity: 1;
-      transform: translateY(0);
+    @media (hover: hover) {
+      .commands:has(.command:hover) .command:not(:hover) {
+        color: var(--color-text-faint);
+
+        .icon {
+          opacity: 0.35;
+        }
+      }
+
+      .command:hover {
+        .icon {
+          opacity: 0;
+        }
+
+        .key {
+          opacity: 1;
+        }
+      }
     }
 
-    .clock {
-      aspect-ratio: 1;
-      height: calc(var(--dial-size) * 0.85);
-      left: 50%;
-      pointer-events: none;
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
+    @media (min-width: 700px) {
+      .commands {
+        grid-template-columns: repeat(2, auto);
+      }
     }
 
-    .hand {
-      background: var(--color-text);
-      border-radius: 2px;
-      bottom: 50%;
-      left: 50%;
-      position: absolute;
-      transform-origin: bottom center;
+    @media (min-width: 960px) {
+      .commands {
+        grid-template-columns: repeat(4, auto);
+      }
     }
 
-    .hand--hour {
-      height: 30%;
-      width: 3px;
-      margin-left: -1.5px;
-    }
-
-    .hand--minute {
-      height: 40%;
-      width: 2px;
-      margin-left: -1px;
-    }
-
-    .hand--second {
-      background: var(--color-accent);
-      height: 45%;
-      width: 1px;
-      margin-left: -0.5px;
-    }
-
-    .dot {
-      background: var(--color-text);
-      border-radius: 50%;
-      height: 6px;
-      left: 50%;
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 6px;
+    @media (min-width: 1280px) {
+      .commands {
+        grid-template-columns: repeat(6, auto);
+      }
     }
   </style>
   <nav>
     <menu class="commands"></menu>
-    <div class="clock">
-      <div class="hand hand--hour"></div>
-      <div class="hand hand--minute"></div>
-      <div class="hand hand--second"></div>
-      <div class="dot"></div>
-    </div>
   </nav>
 </template>
 
 <template id="command-template">
   <li>
-    <a class="command" rel="noopener noreferrer" aria-label="">
-      <span class="key" aria-hidden="true"></span>
+    <a class="command" rel="noopener noreferrer">
+      <span class="glyph" aria-hidden="true">
+        <icon-component class="icon"></icon-component>
+        <span class="key"></span>
+      </span>
       <span class="name"></span>
     </a>
   </li>
@@ -827,23 +965,18 @@
   <style>
     input,
     button {
-      -moz-appearance: none;
-      font-family: var(--font-family);
-      -webkit-appearance: none;
+      appearance: none;
       background: transparent;
       border: 0;
       display: block;
+      font-family: var(--font-family);
       outline: 0;
     }
 
     .dialog {
-      align-items: center;
       background: var(--color-background);
       border: none;
-      display: none;
-      flex-direction: column;
       height: 100%;
-      justify-content: center;
       left: 0;
       opacity: 0;
       padding: 0;
@@ -855,17 +988,33 @@
       width: 100%;
     }
 
-    .dialog[open] {
-      display: flex;
-    }
-
     .dialog.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
     .form {
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      height: 100%;
+      padding-top: 3rem;
       width: 100%;
+    }
+
+    .target {
+      align-items: center;
+      align-self: end;
+      color: var(--color-text-subtle);
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      margin: 0 0 1rem;
+      min-height: 1.4rem;
+    }
+
+    .target-icon:is([hidden], [missing]) {
+      display: none;
     }
 
     .sr-only {
@@ -882,16 +1031,15 @@
       color: var(--color-text);
       font-size: 2rem;
       font-weight: bold;
+      line-height: 1.25;
       padding: 0;
       text-align: center;
       width: 100%;
     }
 
     .suggestions {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
+      align-self: start;
+      display: grid;
       justify-content: center;
       list-style: none;
       margin: 1rem 0 0;
@@ -903,43 +1051,11 @@
       color: var(--color-text);
       cursor: pointer;
       font-size: 1rem;
-      padding: 1rem;
-      position: relative;
+      line-height: 1.4;
+      padding: 0.5rem 1.5rem;
       transition: color var(--transition-speed);
       white-space: nowrap;
-      z-index: 1;
-    }
-
-    .suggestion:where(:focus, :hover) {
-      color: var(--color-background);
-    }
-
-    .suggestions:hover .suggestion:focus:not(:hover) {
-      color: var(--color-text);
-    }
-
-    .suggestion::before {
-      background-color: var(--color-text);
-      border-radius: 1em;
-      content: ' ';
-      inset: 0.8em 0.4em;
-      opacity: 0;
-      position: absolute;
-      transform: translateY(0.3em) scale(0.9);
-      transition:
-        opacity var(--transition-speed),
-        transform var(--transition-speed);
-      z-index: -1;
-    }
-
-    .suggestion:where(:focus, :hover)::before {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .suggestions:hover .suggestion:focus:not(:hover)::before {
-      opacity: 0;
-      transform: translateY(0.3em) scale(0.9);
+      width: 100%;
     }
 
     .match {
@@ -947,22 +1063,33 @@
       transition: color var(--transition-speed);
     }
 
-    .suggestion:where(:focus, :hover) .match {
-      color: var(--color-background);
+    .suggestions.pointing:has(.suggestion:hover) .suggestion:not(:hover),
+    .suggestions:not(.pointing:has(.suggestion:hover)):focus-within
+      .suggestion:not(:focus) {
+      &,
+      .match {
+        color: var(--color-text-faint);
+      }
     }
 
-    .suggestions:hover .suggestion:focus:not(:hover) .match {
-      color: var(--color-text-subtle);
+    .suggestions.pointing .suggestion:hover .match,
+    .suggestion:focus .match {
+      color: var(--color-text);
     }
 
-    @media (min-width: 700px) {
-      .suggestions {
-        flex-direction: row;
+    @media (min-width: 700px) and (hover: hover) {
+      .form {
+        grid-template-rows: 1fr auto 1fr;
+        padding-top: 0;
       }
     }
   </style>
   <dialog class="dialog" aria-label="Search">
     <form autocomplete="off" class="form" method="dialog" spellcheck="false">
+      <p class="target">
+        <icon-component class="target-icon"></icon-component>
+        <span class="target-label"></span>
+      </p>
       <label for="search-input" class="sr-only">Search</label>
       <input class="input" id="search-input" type="text" />
       <menu class="suggestions"></menu>
@@ -985,7 +1112,9 @@
     background-color: var(--color-background);
     font-family: var(--font-family);
     font-size: var(--font-size);
+    -webkit-font-smoothing: antialiased;
     line-height: 1.4;
+    -moz-osx-font-smoothing: grayscale;
     user-select: none;
   }
 
