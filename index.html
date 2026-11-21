@@ -27,6 +27,7 @@
     --color-text-subtle: #888;
     --color-text: #eee;
     --color-text-faint: color-mix(in srgb, var(--color-text) 35%, transparent);
+    --color-highlight: color-mix(in srgb, var(--color-text) 9%, transparent);
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.5vw, 18px);
     --transition-speed: 200ms;
@@ -440,6 +441,7 @@
   class SearchOverlay extends HTMLElement {
     #dialog;
     #input;
+    #reveal;
     #suggestions;
     #targetIcon;
     #targetLabel;
@@ -456,6 +458,7 @@
       const form = componentFragment.querySelector('.form');
       this.#dialog = componentFragment.querySelector('.dialog');
       this.#input = componentFragment.querySelector('.input');
+      this.#reveal = componentFragment.querySelector('.reveal');
       this.#suggestions = componentFragment.querySelector('.suggestions');
       this.#targetIcon = componentFragment.querySelector('.target-icon');
       this.#targetLabel = componentFragment.querySelector('.target-label');
@@ -497,6 +500,8 @@
 
     #prepareOpen() {
       this.#cancelPendingClose();
+      // closing leaves the height as it was, so nothing moves as it fades out
+      this.#fitSuggestions();
       this.#dialog.show();
       this.#input.focus();
     }
@@ -604,7 +609,7 @@
       if (!parsedQuery.query) {
         // closing on a touch screen would dismiss the keyboard mid-edit
         if (matchMedia('(hover: hover)').matches) this.#close();
-        else this.#suggestions.innerHTML = '';
+        else this.#renderSuggestions([], parsedQuery.query);
         return;
       }
 
@@ -618,10 +623,8 @@
         ),
       ].slice(0, CONFIG.suggestionLimit);
 
-      if (suggestionsWithStale.length) {
+      if (suggestionsWithStale.length || !isSearch) {
         this.#renderSuggestions(suggestionsWithStale, parsedQuery.query);
-      } else if (!isSearch) {
-        this.#suggestions.innerHTML = '';
       }
 
       if (isSearch) {
@@ -790,6 +793,8 @@
         this.#suggestions.append(suggestionFragment);
       }
 
+      this.#fitSuggestions();
+
       if (focusedSuggestion) {
         const buttonToRefocus = this.#suggestions.querySelector(
           `[data-suggestion="${CSS.escape(focusedSuggestion)}"]`
@@ -797,6 +802,12 @@
 
         buttonToRefocus?.focus();
       }
+    }
+
+    // the list's height is set explicitly so that it can transition, sliding
+    // the content to its new center as suggestions come and go
+    #fitSuggestions() {
+      this.#reveal.style.height = `${this.#suggestions.offsetHeight}px`;
     }
   }
 
@@ -994,9 +1005,9 @@
     }
 
     .form {
+      align-content: start;
       box-sizing: border-box;
       display: grid;
-      grid-template-rows: auto auto 1fr;
       height: 100%;
       padding-top: 3rem;
       width: 100%;
@@ -1004,7 +1015,6 @@
 
     .target {
       align-items: center;
-      align-self: end;
       color: var(--color-text-subtle);
       display: flex;
       gap: 0.6rem;
@@ -1037,50 +1047,52 @@
       width: 100%;
     }
 
+    .reveal {
+      height: 0;
+      overflow: clip;
+      transition: height var(--transition-speed);
+    }
+
     .suggestions {
-      align-self: start;
       display: grid;
-      justify-content: center;
       list-style: none;
-      margin: 1rem 0 0;
-      overflow: hidden;
+      margin: 0;
+      padding: 1rem 1rem 0;
+    }
+
+    .suggestions:empty {
       padding: 0;
     }
 
     .suggestion {
+      border-radius: 0.6rem;
       color: var(--color-text);
       cursor: pointer;
       font-size: 1rem;
       line-height: 1.4;
       padding: 0.5rem 1.5rem;
-      transition: color var(--transition-speed);
+      transition: background-color var(--transition-speed);
       white-space: nowrap;
       width: 100%;
     }
 
     .match {
       color: var(--color-text-subtle);
-      transition: color var(--transition-speed);
     }
 
-    .suggestions.pointing:has(.suggestion:hover) .suggestion:not(:hover),
-    .suggestions:not(.pointing:has(.suggestion:hover)):focus-within
-      .suggestion:not(:focus) {
-      &,
-      .match {
-        color: var(--color-text-faint);
-      }
-    }
-
-    .suggestions.pointing .suggestion:hover .match,
-    .suggestion:focus .match {
-      color: var(--color-text);
+    .suggestions.pointing .suggestion:hover,
+    .suggestions:not(.pointing:has(.suggestion:hover)) .suggestion:focus {
+      background-color: var(--color-highlight);
     }
 
     @media (min-width: 700px) and (hover: hover) {
       .form {
-        grid-template-rows: 1fr auto 1fr;
+        align-content: center;
         padding-top: 0;
+      }
+
+      .suggestions {
+        justify-items: center;
       }
     }
   </style>
@@ -1092,7 +1104,9 @@
       </p>
       <label for="search-input" class="sr-only">Search</label>
       <input class="input" id="search-input" type="text" />
-      <menu class="suggestions"></menu>
+      <div class="reveal">
+        <menu class="suggestions"></menu>
+      </div>
     </form>
   </dialog>
 </template>
