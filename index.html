@@ -26,7 +26,7 @@
     --color-background: #111;
     --color-text-subtle: #888;
     --color-text: #eee;
-    --color-text-faint: color-mix(in srgb, var(--color-text) 35%, transparent);
+    --color-text-faint: color-mix(in srgb, var(--color-text) 55%, transparent);
     --color-highlight: color-mix(in srgb, var(--color-text) 9%, transparent);
     --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
     --font-size: clamp(16px, 1.5vw, 18px);
@@ -456,6 +456,7 @@
       this.attachShadow({ mode: 'open' });
       const componentFragment = TEMPLATES.search.content.cloneNode(true);
       const form = componentFragment.querySelector('.form');
+      form.style.setProperty('--suggestion-limit', CONFIG.suggestionLimit);
       this.#dialog = componentFragment.querySelector('.dialog');
       this.#input = componentFragment.querySelector('.input');
       this.#reveal = componentFragment.querySelector('.reveal');
@@ -804,8 +805,8 @@
       }
     }
 
-    // the list's height is set explicitly so that it can transition, sliding
-    // the content to its new center as suggestions come and go
+    // the list's height is set explicitly so that it can transition as
+    // suggestions come and go
     #fitSuggestions() {
       this.#reveal.style.height = `${this.#suggestions.offsetHeight}px`;
     }
@@ -922,7 +923,7 @@
         color: var(--color-text-faint);
 
         .icon {
-          opacity: 0.35;
+          opacity: 0.55;
         }
       }
 
@@ -1004,12 +1005,19 @@
       transform: translateY(0);
     }
 
+    /* --inset puts the label, input and suggestion text on one left edge.
+       minmax(0, 1fr) keeps a long suggestion from widening the column, so it
+       is cut off with an ellipsis instead */
     .form {
+      --inset: 0.75rem;
+      --list-gap: 1rem;
+      --suggestion-height: 2.4rem;
       align-content: start;
       box-sizing: border-box;
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       height: 100%;
-      padding-top: 3rem;
+      padding: 3rem 1rem 0;
       width: 100%;
     }
 
@@ -1018,9 +1026,9 @@
       color: var(--color-text-subtle);
       display: flex;
       gap: 0.6rem;
-      justify-content: center;
       margin: 0 0 1rem;
       min-height: 1.4rem;
+      padding: 0 var(--inset);
     }
 
     .target-icon:is([hidden], [missing]) {
@@ -1038,12 +1046,12 @@
     }
 
     .input {
+      box-sizing: border-box;
       color: var(--color-text);
       font-size: 2rem;
       font-weight: bold;
       line-height: 1.25;
-      padding: 0;
-      text-align: center;
+      padding: 0 var(--inset);
       width: 100%;
     }
 
@@ -1054,10 +1062,9 @@
     }
 
     .suggestions {
-      display: grid;
       list-style: none;
       margin: 0;
-      padding: 1rem 1rem 0;
+      padding: var(--list-gap) 0 0;
     }
 
     .suggestions:empty {
@@ -1069,8 +1076,12 @@
       color: var(--color-text);
       cursor: pointer;
       font-size: 1rem;
+      height: var(--suggestion-height);
       line-height: 1.4;
-      padding: 0.5rem 1.5rem;
+      overflow: hidden;
+      padding: 0 var(--inset);
+      text-align: left;
+      text-overflow: ellipsis;
       transition: background-color var(--transition-speed);
       white-space: nowrap;
       width: 100%;
@@ -1086,13 +1097,22 @@
     }
 
     @media (min-width: 700px) and (hover: hover) {
+      /* a fixed-width column centered as if the list were always full, so
+         the label and input stay put as suggestions come and go */
       .form {
         align-content: center;
+        grid-template-rows:
+          auto auto
+          calc(
+            var(--list-gap) + var(--suggestion-limit) * var(--suggestion-height)
+          );
+        margin: 0 auto;
         padding-top: 0;
+        width: min(32rem, 100%);
       }
 
-      .suggestions {
-        justify-items: center;
+      .reveal {
+        align-self: start;
       }
     }
   </style>
