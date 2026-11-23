@@ -687,10 +687,16 @@
       const isSearch = parsedQuery.search?.length > 1;
       let suggestions = collectLocalSuggestions(parsedQuery, COMMANDS, CONFIG);
 
+      // duckduckgo suggests in lowercase, and often suggests what was typed,
+      // which would only repeat it
+      const typed = parsedQuery.query.toLowerCase();
+      const isTyped = (suggestion) => suggestion.toLowerCase() === typed;
+
       const suggestionsWithStale = [
         ...suggestions,
-        ...this.#lastSuggestions.filter((suggestion) =>
-          suggestion.includes(parsedQuery.query)
+        ...this.#lastSuggestions.filter(
+          (suggestion) =>
+            suggestion.toLowerCase().includes(typed) && !isTyped(suggestion)
         ),
       ].slice(0, CONFIG.suggestionLimit);
 
@@ -711,10 +717,10 @@
 
         this.#lastSuggestions = duckDuckGoSuggestions;
 
-        suggestions = [...suggestions, ...duckDuckGoSuggestions].slice(
-          0,
-          CONFIG.suggestionLimit
-        );
+        suggestions = [
+          ...suggestions,
+          ...duckDuckGoSuggestions.filter((suggestion) => !isTyped(suggestion)),
+        ].slice(0, CONFIG.suggestionLimit);
 
         this.#renderSuggestions(suggestions, parsedQuery.query);
       }
