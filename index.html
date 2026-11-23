@@ -1109,7 +1109,9 @@
        minmax(0, 1fr) keeps a long suggestion from widening the column, so it
        is cut off with an ellipsis instead */
     .form {
+      --input-height: 2.5rem;
       --inset: 0.75rem;
+      --label-height: 2.4rem;
       --list-gap: 1rem;
       --suggestion-height: 2.4rem;
       align-content: start;
@@ -1126,8 +1128,8 @@
       color: var(--color-text-subtle);
       display: flex;
       gap: 0.6rem;
+      height: calc(var(--label-height) - 1rem);
       margin: 0 0 1rem;
-      min-height: 1.4rem;
       padding: 0 var(--inset);
     }
 
@@ -1150,6 +1152,7 @@
       color: var(--color-text);
       font-size: 2rem;
       font-weight: bold;
+      height: var(--input-height);
       line-height: 1.25;
       padding: 0 var(--inset);
       width: 100%;
@@ -1248,23 +1251,31 @@
     }
 
     @media (min-width: 700px) and (hover: hover) {
-      /* a fixed-width column centered as if the list were always full, so
-         the label and input stay put as suggestions come and go. safe keeps
-         the top on screen when the window is too short for the full list */
+      /* the input sits on the golden section, raised if need be so a full
+         list still fits, and the column starts --offset left of center so
+         text of a typical length reads as centered. both are fixed, so the
+         label and input stay put as suggestions come and go */
       .form {
-        align-content: safe center;
-        grid-template-rows:
-          auto auto
-          calc(
-            var(--list-gap) + var(--suggestion-limit) * var(--suggestion-height)
-          );
-        margin: 0 auto;
-        padding-block: 2rem;
-        width: min(36rem, 100%);
+        --head: calc(var(--label-height) + var(--input-height));
+        --list: calc(
+          var(--list-gap) + var(--suggestion-limit) * var(--suggestion-height)
+        );
+        --offset: 10rem;
+        grid-template-columns: minmax(0, 36rem);
+        padding: clamp(
+            2rem,
+            38.2dvh - var(--label-height) - var(--input-height) / 2,
+            100dvh - 2rem - var(--head) - var(--list)
+          )
+          1rem 2rem max(1rem, 50% - var(--offset) - var(--inset));
       }
 
-      .reveal {
-        align-self: start;
+      /* the highlight spans the longest suggestion, not the whole column */
+      .suggestions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 100%;
+        width: fit-content;
       }
     }
   </style>
