@@ -228,7 +228,9 @@
     splitBy = config.commandPathDelimiter;
     const [pathKey, path] = splitOnce(query, splitBy);
 
-    if (commands.has(pathKey)) {
+    // a path with a space in it is words, so e.g. a command without a search
+    // template followed by words is a web search for all of it
+    if (commands.has(pathKey) && !/\s/.test(path)) {
       const command = commands.get(pathKey);
       const url = `${new URL(command.url).origin}/${path}`;
       return { key: pathKey, path, query, splitBy, url };
