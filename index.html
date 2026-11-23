@@ -68,7 +68,7 @@
     { name: 'slskd' },
     { name: 'prowlarr', searchTemplate: '/search?query={}' },
     { name: 'nzbget' },
-    { name: 'bazarr' },
+    { icon: 'bazarr-light', name: 'bazarr' },
     { name: 'nginx' },
   ];
 
@@ -96,7 +96,7 @@
     ['s', { name: 'Slack', url: 'https://app.slack.com/client/T03VB9LJ0AF' }],
     ['t', { icon: 'https://cdn.jsdelivr.net/gh/selfhst/icons/svg/ticktick.svg', name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
     ['x', { name: 'Tailscale', suggestions: SERVICES.map(({ name }) => `x/${name}`), url: 'https://login.tailscale.com/admin' }],
-    ...SERVICES.map(({ name, host = name, searchTemplate }) => [`x/${name}`, { icon: host, searchTemplate, url: `https://${host}.xvyz.co` }]),
+    ...SERVICES.map(({ name, host = name, icon = host, searchTemplate }) => [`x/${name}`, { icon, searchTemplate, url: `https://${host}.xvyz.co` }]),
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
   ]);
 
