@@ -48,48 +48,44 @@
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
+    fallbackIconTemplate:
+      'https://cdn.jsdelivr.net/gh/selfhst/icons/svg/{}.svg',
     iconTemplate: 'https://cdn.simpleicons.org/{}',
     logoTemplate:
       'https://cdn.jsdelivr.net/gh/pheralb/svgl@main/static/library/{}.svg',
     openLinksInNewTab: true,
-    suggestionLimit: 4,
+    suggestionLimit: 10,
   };
+
+  // self-hosted at <service>.xvyz.co, opened as x/<service>
+  // prettier-ignore
+  const SERVICES = ['audiobookshelf', 'bazarr', 'jellyfin', 'lidarr', 'nginx', 'nzbget', 'prowlarr', 'radarr', 'slskd', 'sonarr'];
 
   // named entries appear in the list, in insertion order. an icon is an svg url
   // or a slug, taken from the hostname unless set: the svgl logo if it has
-  // several colors, else the simple icons glyph. suggestions are curated.
+  // several colors, else the simple icons glyph, else the selfhst icon.
+  // suggestions are curated.
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
     ['a', { name: 'Claude', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
-    ['a/chatgpt', { url: 'https://chatgpt.com' }],
-    ['a/grok', { url: 'https://grok.com' }],
+    ['a/chatgpt', { icon: 'openai', url: 'https://chatgpt.com' }],
     ['a/gemini', { icon: 'gemini', url: 'https://gemini.google.com' }],
-    ['a/lumo', { url: 'https://lumo.proton.me/u/0' }],
-    ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
-    ['co', { name: 'Convex', url: 'https://dashboard.convex.dev' }],
+    ['a/grok', { url: 'https://grok.com' }],
+    ['a/lumo', { icon: 'proton-lumo', url: 'https://lumo.proton.me/u/0' }],
+    ['c', { name: 'Convex', url: 'https://dashboard.convex.dev' }],
     ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
+    ['f', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
     ['o', { name: 'OpenRouter', url: 'https://openrouter.ai/models' }],
     ['p', { icon: 'protonmail', name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
     ['p/drive', { icon: 'protondrive', url: 'https://drive.proton.me/u/0' }],
     ['p/pass', { url: 'https://pass.proton.me/u/0' }],
     ['q', { icon: 'quickbooks', name: 'QuickBooks', url: 'https://qbo.intuit.com' }],
-    ['r', { name: 'Reddit', searchTemplate: '/search?q={}', url: 'https://www.reddit.com' }],
     ['s', { name: 'Slack', url: 'https://app.slack.com/client/T03VB9LJ0AF' }],
     ['t', { icon: 'https://cdn.jsdelivr.net/gh/selfhst/icons/svg/ticktick.svg', name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
-    ['ts', { name: 'Tailscale', url: 'https://login.tailscale.com/admin' }],
-    ['x', { name: 'X', url: 'https://x.com' }],
-    ['x/audiobookshelf', { url: 'https://audiobookshelf.xvyz.co' }],
-    ['x/bazarr', { url: 'https://bazarr.xvyz.co' }],
-    ['x/jellyfin', { url: 'https://jellyfin.xvyz.co' }],
-    ['x/lidarr', { url: 'https://lidarr.xvyz.co' }],
-    ['x/nginx', { url: 'https://nginx.xvyz.co' }],
-    ['x/nzbget', { url: 'https://nzbget.xvyz.co' }],
-    ['x/prowlarr', { url: 'https://prowlarr.xvyz.co' }],
-    ['x/radarr', { url: 'https://radarr.xvyz.co' }],
-    ['x/slskd', { url: 'https://slskd.xvyz.co' }],
-    ['x/sonarr', { url: 'https://sonarr.xvyz.co' }],
+    ['x', { name: 'Tailscale', suggestions: SERVICES.map((service) => `x/${service}`), url: 'https://login.tailscale.com/admin' }],
+    ...SERVICES.map((service) => [`x/${service}`, { icon: service, url: `https://${service}.xvyz.co` }]),
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
   ]);
 
@@ -98,6 +94,7 @@
    * @property {string} commandPathDelimiter
    * @property {string} commandSearchDelimiter
    * @property {string} defaultSearchTemplate
+   * @property {string} fallbackIconTemplate
    * @property {string} iconTemplate
    * @property {string} logoTemplate
    * @property {boolean} openLinksInNewTab
@@ -217,9 +214,12 @@
     let splitBy = config.commandSearchDelimiter;
     const [searchKey, rawSearch] = splitOnce(query, splitBy);
 
-    if (commands.has(searchKey)) {
-      const command = commands.get(searchKey);
-      const template = new URL(command.searchTemplate ?? '', command.url);
+    // only a command with a search template searches, so a web search that
+    // happens to start with a command's key is still a web search
+    const searchCommand = commands.get(searchKey);
+
+    if (searchCommand?.searchTemplate) {
+      const template = new URL(searchCommand.searchTemplate, searchCommand.url);
       const search = rawSearch.trim();
       const url = fillTemplate(decodeURI(template.href), search);
       return { key: searchKey, query, search, splitBy, url };
@@ -239,6 +239,9 @@
   }
 
   /**
+   * a command's own suggestions come first and in full; the rest, its
+   * parent's first, must contain the query.
+   *
    * @param {ParsedQuery} parsedQuery
    * @param {Map<string, Command>} commands
    * @param {AppConfig} config
@@ -247,24 +250,18 @@
   function collectLocalSuggestions({ query }, commands, config) {
     const parentKey = query.split(config.commandPathDelimiter)[0];
 
-    const curated =
-      commands.get(query)?.suggestions ??
-      commands.get(parentKey)?.suggestions ??
-      [];
+    const matches = [
+      ...(commands.get(parentKey)?.suggestions ?? []),
+      ...[...commands].flatMap(([key, command]) => [
+        key,
+        ...(command.suggestions ?? []),
+      ]),
+    ].filter((suggestion) => suggestion.includes(query));
 
-    const suggestions = commands.has(query)
-      ? curated.filter((suggestion) => suggestion.startsWith(query))
-      : [...curated];
-
-    for (const [key, command] of commands) {
-      for (const candidate of [key, ...(command.suggestions ?? [])]) {
-        if (candidate !== query && !suggestions.includes(candidate)) {
-          suggestions.push(candidate);
-        }
-      }
-    }
-
-    return suggestions.filter((suggestion) => suggestion.includes(query));
+    const own = commands.get(query)?.suggestions ?? [];
+    const suggestions = new Set([...own, ...matches]);
+    suggestions.delete(query);
+    return [...suggestions];
   }
 
   /**
@@ -337,7 +334,10 @@
   async function fetchSlug(slug) {
     const logo = await fetchSvg(fillTemplate(CONFIG.logoTemplate, slug));
     if (logo && isMulticolor(logo)) return logo;
-    return (await fetchSvg(fillTemplate(CONFIG.iconTemplate, slug))) ?? logo;
+    const glyph = await fetchSvg(fillTemplate(CONFIG.iconTemplate, slug));
+    return (
+      glyph ?? logo ?? fetchSvg(fillTemplate(CONFIG.fallbackIconTemplate, slug))
+    );
   }
 
   /**
@@ -944,21 +944,21 @@
       }
     }
 
-    @media (min-width: 700px) {
+    @media (min-width: 400px) {
       .commands {
         grid-template-columns: repeat(2, auto);
       }
     }
 
-    @media (min-width: 960px) {
+    @media (min-width: 720px) {
       .commands {
         grid-template-columns: repeat(4, auto);
       }
     }
 
-    @media (min-width: 1280px) {
+    @media (min-width: 1200px) {
       .commands {
-        grid-template-columns: repeat(5, auto);
+        grid-template-columns: repeat(6, auto);
       }
     }
   </style>
@@ -1104,17 +1104,18 @@
 
     @media (min-width: 700px) and (hover: hover) {
       /* a fixed-width column centered as if the list were always full, so
-         the label and input stay put as suggestions come and go */
+         the label and input stay put as suggestions come and go. safe keeps
+         the top on screen when the window is too short for the full list */
       .form {
-        align-content: center;
+        align-content: safe center;
         grid-template-rows:
           auto auto
           calc(
             var(--list-gap) + var(--suggestion-limit) * var(--suggestion-height)
           );
         margin: 0 auto;
-        padding-top: 0;
-        width: min(28rem, 100%);
+        padding-block: 2rem;
+        width: min(36rem, 100%);
       }
 
       .reveal {
