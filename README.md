@@ -14,8 +14,8 @@ Type or tap anywhere, then press <kbd>Enter</kbd>.
 | `tilde`          | [DuckDuckGo search for tilde](https://duckduckgo.com/?q=tilde) |
 | `example.com`    | [example.com](https://example.com)                             |
 
-<kbd>↓</kbd> and <kbd>↑</kbd> pick a suggestion, <kbd>Tab</kbd> completes it,
-<kbd>Esc</kbd> closes.
+<kbd>↓</kbd>/<kbd>↑</kbd> or <kbd>Tab</kbd>/<kbd>Shift</kbd>+<kbd>Tab</kbd>
+cycle through suggestions, <kbd>Esc</kbd> closes.
 
 ## Beyond
 

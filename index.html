@@ -494,6 +494,9 @@
     #targetIcon;
     #targetLabel;
     #lastSuggestions = [];
+    #shownSuggestions = [];
+    #selectedIndex = -1;
+    #typed = '';
     #pendingSearch = null;
     #suggestionRequest = Promise.resolve([]);
     #closeController = null;
@@ -511,7 +514,6 @@
       this.#suggestions = componentFragment.querySelector('.suggestions');
       this.#targetIcon = componentFragment.querySelector('.target-icon');
       this.#targetLabel = componentFragment.querySelector('.target-label');
-      form.addEventListener('focusin', this.#renderTarget);
       form.addEventListener('submit', this.#onSubmit);
       this.#input.addEventListener('input', this.#onInput);
       this.#suggestions.addEventListener('click', this.#onSuggestionClick);
@@ -543,8 +545,11 @@
 
     #reset() {
       this.#input.value = '';
+      this.#typed = '';
+      this.#selectedIndex = -1;
       this.#input.blur();
       this.#suggestions.innerHTML = '';
+      this.#shownSuggestions = [];
     }
 
     #prepareOpen() {
@@ -597,17 +602,6 @@
       this.#renderTarget();
     }
 
-    #completeSuggestion() {
-      const suggestion =
-        this.shadowRoot.activeElement?.dataset.suggestion ??
-        this.#suggestions.querySelector('.suggestion')?.dataset.suggestion;
-
-      if (!suggestion) return;
-      this.#input.value = suggestion;
-      this.#input.focus();
-      this.#onInput();
-    }
-
     // duckduckgo answers every request through the same callback, so requests
     // run one at a time and a search that has been superseded is skipped
     #fetchSuggestions(search) {
@@ -620,19 +614,26 @@
       return this.#suggestionRequest;
     }
 
-    #focusNextSuggestion(previous = false) {
-      const activeIndex = this.shadowRoot.activeElement?.dataset.index;
-      let nextIndex;
+    // each step puts a suggestion in the input, leaving the list as it is.
+    // what was typed is a stop of its own (-1) between the last suggestion
+    // and the first, so cycling round comes back to it
+    #moveSelection(step) {
+      const stops = this.#shownSuggestions.length + 1;
+      if (stops === 1) return;
+      const stop = (this.#selectedIndex + 1 + step + stops) % stops;
+      this.#selectedIndex = stop - 1;
+      this.#input.value = this.#shownSuggestions[stop - 1] ?? this.#typed;
+      this.#input.focus();
+      this.#renderSelection();
+      this.#renderTarget();
+    }
 
-      if (activeIndex) {
-        nextIndex = Number(activeIndex) + (previous ? -1 : 1);
-      } else {
-        nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
+    #renderSelection() {
+      const buttons = this.#suggestions.querySelectorAll('.suggestion');
+
+      for (const [index, button] of buttons.entries()) {
+        button.classList.toggle('selected', index === this.#selectedIndex);
       }
-
-      const nextItem = this.#suggestions.children[nextIndex];
-      if (nextItem) nextItem.querySelector('.suggestion').focus();
-      else this.#input.focus();
     }
 
     #onClick = (event) => {
@@ -654,7 +655,9 @@
     };
 
     #onInput = async () => {
-      const parsedQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+      this.#typed = this.#input.value;
+      this.#selectedIndex = -1;
+      const parsedQuery = parseQuery(this.#typed, COMMANDS, CONFIG);
       this.#renderTarget();
 
       if (!parsedQuery.query) {
@@ -680,7 +683,7 @@
 
       if (isSearch) {
         const results = await this.#fetchSuggestions(parsedQuery.search);
-        const currentQuery = parseQuery(this.#input.value, COMMANDS, CONFIG);
+        const currentQuery = parseQuery(this.#typed, COMMANDS, CONFIG);
         if (currentQuery.query !== parsedQuery.query) return;
 
         const duckDuckGoSuggestions = parsedQuery.splitBy
@@ -749,21 +752,20 @@
       const shift = shiftKey ? 'shift-' : '';
       const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${key}`;
 
-      if (/^(ArrowDown|ctrl-n)$/.test(modifierPrefixedKey)) {
+      if (/^(ArrowDown|ctrl-n|Tab)$/.test(modifierPrefixedKey)) {
         event.preventDefault();
-        this.#focusNextSuggestion();
+        this.#moveSelection(1);
         return;
       }
 
-      if (/^(ArrowUp|ctrl-p)$/.test(modifierPrefixedKey)) {
+      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
         event.preventDefault();
-        this.#focusNextSuggestion(true);
+        this.#moveSelection(-1);
         return;
       }
 
       if (key === 'Tab') {
         event.preventDefault();
-        if (!shiftKey) this.#completeSuggestion();
         return;
       }
 
@@ -786,12 +788,12 @@
     };
 
     #renderTarget = () => {
-      const highlighted =
-        this.#suggestions.querySelector('.pointing .suggestion:hover') ??
-        this.shadowRoot.activeElement;
+      const hovered = this.#suggestions.querySelector(
+        '.pointing .suggestion:hover'
+      );
 
       const parsedQuery = parseQuery(
-        highlighted?.dataset.suggestion ?? this.#input.value,
+        hovered?.dataset.suggestion ?? this.#input.value,
         COMMANDS,
         CONFIG
       );
@@ -807,10 +809,11 @@
     };
 
     #renderSuggestions(suggestions, query) {
-      const focusedSuggestion =
-        this.shadowRoot.activeElement?.dataset?.suggestion;
+      const selectedSuggestion =
+        this.#selectedIndex === -1 ? undefined : this.#input.value;
 
       this.#suggestions.innerHTML = '';
+      this.#shownSuggestions = suggestions;
       const pattern = new RegExp(escapeRegexCharacters(query), 'i');
 
       // a suggestion with the same icon as the one just above it trades its
@@ -818,14 +821,13 @@
       // target for what was typed, not for a highlighted suggestion, so
       // moving through the list leaves the lines be
       let iconAbove = resolveQueryIcon(
-        parseQuery(this.#input.value, COMMANDS, CONFIG),
+        parseQuery(this.#typed, COMMANDS, CONFIG),
         COMMANDS
       );
 
-      for (const [index, suggestion] of suggestions.entries()) {
+      for (const suggestion of suggestions) {
         const suggestionFragment = TEMPLATES.suggestion.content.cloneNode(true);
         const button = suggestionFragment.querySelector('.suggestion');
-        button.dataset.index = index;
         button.dataset.suggestion = suggestion;
         const text = suggestionFragment.querySelector('.suggestion-text');
         const matched = suggestion.match(pattern);
@@ -867,13 +869,18 @@
 
       this.#fitSuggestions();
 
-      if (focusedSuggestion) {
-        const buttonToRefocus = this.#suggestions.querySelector(
-          `[data-suggestion="${CSS.escape(focusedSuggestion)}"]`
-        );
+      // suggestions arriving mid-cycle keep the selected one selected, or
+      // put back what was typed if it is gone
+      if (selectedSuggestion !== undefined) {
+        this.#selectedIndex = suggestions.indexOf(selectedSuggestion);
 
-        buttonToRefocus?.focus();
+        if (this.#selectedIndex === -1) {
+          this.#input.value = this.#typed;
+          this.#renderTarget();
+        }
       }
+
+      this.#renderSelection();
     }
 
     // the list's height is set explicitly so that it can transition as
@@ -1214,7 +1221,7 @@
     }
 
     .suggestions.pointing .suggestion:hover,
-    .suggestions:not(.pointing:has(.suggestion:hover)) .suggestion:focus {
+    .suggestions:not(.pointing:has(.suggestion:hover)) .suggestion.selected {
       background-color: var(--color-highlight);
     }
 
