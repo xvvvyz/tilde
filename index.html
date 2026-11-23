@@ -595,10 +595,12 @@
       const path = event.composedPath();
 
       if (!this.#dialog.classList.contains('visible')) {
-        if (!path.some((element) => element instanceof HTMLAnchorElement)) {
-          this.#open();
-        }
-
+        // tapping opens search on touch screens; on desktop, typing does
+        const isTouch = !matchMedia('(hover: hover)').matches;
+        const onLink = path.some(
+          (element) => element instanceof HTMLAnchorElement
+        );
+        if (isTouch && !onLink) this.#open();
         return;
       }
 
@@ -956,7 +958,7 @@
 
     @media (min-width: 1280px) {
       .commands {
-        grid-template-columns: repeat(6, auto);
+        grid-template-columns: repeat(5, auto);
       }
     }
   </style>
@@ -1112,7 +1114,7 @@
           );
         margin: 0 auto;
         padding-top: 0;
-        width: min(32rem, 100%);
+        width: min(28rem, 100%);
       }
 
       .reveal {
