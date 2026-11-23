@@ -295,6 +295,11 @@
   /** @type {Map<string, Promise<string>>} */
   const ICONS = new Map();
 
+  // icons that have arrived, so a re-rendered suggestion shows its icon at
+  // once instead of fading it in again
+  /** @type {Map<string, string>} */
+  const LOADED_ICONS = new Map();
+
   /**
    * @param {{ icon?: string, url: string }} target
    * @returns {string}
@@ -308,8 +313,30 @@
    * @returns {Promise<string>}
    */
   function loadIcon(icon) {
-    if (!ICONS.has(icon)) ICONS.set(icon, fetchIcon(icon));
+    if (!ICONS.has(icon)) {
+      ICONS.set(
+        icon,
+        fetchIcon(icon).then((svg) => {
+          LOADED_ICONS.set(icon, svg);
+          return svg;
+        })
+      );
+    }
+
     return ICONS.get(icon);
+  }
+
+  /**
+   * a typed url gets no icon, so its hostname is never sent to the icon cdn
+   *
+   * @param {ParsedQuery} parsedQuery
+   * @param {Map<string, Command>} commands
+   * @returns {string | undefined}
+   */
+  function resolveQueryIcon({ key, search, url }, commands) {
+    const command = commands.get(key);
+    if (command) return resolveIcon(command);
+    if (search !== undefined) return resolveIcon({ url });
   }
 
   /**
@@ -401,9 +428,13 @@
     async attributeChangedCallback(attribute, previousIcon, icon) {
       if (icon === previousIcon) return;
 
-      this.#icon.classList.remove('loaded');
-      const svg = await loadIcon(icon).catch(() => null);
-      if (this.getAttribute('icon') !== icon) return;
+      if (!LOADED_ICONS.has(icon)) {
+        this.#icon.classList.remove('loaded');
+        await loadIcon(icon).catch(() => null);
+        if (this.getAttribute('icon') !== icon) return;
+      }
+
+      const svg = LOADED_ICONS.get(icon);
       this.toggleAttribute('missing', !svg);
       if (!svg) return;
 
@@ -746,21 +777,17 @@
         this.#suggestions.querySelector('.pointing .suggestion:hover') ??
         this.shadowRoot.activeElement;
 
-      const { key, search, url } = parseQuery(
+      const parsedQuery = parseQuery(
         highlighted?.dataset.suggestion ?? this.#input.value,
         COMMANDS,
         CONFIG
       );
 
+      const { key, url } = parsedQuery;
       const command = COMMANDS.get(key);
-
-      // a typed url gets no icon, so its hostname is never sent to the icon cdn
-      const isTypedUrl = !command && search === undefined;
-      this.#targetIcon.hidden = isTypedUrl;
-
-      if (!isTypedUrl) {
-        this.#targetIcon.setAttribute('icon', resolveIcon(command ?? { url }));
-      }
+      const icon = resolveQueryIcon(parsedQuery, COMMANDS);
+      this.#targetIcon.hidden = !icon;
+      if (icon) this.#targetIcon.setAttribute('icon', icon);
 
       this.#targetLabel.textContent =
         command?.name ?? (URL.canParse(url) ? new URL(url).hostname : '');
@@ -778,7 +805,20 @@
         const button = suggestionFragment.querySelector('.suggestion');
         button.dataset.index = index;
         button.dataset.suggestion = suggestion;
+        const text = suggestionFragment.querySelector('.suggestion-text');
         const matched = suggestion.match(pattern);
+
+        // an icon left unset keeps its space, so every suggestion lines up
+        const icon = resolveQueryIcon(
+          parseQuery(suggestion, COMMANDS, CONFIG),
+          COMMANDS
+        );
+
+        if (icon) {
+          suggestionFragment
+            .querySelector('.suggestion-icon')
+            .setAttribute('icon', icon);
+        }
 
         if (matched) {
           const matchFragment = TEMPLATES.match.content.cloneNode(true);
@@ -792,9 +832,9 @@
           match.textContent = matched[0];
           match.insertAdjacentText('beforebegin', beforeMatch);
           match.insertAdjacentText('afterend', afterMatch);
-          button.append(matchFragment);
+          text.append(matchFragment);
         } else {
-          button.textContent = suggestion;
+          text.textContent = suggestion;
         }
 
         this.#suggestions.append(suggestionFragment);
@@ -1078,19 +1118,25 @@
     }
 
     .suggestion {
+      align-items: center;
       border-radius: 0.6rem;
       color: var(--color-text);
       cursor: pointer;
+      display: flex;
       font-size: 1rem;
+      gap: 0.6rem;
       height: var(--suggestion-height);
       line-height: 1.4;
-      overflow: hidden;
       padding: 0 var(--inset);
       text-align: left;
-      text-overflow: ellipsis;
       transition: background-color var(--transition-speed);
-      white-space: nowrap;
       width: 100%;
+    }
+
+    .suggestion-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .match {
@@ -1140,7 +1186,10 @@
 
 <template id="suggestion-template">
   <li>
-    <button class="suggestion" type="button"></button>
+    <button class="suggestion" type="button">
+      <icon-component class="suggestion-icon"></icon-component>
+      <span class="suggestion-text"></span>
+    </button>
   </li>
 </template>
 
