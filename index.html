@@ -72,10 +72,10 @@
     { name: 'nginx' },
   ];
 
-  // named entries appear in the list, in insertion order. an icon is an svg url
-  // or a slug, taken from the hostname unless set: the svgl logo if it has
-  // several colors, else the simple icons glyph, else the selfhst icon.
-  // suggestions are curated.
+  // named entries appear in the list, in insertion order. an icon is svg
+  // markup, an svg url or a slug, taken from the hostname unless set: the
+  // svgl logo if it has several colors, else the simple icons glyph, else the
+  // selfhst icon. suggestions are curated.
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
@@ -313,6 +313,10 @@
   /** @type {Map<string, string>} */
   const LOADED_ICONS = new Map();
 
+  // a globe for typed urls, drawn here so their hostnames never leave the page
+  const WEB_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M2 12h20"/></svg>';
+
   /**
    * @param {{ icon?: string, url: string }} target
    * @returns {string}
@@ -340,16 +344,27 @@
   }
 
   /**
-   * a typed url gets no icon, so its hostname is never sent to the icon cdn
-   *
    * @param {ParsedQuery} parsedQuery
    * @param {Map<string, Command>} commands
-   * @returns {string | undefined}
+   * @returns {string}
    */
   function resolveQueryIcon({ key, search, url }, commands) {
     const command = commands.get(key);
     if (command) return resolveIcon(command);
-    if (search !== undefined) return resolveIcon({ url });
+    return search === undefined ? WEB_ICON : resolveIcon({ url });
+  }
+
+  /**
+   * suggestions with the same icon are kept together, in the order each icon
+   * first appears, so the top suggestion stays on top and the lines between
+   * them run unbroken
+   *
+   * @template {{ icon: string }} T
+   * @param {T[]} items
+   * @returns {T[]}
+   */
+  function groupByIcon(items) {
+    return [...Map.groupBy(items, ({ icon }) => icon).values()].flat();
   }
 
   /**
@@ -357,6 +372,7 @@
    * @returns {Promise<string>}
    */
   async function fetchIcon(icon) {
+    if (icon.startsWith('<svg')) return icon;
     const cacheKey = `logo:${icon}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) return cached;
@@ -802,51 +818,49 @@
       const { key, url } = parsedQuery;
       const command = COMMANDS.get(key);
       const icon = resolveQueryIcon(parsedQuery, COMMANDS);
-      this.#targetIcon.hidden = !icon;
-      if (icon) this.#targetIcon.setAttribute('icon', icon);
+      this.#targetIcon.setAttribute('icon', icon);
 
       this.#targetLabel.textContent =
         command?.name ?? (URL.canParse(url) ? new URL(url).hostname : '');
     };
 
+    #iconFor(query) {
+      return resolveQueryIcon(parseQuery(query, COMMANDS, CONFIG), COMMANDS);
+    }
+
     #renderSuggestions(suggestions, query) {
       const selectedSuggestion =
         this.#selectedIndex === -1 ? undefined : this.#input.value;
 
+      const rows = groupByIcon(
+        suggestions.map((suggestion) => ({
+          icon: this.#iconFor(suggestion),
+          suggestion,
+        }))
+      );
+
       this.#suggestions.innerHTML = '';
-      this.#shownSuggestions = suggestions;
+      this.#shownSuggestions = rows.map(({ suggestion }) => suggestion);
       const pattern = new RegExp(escapeRegexCharacters(query), 'i');
 
       // a suggestion with the same icon as the one just above it trades its
       // icon for a line running down from that one. the first looks to the
       // target for what was typed, not for a highlighted suggestion, so
       // moving through the list leaves the lines be
-      let iconAbove = resolveQueryIcon(
-        parseQuery(this.#typed, COMMANDS, CONFIG),
-        COMMANDS
-      );
+      let iconAbove = this.#iconFor(this.#typed);
 
-      for (const suggestion of suggestions) {
+      for (const { icon, suggestion } of rows) {
         const suggestionFragment = TEMPLATES.suggestion.content.cloneNode(true);
         const button = suggestionFragment.querySelector('.suggestion');
         button.dataset.suggestion = suggestion;
         const text = suggestionFragment.querySelector('.suggestion-text');
         const matched = suggestion.match(pattern);
-
-        // an icon left unset keeps its space, so every suggestion lines up
-        const icon = resolveQueryIcon(
-          parseQuery(suggestion, COMMANDS, CONFIG),
-          COMMANDS
-        );
-
-        button.classList.toggle('continued', !!icon && icon === iconAbove);
+        button.classList.toggle('continued', icon === iconAbove);
         iconAbove = icon;
 
-        if (icon) {
-          suggestionFragment
-            .querySelector('.suggestion-icon')
-            .setAttribute('icon', icon);
-        }
+        suggestionFragment
+          .querySelector('.suggestion-icon')
+          .setAttribute('icon', icon);
 
         if (matched) {
           const matchFragment = TEMPLATES.match.content.cloneNode(true);
@@ -873,7 +887,8 @@
       // suggestions arriving mid-cycle keep the selected one selected, or
       // put back what was typed if it is gone
       if (selectedSuggestion !== undefined) {
-        this.#selectedIndex = suggestions.indexOf(selectedSuggestion);
+        this.#selectedIndex =
+          this.#shownSuggestions.indexOf(selectedSuggestion);
 
         if (this.#selectedIndex === -1) {
           this.#input.value = this.#typed;
@@ -1110,7 +1125,7 @@
       padding: 0 var(--inset);
     }
 
-    .target-icon:is([hidden], [missing]) {
+    .target-icon[missing] {
       display: none;
     }
 
