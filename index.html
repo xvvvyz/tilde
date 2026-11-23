@@ -79,7 +79,7 @@
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Claude', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
+    ['a', { name: 'Claude', searchTemplate: '/new?q={}', suggestions: ['a/chatgpt', 'a/grok', 'a/gemini', 'a/lumo'], url: 'https://claude.ai/new' }],
     ['a/chatgpt', { icon: 'openai', url: 'https://chatgpt.com' }],
     ['a/gemini', { icon: 'gemini', url: 'https://gemini.google.com' }],
     ['a/grok', { url: 'https://grok.com' }],
