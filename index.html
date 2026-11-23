@@ -57,9 +57,20 @@
     suggestionLimit: 10,
   };
 
-  // self-hosted at <service>.xvyz.co, opened as x/<service>
+  // self-hosted at <host>.xvyz.co, opened as x/<name>, most used first
   // prettier-ignore
-  const SERVICES = ['audiobookshelf', 'bazarr', 'jellyfin', 'lidarr', 'nginx', 'nzbget', 'prowlarr', 'radarr', 'slskd', 'sonarr'];
+  const SERVICES = [
+    { name: 'jellyfin', searchTemplate: '/web/#/search?query={}' },
+    { host: 'audiobookshelf', name: 'books', searchTemplate: '/audiobookshelf/library/82d7c893-0bd0-49d9-a99e-10ae156aedad/search?q={}' },
+    { name: 'sonarr', searchTemplate: '/add/new?term={}' },
+    { name: 'radarr', searchTemplate: '/add/new?term={}' },
+    { name: 'lidarr', searchTemplate: '/add/search?term={}' },
+    { name: 'slskd' },
+    { name: 'prowlarr', searchTemplate: '/search?query={}' },
+    { name: 'nzbget' },
+    { name: 'bazarr' },
+    { name: 'nginx' },
+  ];
 
   // named entries appear in the list, in insertion order. an icon is an svg url
   // or a slug, taken from the hostname unless set: the svgl logo if it has
@@ -84,8 +95,8 @@
     ['q', { icon: 'quickbooks', name: 'QuickBooks', url: 'https://qbo.intuit.com' }],
     ['s', { name: 'Slack', url: 'https://app.slack.com/client/T03VB9LJ0AF' }],
     ['t', { icon: 'https://cdn.jsdelivr.net/gh/selfhst/icons/svg/ticktick.svg', name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
-    ['x', { name: 'Tailscale', suggestions: SERVICES.map((service) => `x/${service}`), url: 'https://login.tailscale.com/admin' }],
-    ...SERVICES.map((service) => [`x/${service}`, { icon: service, url: `https://${service}.xvyz.co` }]),
+    ['x', { name: 'Tailscale', suggestions: SERVICES.map(({ name }) => `x/${name}`), url: 'https://login.tailscale.com/admin' }],
+    ...SERVICES.map(({ name, host = name, searchTemplate }) => [`x/${name}`, { icon: host, searchTemplate, url: `https://${host}.xvyz.co` }]),
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
   ]);
 
