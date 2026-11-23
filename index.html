@@ -75,7 +75,7 @@
   // named entries appear in the list, in insertion order. an icon is svg
   // markup, an svg url or a slug, taken from the hostname unless set: the
   // svgl logo if it has several colors, else the simple icons glyph, else the
-  // selfhst icon. suggestions are curated.
+  // selfhst icon.
   /** @type {Map<string, Command>} */
   // prettier-ignore
   const COMMANDS = new Map([
@@ -657,7 +657,6 @@
       const path = event.composedPath();
 
       if (!this.#dialog.classList.contains('visible')) {
-        // tapping opens search on touch screens; on desktop, typing does
         const isTouch = !matchMedia('(hover: hover)').matches;
         const onLink = path.some(
           (element) => element instanceof HTMLAnchorElement
@@ -890,8 +889,6 @@
 
       this.#fitSuggestions();
 
-      // suggestions arriving mid-cycle keep the selected one selected, or
-      // put back what was typed if it is gone
       if (selectedSuggestion !== undefined) {
         this.#selectedIndex =
           this.#shownSuggestions.indexOf(selectedSuggestion);
